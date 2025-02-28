@@ -29,7 +29,7 @@
 }
 
 .sidebar.collapsed {
-    width: 64px;
+    width: 54px;
 }
 
 .sidebar-header {
@@ -46,6 +46,11 @@
     height: 35px;
     width: auto;
     flex-shrink: 0;
+    transition: height var(--transition-normal);
+}
+
+.sidebar.collapsed .sidebar-logo {
+    height: 28px; /* Smaller logo when collapsed */
 }
 
 .sidebar-title {
