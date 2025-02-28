@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Document AI Assistant</title>
+    <link rel="stylesheet" href="../assets/css/reset.css">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <style>
+        /* Dashboard specific styles */
+        body {
+            display: block;
+            padding: 0;
+        }
+        
+        header {
+            background-color: var(--color-neutral);
+            border-bottom: 1px solid var(--color-supporting);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .header-logo {
+            display: flex;
+            align-items: center;
+        }
+        
+        .header-logo img {
+            height: 30px;
+            margin-right: 1rem;
+        }
+        
+        .user-menu {
+            display: flex;
+            align-items: center;
+        }
+        
+        .username {
+            margin-right: 1rem;
+        }
+        
+        .logout-btn {
+            width: auto;
+            padding: 0.5rem 1rem;
+        }
+        
+        .dashboard-content {
+            padding: 2rem;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-logo">
+            <img src="../assets/images/logo.png" alt="Logo">
+            <h1>Document AI Assistant</h1>
+        </div>
+        <div class="user-menu">
+            <span class="username" id="currentUsername">User</span>
+            <button class="logout-btn" onclick="app.logout()">Log Out</button>
+        </div>
+    </header>
+    
+    <main class="dashboard-content">
+        <h2>Welcome to the Dashboard</h2>
+        <p>This is a placeholder for the dashboard content.</p>
+    </main>
+
+    <!-- Scripts -->
+    <script src="../assets/js/app.js"></script>
+    <script>
+        // Get and display current user
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (currentUser) {
+                document.getElementById('currentUsername').textContent = currentUser;
+            }
+        });
+    </script>
+</body>
+</html>
