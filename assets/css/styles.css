@@ -2,8 +2,8 @@
 
 /* Global Styles */
 body {
-    background-color: var(--color-secondary);
-    color: var(--color-primary);
+    background-color: var(--background);
+    color: var(--text-color);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -85,5 +85,8 @@ button:hover {
     font-size: 0.8rem;
     margin-top: var(--spacing-sm);
     text-align: center;
-    display: none;
+    visibility: hidden;
+    height: 1.2rem; /* Fixed height */
+    opacity: 0;
+    transition: opacity var(--transition-fast);
 }

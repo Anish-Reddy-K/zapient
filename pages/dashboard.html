@@ -3,72 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Document AI Assistant</title>
+    <title>Dashboard - AI Assistant</title>
     <link rel="stylesheet" href="../assets/css/reset.css">
     <link rel="stylesheet" href="../assets/css/variables.css">
     <link rel="stylesheet" href="../assets/css/styles.css">
-    <style>
-        /* Dashboard specific styles */
-        body {
-            display: block;
-            padding: 0;
-        }
-        
-        header {
-            background-color: var(--color-neutral);
-            border-bottom: 1px solid var(--color-supporting);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .header-logo {
-            display: flex;
-            align-items: center;
-        }
-        
-        .header-logo img {
-            height: 30px;
-            margin-right: 1rem;
-        }
-        
-        .user-menu {
-            display: flex;
-            align-items: center;
-        }
-        
-        .username {
-            margin-right: 1rem;
-        }
-        
-        .logout-btn {
-            width: auto;
-            padding: 0.5rem 1rem;
-        }
-        
-        .dashboard-content {
-            padding: 2rem;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <header>
-        <div class="header-logo">
-            <img src="../assets/images/logo.png" alt="Logo">
-            <h1>Document AI Assistant</h1>
-        </div>
-        <div class="user-menu">
-            <span class="username" id="currentUsername">User</span>
-            <button class="logout-btn" onclick="app.logout()">Log Out</button>
-        </div>
-    </header>
-    
-    <main class="dashboard-content">
-        <h2>Welcome to the Dashboard</h2>
-        <p>This is a placeholder for the dashboard content.</p>
-    </main>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="Logo" class="sidebar-logo">
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-rocket nav-icon"></i>
+                            <span class="nav-text">AI Hub</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-robot nav-icon"></i>
+                            <span class="nav-text">My AI Agents</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <button id="collapse-btn" class="collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Main content header -->
+            <div class="content-header">
+                <div class="user-menu">
+                    <span class="username" id="currentUsername">User</span>
+                    <button class="logout-btn" onclick="app.logout()">Log Out</button>
+                </div>
+            </div>
+
+            <!-- Central content -->
+            <div class="central-content">
+                <div class="hero-section">
+                    <img src="../assets/images/logo_gray.png" alt="Logo" class="hero-logo">
+                    <h1 class="hero-title">Build Your AI Team for Smarter Operations</h1>
+                    <p class="hero-subtitle">Create specialized AI Agents to supercharge your Frontline Operations</p>
+                </div>
+
+                <a href="config.html" class="create-agent-card">
+                    <div class="create-card-content">
+                        <div class="card-icon">
+                            <div class="icon-box">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                        </div>
+                        <div class="card-text">
+                            <h2 class="card-title">Create AI Agent</h2>
+                            <p class="card-description">Define a custom AI Agent tailored to your plant's unique needs</p>
+                        </div>
+                        <div class="start-building-btn">Start Building</div>
+                    </div>
+                </a>
+                
+                <div class="templates-section">
+                    <h3 class="templates-title">Or choose from these templates:</h3>
+                    
+                    <div class="templates-grid">
+                        <a href="config.html" class="template-card">
+                            <div class="template-icon">
+                                <i class="fas fa-wrench"></i>
+                            </div>
+                            <div class="template-content">
+                                <h3 class="template-title">AI Maintenance Buddy</h3>
+                                <p class="template-description">Diagnoses issues, recommends troubleshooting actions, and automates maintenance logging.</p>
+                            </div>
+                        </a>
+                        
+                        <a href="config.html" class="template-card">
+                            <div class="template-icon shield-icon">
+                                <i class="fas fa-shield-alt"></i>
+                            </div>
+                            <div class="template-content">
+                                <h3 class="template-title">AI Safety Guardian</h3>
+                                <p class="template-description">Automates safety inspections, and assists with hazard detection using AI vision/audio tools.</p>
+                            </div>
+                        </a>
+                        
+                        <a href="config.html" class="template-card">
+                            <div class="template-icon">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <div class="template-content">
+                                <h3 class="template-title">AI Reliability Engineer</h3>
+                                <p class="template-description">Predicts equipment failures, recommends long-term reliability improvements, and triggers predictive maintenance workflows.</p>
+                            </div>
+                        </a>
+                        
+                        <a href="config.html" class="template-card">
+                            <div class="template-icon">
+                                <i class="fas fa-user-cog"></i>
+                            </div>
+                            <div class="template-content">
+                                <h3 class="template-title">AI Operations Assistant</h3>
+                                <p class="template-description">Assists operators with real-time process monitoring, abnormal condition detection, SOP adherence, and work order initiation.</p>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
 
     <!-- Scripts -->
     <script src="../assets/js/app.js"></script>
@@ -79,6 +132,32 @@
             if (currentUser) {
                 document.getElementById('currentUsername').textContent = currentUser;
             }
+
+            // Sidebar collapse functionality
+            const sidebar = document.getElementById('sidebar');
+            const collapseBtn = document.getElementById('collapse-btn');
+            const sidebarLogo = sidebar.querySelector('.sidebar-logo');
+            
+            collapseBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                
+                // Change the logo image
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebarLogo.src = '../assets/images/logo_small.png';
+                } else {
+                    sidebarLogo.src = '../assets/images/logo.png';
+                }
+                
+                // Update the button icon
+                const icon = collapseBtn.querySelector('i');
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-right');
+                } else {
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-left');
+                }
+            });
         });
     </script>
 </body>

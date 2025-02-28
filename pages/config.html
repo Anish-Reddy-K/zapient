@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configure AI Agent - AI Assistant</title>
+    <link rel="stylesheet" href="../assets/css/reset.css">
+    <link rel="stylesheet" href="../assets/css/variables.css">
+    <link rel="stylesheet" href="../assets/css/styles.css">
+    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .config-content {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--color-neutral);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .config-title {
+            font-size: 1.5rem;
+            font-weight: var(--font-weight-bold);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .back-link i {
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <img src="../assets/images/logo.png" alt="Logo" class="sidebar-logo">
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item active">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="fas fa-rocket nav-icon"></i>
+                            <span class="nav-text">AI Hub</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="fas fa-robot nav-icon"></i>
+                            <span class="nav-text">My AI Agents</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            
+            <button id="collapse-btn" class="collapse-btn">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Main content header -->
+            <div class="content-header">
+                <div class="user-menu">
+                    <span class="username" id="currentUsername">User</span>
+                    <button class="logout-btn" onclick="app.logout()">Log Out</button>
+                </div>
+            </div>
+
+            <!-- Config Content -->
+            <div class="config-content">
+                <a href="dashboard.html" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+                <h1 class="config-title">Configure Your New AI Agent</h1>
+                <p>This is a temporary configuration page. Your agent creation interface will go here.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../assets/js/app.js"></script>
+    <script>
+        // Get and display current user
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = sessionStorage.getItem('currentUser');
+            if (currentUser) {
+                document.getElementById('currentUsername').textContent = currentUser;
+            }
+
+            // Sidebar collapse functionality
+            const sidebar = document.getElementById('sidebar');
+            const collapseBtn = document.getElementById('collapse-btn');
+            const sidebarLogo = sidebar.querySelector('.sidebar-logo');
+            
+            collapseBtn.addEventListener('click', function() {
+                sidebar.classList.toggle('collapsed');
+                
+                // Change the logo image
+                if (sidebar.classList.contains('collapsed')) {
+                    sidebarLogo.src = '../assets/images/logo_small.png';
+                } else {
+                    sidebarLogo.src = '../assets/images/logo.png';
+                }
+                
+                // Update the button icon
+                const icon = collapseBtn.querySelector('i');
+                if (sidebar.classList.contains('collapsed')) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-right');
+                } else {
+                    icon.classList.remove('fa-chevron-right');
+                    icon.classList.add('fa-chevron-left');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
