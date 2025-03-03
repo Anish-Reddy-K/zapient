@@ -6,7 +6,8 @@
 // Immediately invoked function expression (IIFE) to avoid polluting the global namespace
 (function() {
     // DOM Elements
-    const agentsContainer = document.getElementById('agentsContainer');
+    const agentsGrid = document.getElementById('agentsGrid');
+    const noAgentsText = document.getElementById('noAgentsText');
     
     /**
      * Initialize the my-agents page
@@ -20,19 +21,39 @@
      */
     function loadAgents() {
         try {
+            // Clear the existing grid
+            agentsGrid.innerHTML = '';
+            
             // Get the agents from localStorage
             const agentsFolder = JSON.parse(localStorage.getItem('agentsFolder'));
             
             if (!agentsFolder || !agentsFolder.agents || Object.keys(agentsFolder.agents).length === 0) {
-                showNoAgents();
+                // Show the no agents message
+                noAgentsText.style.display = 'block';
+                
+                // Add the "Create New Agent" tile at the end
+                const createNewTile = createNewAgentTile();
+                agentsGrid.appendChild(createNewTile);
                 return;
             }
             
+            // Hide the no agents message
+            noAgentsText.style.display = 'none';
+            
             // Display the agents
             displayAgents(agentsFolder.agents);
+            
+            // Add the "Create New Agent" tile at the end
+            const createNewTile = createNewAgentTile();
+            agentsGrid.appendChild(createNewTile);
         } catch (error) {
             console.error('Error loading agents:', error);
-            showNoAgents();
+            // Show the no agents message
+            noAgentsText.style.display = 'block';
+            
+            // Add the "Create New Agent" tile at the end
+            const createNewTile = createNewAgentTile();
+            agentsGrid.appendChild(createNewTile);
         }
     }
     
@@ -41,73 +62,66 @@
      * @param {Object} agents - The agents to display
      */
     function displayAgents(agents) {
-        // Create a grid to hold the agent cards
-        const agentsGrid = document.createElement('div');
-        agentsGrid.className = 'agents-grid';
-        
-        // Iterate through the agents and create cards
+        // Iterate through the agents and create tiles
         Object.values(agents).forEach(agent => {
             // Parse the agent config
             const config = JSON.parse(agent.configFile.content);
             
-            // Create the agent card
-            const agentCard = document.createElement('div');
-            agentCard.className = 'agent-card';
-            agentCard.innerHTML = `
-                <div class="agent-header">
+            // Create the agent tile
+            const agentTile = document.createElement('div');
+            agentTile.className = 'agent-tile';
+            agentTile.innerHTML = `
+                <div class="agent-content">
                     <h2 class="agent-title">${config.name}</h2>
-                    <p class="agent-subtitle">Created: ${formatDate(config.createdAt)}</p>
-                </div>
-                <div class="agent-body">
-                    <p class="agent-description">${truncateText(config.persona, 150)}</p>
-                    ${agent.files.length > 0 ? `
-                    <div class="agent-files">
-                        <p class="files-title">Attached Files:</p>
-                        ${agent.files.map(file => `
-                            <span class="file-badge"><i class="fas fa-file"></i> ${file.name}</span>
-                        `).join('')}
-                    </div>
-                    ` : ''}
+                    <p class="agent-date">Created: ${formatDate(config.createdAt)}</p>
                 </div>
                 <div class="agent-actions">
-                    <button class="agent-button manage-btn" data-agent-id="${agent.id}">Manage</button>
+                    <button class="agent-button interact-btn" data-agent-id="${agent.id}">
+                        <i class="fas fa-comments"></i> Interact
+                    </button>
+                    <button class="agent-button manage-btn" data-agent-id="${agent.id}">
+                        <i class="fas fa-cog"></i> Manage
+                    </button>
                 </div>
             `;
             
-            // Add event listener to manage button
-            const manageBtn = agentCard.querySelector('.manage-btn');
-            manageBtn.addEventListener('click', function() {
-                // In a real app, this would navigate to a management page
-                alert(`Management functionality for "${config.name}" is coming soon!`);
+            // Add event listeners to buttons
+            const interactBtn = agentTile.querySelector('.interact-btn');
+            interactBtn.addEventListener('click', function() {
+                // In a real app, this would navigate to an interaction page
+                alert(`Interaction functionality for "${config.name}" is coming soon!`);
             });
             
-            // Add the card to the grid
-            agentsGrid.appendChild(agentCard);
+            const manageBtn = agentTile.querySelector('.manage-btn');
+            manageBtn.addEventListener('click', function() {
+                // Redirect to config page with agent ID as parameter
+                window.location.href = `config.html?agent=${agent.id}`;
+            });
+            
+            // Add the tile to the grid
+            agentsGrid.appendChild(agentTile);
         });
-        
-        // Add the grid to the container
-        agentsContainer.innerHTML = '';
-        agentsContainer.appendChild(agentsGrid);
     }
     
     /**
-     * Show a message when there are no agents
+     * Create the "Create New Agent" tile
+     * @returns {HTMLElement} The create new agent tile
      */
-    function showNoAgents() {
-        const noAgentsEl = document.createElement('div');
-        noAgentsEl.className = 'no-agents';
-        noAgentsEl.innerHTML = `
-            <div class="no-agents-icon">
-                <i class="fas fa-robot"></i>
+    function createNewAgentTile() {
+        const createTile = document.createElement('a');
+        createTile.href = 'config.html';
+        createTile.className = 'create-tile';
+        createTile.innerHTML = `
+            <div class="create-content">
+                <div class="create-icon">
+                    <i class="fas fa-plus"></i>
+                </div>
+                <h3 class="create-title">Add New AI Agent</h3>
+                <p class="create-subtitle">Create a custom AI agent for your needs</p>
             </div>
-            <p class="no-agents-text">You haven't created any AI agents yet</p>
-            <a href="config.html" class="create-new-btn">
-                <i class="fas fa-plus"></i> Create Your First Agent
-            </a>
         `;
         
-        agentsContainer.innerHTML = '';
-        agentsContainer.appendChild(noAgentsEl);
+        return createTile;
     }
     
     /**
@@ -122,17 +136,6 @@
             month: 'short',
             day: 'numeric'
         });
-    }
-    
-    /**
-     * Truncate text to a specified length and add ellipsis
-     * @param {string} text - The text to truncate
-     * @param {number} maxLength - The maximum length
-     * @returns {string} The truncated text
-     */
-    function truncateText(text, maxLength) {
-        if (text.length <= maxLength) return text;
-        return text.substring(0, maxLength) + '...';
     }
     
     // Initialize the my-agents page when DOM is loaded

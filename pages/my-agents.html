@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .agents-content {
-            max-width: 1000px;
+            max-width: 1100px;
             width: 90%;
             margin: 0 auto;
         }
@@ -30,42 +30,38 @@
             color: var(--color-primary);
         }
         
-        .no-agents {
-            text-align: center;
-            padding: 3rem;
-            background-color: var(--color-neutral);
-            border-radius: var(--border-radius-md);
-            box-shadow: var(--shadow-md);
-        }
-        
-        .no-agents-icon {
-            font-size: 3rem;
-            color: #d1d5db;
-            margin-bottom: 1rem;
-        }
-        
         .no-agents-text {
             font-size: 1.1rem;
             color: #6b7280;
-            margin-bottom: 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
         }
         
         .agents-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
+            grid-template-columns: repeat(3, 1fr);
             gap: 1.5rem;
         }
         
-        .agent-card {
+        .agent-tile {
             background-color: var(--color-neutral);
             border-radius: var(--border-radius-md);
             box-shadow: var(--shadow-md);
             overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s;
+            border: 1px solid var(--color-supporting);
         }
         
-        .agent-header {
-            padding: 1.25rem;
-            border-bottom: 1px solid var(--color-supporting);
+        .agent-tile:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .agent-content {
+            padding: 1.5rem;
+            flex: 1;
         }
         
         .agent-title {
@@ -75,93 +71,114 @@
             color: var(--color-primary);
         }
         
-        .agent-subtitle {
-            font-size: 0.85rem;
-            color: #6b7280;
-        }
-        
-        .agent-body {
-            padding: 1.25rem;
-        }
-        
-        .agent-description {
-            font-size: 0.9rem;
-            color: var(--color-primary);
-            margin-bottom: 1rem;
-            line-height: 1.5;
-        }
-        
-        .agent-files {
-            margin-top: 1rem;
-            border-top: 1px solid var(--color-supporting);
-            padding-top: 1rem;
-        }
-        
-        .files-title {
+        .agent-date {
             font-size: 0.8rem;
-            font-weight: 500;
             color: #6b7280;
-            margin-bottom: 0.5rem;
-        }
-        
-        .file-badge {
-            display: inline-block;
-            background-color: #f3f4f6;
-            color: #6b7280;
-            font-size: 0.7rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            margin-right: 0.5rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 1rem;
         }
         
         .agent-actions {
-            padding: 1rem 1.25rem;
-            background-color: #f9fafb;
-            border-top: 1px solid var(--color-supporting);
-            display: flex;
-            justify-content: flex-end;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            padding: 0 1.5rem 1.5rem 1.5rem;
         }
         
         .agent-button {
-            padding: 0.5rem 1rem;
+            padding: 0.6rem;
             border-radius: var(--border-radius-sm);
             font-size: 0.8rem;
             font-weight: 500;
             cursor: pointer;
-        }
-        
-        .manage-btn {
-            background-color: var(--color-accent);
-            color: white;
-            border: none;
-        }
-        
-        .manage-btn:hover {
-            background-color: var(--color-accent-hover);
-        }
-        
-        .create-new-btn {
             display: flex;
             align-items: center;
             justify-content: center;
+            transition: all var(--transition-fast);
+        }
+        
+        .agent-button i {
+            margin-right: 0.4rem;
+        }
+        
+        .interact-btn {
             background-color: var(--color-accent);
             color: white;
             border: none;
-            border-radius: var(--border-radius-sm);
-            padding: 0.75rem 1.5rem;
-            font-size: 0.9rem;
-            font-weight: var(--font-weight-medium);
-            cursor: pointer;
-            transition: background-color var(--transition-fast);
         }
         
-        .create-new-btn:hover {
+        .interact-btn:hover {
             background-color: var(--color-accent-hover);
         }
         
-        .create-new-btn i {
-            margin-right: 0.5rem;
+        .manage-btn {
+            background-color: var(--color-secondary);
+            color: var(--color-primary);
+            border: 1px solid var(--color-supporting);
+        }
+        
+        .manage-btn:hover {
+            background-color: #e5e7eb;
+        }
+        
+        /* Create New Agent Tile */
+        .create-tile {
+            background-color: var(--color-neutral);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-md);
+            overflow: hidden;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            transition: box-shadow 0.2s;
+            border: 1px solid var(--color-supporting);
+            text-decoration: none;
+        }
+        
+        .create-tile:hover {
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .create-content {
+            padding: 1.5rem;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%; /* Ensure same height as agent tiles */
+        }
+        
+        .create-icon {
+            width: 60px;
+            height: 60px;
+            background-color: #e6f0fd;
+            border-radius: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #3182ed;
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+        }
+        
+        .create-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--color-primary);
+            text-align: center;
+        }
+        
+        .create-subtitle {
+            color: #6b7280;
+            font-size: 0.9rem;
+            text-align: center;
+        }
+        
+        @media (max-width: 992px) {
+            .agents-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
         
         @media (max-width: 768px) {
@@ -173,10 +190,6 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 1rem;
-            }
-            
-            .create-new-btn {
-                width: 100%;
             }
         }
     </style>
@@ -195,12 +208,13 @@
             <div class="agents-content">
                 <div class="agents-header">
                     <h1 class="page-title">My AI Agents</h1>
-                    <a href="config.html" class="create-new-btn">
-                        <i class="fas fa-plus"></i> Create New Agent
-                    </a>
                 </div>
                 
-                <div id="agentsContainer">
+                <div id="noAgentsText" style="display: none;">
+                    <p class="no-agents-text">You have no AI agents yet. Create one to get started!</p>
+                </div>
+                
+                <div id="agentsGrid" class="agents-grid">
                     <!-- Agents will be loaded here by my-agents.js -->
                 </div>
             </div>

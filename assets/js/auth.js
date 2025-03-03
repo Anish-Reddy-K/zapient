@@ -8,6 +8,7 @@
     // Preconfigured credentials for demonstration purposes
     const validCredentials = [
         { username: "admin", password: "admin" },
+        { username: "test", password: "test" },
         { username: "tester1@example.com", password: "test123" },
         { username: "tester2@example.com", password: "test456" },
         { username: "demo@example.com", password: "demo789" },

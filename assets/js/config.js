@@ -10,6 +10,12 @@
     const fileDropzone = document.getElementById('fileDropzone');
     const fileInput = document.getElementById('fileInput');
     const fileList = document.getElementById('fileList');
+    const agentNameInput = document.getElementById('agentName');
+    const agentPersonaInput = document.getElementById('agentPersona');
+    const submitButton = document.querySelector('.primary-btn');
+    
+    // Current agent being edited (if any)
+    let currentAgentId = null;
     
     // Files array to store uploaded files
     let uploadedFiles = [];
@@ -18,8 +24,62 @@
      * Initialize the configuration page
      */
     function initConfig() {
+        // Check if we're editing an existing agent
+        checkForExistingAgent();
+        
         setupFileUpload();
         setupFormSubmission();
+    }
+    
+    /**
+     * Check if we're editing an existing agent
+     */
+    function checkForExistingAgent() {
+        // Get the agent ID from the URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const agentId = urlParams.get('agent');
+        
+        if (agentId) {
+            // We're editing an existing agent
+            currentAgentId = agentId;
+            loadAgentData(agentId);
+            
+            // Update the title and button text
+            document.querySelector('.config-title').textContent = 'Manage Your AI Agent';
+            document.querySelector('.config-subtitle').textContent = 'Update your AI agent settings and knowledge sources';
+            submitButton.textContent = 'Update Agent';
+        }
+    }
+    
+    /**
+     * Load existing agent data
+     * @param {string} agentId - The ID of the agent to load
+     */
+    function loadAgentData(agentId) {
+        try {
+            // Get agents from localStorage
+            const agentsFolder = JSON.parse(localStorage.getItem('agentsFolder'));
+            
+            if (!agentsFolder || !agentsFolder.agents || !agentsFolder.agents[agentId]) {
+                console.error('Agent not found:', agentId);
+                return;
+            }
+            
+            const agent = agentsFolder.agents[agentId];
+            const config = JSON.parse(agent.configFile.content);
+            
+            // Fill in the form fields
+            agentNameInput.value = config.name;
+            agentPersonaInput.value = config.persona;
+            
+            // Load files
+            agent.files.forEach(file => {
+                addFileToUI(file);
+                uploadedFiles.push(file);
+            });
+        } catch (error) {
+            console.error('Error loading agent data:', error);
+        }
     }
     
     /**
@@ -88,15 +148,15 @@
         
         // Determine icon based on file type
         let iconClass = 'fa-file';
-        if (file.type.includes('image')) {
+        if (file.type && file.type.includes('image')) {
             iconClass = 'fa-file-image';
-        } else if (file.type.includes('pdf')) {
+        } else if (file.type && file.type.includes('pdf')) {
             iconClass = 'fa-file-pdf';
-        } else if (file.type.includes('word') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
+        } else if (file.type && file.type.includes('word') || (file.name && (file.name.endsWith('.doc') || file.name.endsWith('.docx')))) {
             iconClass = 'fa-file-word';
-        } else if (file.type.includes('excel') || file.name.endsWith('.xls') || file.name.endsWith('.xlsx')) {
+        } else if (file.type && file.type.includes('excel') || (file.name && (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')))) {
             iconClass = 'fa-file-excel';
-        } else if (file.type.includes('text')) {
+        } else if (file.type && file.type.includes('text')) {
             iconClass = 'fa-file-alt';
         }
         
@@ -132,29 +192,31 @@
         agentConfigForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            const agentName = document.getElementById('agentName').value;
-            const agentPersona = document.getElementById('agentPersona').value;
+            const agentName = agentNameInput.value;
+            const agentPersona = agentPersonaInput.value;
             
-            // Create agent data object
             const agentData = {
                 name: agentName,
                 persona: agentPersona,
                 files: uploadedFiles.map(file => ({
                     name: file.name,
-                    size: file.size,
-                    type: file.type
-                })),
-                createdAt: new Date().toISOString(),
-                createdBy: sessionStorage.getItem('currentUser') || 'Unknown User'
+                    size: file.size || 0,
+                    type: file.type || '',
+                    lastModified: file.lastModified || Date.now()
+                }))
             };
             
-            // Save agent data
-            saveAgentData(agentData);
+            // Save or update agent data
+            if (currentAgentId) {
+                updateAgentData(currentAgentId, agentData);
+            } else {
+                saveAgentData(agentData);
+            }
         });
     }
     
     /**
-     * Save the agent data
+     * Save the agent data for a new agent
      * @param {Object} agentData - The agent data to save
      */
     function saveAgentData(agentData) {
@@ -173,20 +235,12 @@
                         id: agentId,
                         name: agentData.name,
                         persona: agentData.persona,
-                        createdAt: agentData.createdAt,
-                        createdBy: agentData.createdBy
+                        createdAt: new Date().toISOString(),
+                        updatedAt: new Date().toISOString(),
+                        createdBy: sessionStorage.getItem('currentUser') || 'Unknown User'
                     })
                 },
-                files: uploadedFiles.map(file => {
-                    // In a real app, we would save the file content
-                    // Here we just store metadata about the file
-                    return {
-                        name: file.name,
-                        size: file.size,
-                        type: file.type,
-                        lastModified: file.lastModified
-                    };
-                })
+                files: agentData.files
             };
             
             // Get existing agents folder structure or initialize
@@ -200,10 +254,56 @@
             
             // Show success message and redirect
             alert(`AI Agent "${agentData.name}" created successfully!`);
-            window.location.href = 'dashboard.html';
+            window.location.href = 'my-agents.html';
         } catch (error) {
             console.error('Error saving agent data:', error);
             alert('There was an error creating your AI Agent. Please try again.');
+        }
+    }
+    
+    /**
+     * Update an existing agent
+     * @param {string} agentId - The ID of the agent to update
+     * @param {Object} agentData - The updated agent data
+     */
+    function updateAgentData(agentId, agentData) {
+        try {
+            // Get existing agents
+            const agentsFolder = JSON.parse(localStorage.getItem('agentsFolder'));
+            
+            if (!agentsFolder || !agentsFolder.agents || !agentsFolder.agents[agentId]) {
+                console.error('Agent not found:', agentId);
+                alert('Agent not found. Creating a new one instead.');
+                saveAgentData(agentData);
+                return;
+            }
+            
+            // Get the existing agent data to preserve original createdAt
+            const existingAgent = agentsFolder.agents[agentId];
+            const existingConfig = JSON.parse(existingAgent.configFile.content);
+            
+            // Update agent config
+            agentsFolder.agents[agentId].configFile.content = JSON.stringify({
+                id: agentId,
+                name: agentData.name,
+                persona: agentData.persona,
+                createdAt: existingConfig.createdAt, // Keep original creation date
+                updatedAt: new Date().toISOString(),
+                createdBy: existingConfig.createdBy // Keep original creator
+            });
+            
+            // Update files
+            agentsFolder.agents[agentId].files = agentData.files;
+            
+            // Save back to localStorage
+            localStorage.setItem('agentsFolder', JSON.stringify(agentsFolder));
+            
+            // Show success message and redirect
+            alert(`AI Agent "${agentData.name}" updated successfully!`);
+            window.location.href = 'my-agents.html';
+        } catch (error) {
+            console.error('Error updating agent data:', error);
+            alert('There was an error updating your AI Agent. Please try again.');
         }
     }
     
