@@ -262,12 +262,12 @@
 .icon-box {
     width: 60px;
     height: 60px;
-    background-color: #e6f0fd;
+    background-color: rgba(10, 133, 209, 0.1);
     border-radius: 9px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #3182ed;
+    color: var(--color-accent);
     font-size: 1.6rem;
 }
 
@@ -293,7 +293,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    background-color: #0A85D1;
+    background-color: var(--color-accent);
     color: white;
     height: 40px;
     padding: 0 1.5rem;
@@ -306,7 +306,7 @@
 }
 
 .start-building-btn:hover {
-    background-color: #2691d3;
+    background-color: var(--color-accent-hover);
 }
 
 /* Templates Section */
@@ -347,19 +347,19 @@
 .template-icon {
     width: 48px;
     height: 48px;
-    background-color: #e6f0fd;
+    background-color: rgba(10, 133, 209, 0.1);
     border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #3182ed;
+    color: var(--color-accent);
     font-size: 1.3rem;
     margin-right: 1rem;
     flex-shrink: 0;
 }
 
 .shield-icon {
-    color: #3182ed;
+    color: var(--color-accent);
 }
 
 .template-content {

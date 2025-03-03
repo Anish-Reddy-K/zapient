@@ -52,6 +52,40 @@
         
         // Set active nav item based on current page
         setActiveNavItem();
+        
+        // Apply saved sidebar collapse state
+        applySavedSidebarState();
+    }
+    
+    /**
+     * Apply saved sidebar collapse state from localStorage
+     */
+    function applySavedSidebarState() {
+        const sidebar = document.getElementById('sidebar');
+        const collapseBtn = document.getElementById('collapse-btn');
+        const sidebarLogo = sidebar.querySelector('.sidebar-logo');
+        
+        // Get saved state from localStorage
+        const isCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+        
+        if (isCollapsed && sidebar) {
+            // Apply collapsed class
+            sidebar.classList.add('collapsed');
+            
+            // Update logo
+            if (sidebarLogo) {
+                sidebarLogo.src = '/static/images/logo_small.png';
+            }
+            
+            // Update button icon
+            if (collapseBtn) {
+                const icon = collapseBtn.querySelector('i');
+                if (icon) {
+                    icon.classList.remove('fa-chevron-left');
+                    icon.classList.add('fa-chevron-right');
+                }
+            }
+        }
     }
     
     /**
@@ -101,7 +135,10 @@
                 const sidebarLogo = sidebar.querySelector('.sidebar-logo');
                 
                 collapseBtn.addEventListener('click', function() {
-                    sidebar.classList.toggle('collapsed');
+                    const isCollapsed = sidebar.classList.toggle('collapsed');
+                    
+                    // Save state to localStorage
+                    localStorage.setItem('sidebarCollapsed', isCollapsed);
                     
                     // Change the logo image
                     if (sidebarLogo) {

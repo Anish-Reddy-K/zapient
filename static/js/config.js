@@ -23,6 +23,26 @@
     function initConfig() {
         setupFileUpload();
         setupFormSubmission();
+        preloadTemplateData();
+    }
+
+    /**
+     * Pre-load template data from URL parameters if present
+     */
+    function preloadTemplateData() {
+        // Parse URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const templateName = urlParams.get('name');
+        const templatePersona = urlParams.get('persona');
+        
+        // If template parameters exist, pre-fill the form
+        if (templateName) {
+            agentNameInput.value = templateName;
+        }
+        
+        if (templatePersona) {
+            agentPersonaInput.value = templatePersona;
+        }
     }
     
     /**
