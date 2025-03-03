@@ -18,11 +18,7 @@ if not os.path.exists(DATA_DIR):
 # Valid users for demo purposes (in a real app, you'd use a database)
 VALID_USERS = [
     {"username": "admin", "password": "admin"},
-    {"username": "test", "password": "test"},
-    {"username": "tester1@example.com", "password": "test123"},
-    {"username": "tester2@example.com", "password": "test456"},
-    {"username": "demo@example.com", "password": "demo789"},
-    {"username": "beta@example.com", "password": "beta2025"}
+    {"username": "test", "password": "test"}
 ]
 
 # Routes

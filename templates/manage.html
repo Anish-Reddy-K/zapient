@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configure AI Agent - AI Assistant</title>
+    <title>Manage AI Agent - AI Assistant</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
@@ -193,7 +193,14 @@
             background-color: var(--color-accent-hover);
         }
         
-        /* Add little badge for upcoming feature */
+        .danger-btn {
+            background-color: #e53e3e;
+        }
+        
+        .danger-btn:hover {
+            background-color: #c53030;
+        }
+        
         .badge {
             display: inline-block;
             background-color: #f3f4f6;
@@ -207,23 +214,23 @@
 </head>
 <body class="dashboard-body">
     <div class="dashboard-container">
-        <!-- Sidebar Navigation (will be loaded by components.js) -->
+        <!-- Sidebar Navigation -->
         <div id="sidebar-container"></div>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Main content header (will be loaded by components.js) -->
+            <!-- Main content header -->
             <div id="header-container"></div>
 
-            <!-- Config Content -->
+            <!-- Manage Content -->
             <div class="config-content">
-                <a href="{{ url_for('dashboard') }}" class="back-link">
-                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                <a href="{{ url_for('my_agents') }}" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to My Agents
                 </a>
-                <h1 class="config-title">Configure Your AI Agent</h1>
-                <p class="config-subtitle">Set up your AI agent by defining its name, persona, and connecting knowledge sources</p>
+                <h1 class="config-title">Manage Your AI Agent</h1>
+                <p class="config-subtitle">Update your AI agent settings and knowledge sources</p>
                 
-                <form id="agentConfigForm">
+                <form id="agentManageForm">
                     <div class="form-group">
                         <label for="agentName" class="form-label">Agent Name</label>
                         <input type="text" id="agentName" name="agentName" class="form-input" placeholder="e.g., AI Maintenance Buddy" required>
@@ -248,12 +255,10 @@
                     </div>
                     
                     <div class="buttons-row">
-                        <button type="button" class="secondary-btn" disabled>
-                            <i class="fas fa-database"></i> Connect Database
-                            <span class="badge">Coming Soon</span>
+                        <button type="submit" class="primary-btn">Update Agent</button>
+                        <button type="button" id="deleteAgentBtn" class="primary-btn danger-btn">
+                            <i class="fas fa-trash"></i> Delete Agent
                         </button>
-                        
-                        <button type="submit" class="primary-btn">Create Agent</button>
                     </div>
                 </form>
             </div>
@@ -262,7 +267,7 @@
 
     <!-- Scripts -->
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
     <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/manage.js') }}"></script>
 </body>
 </html>

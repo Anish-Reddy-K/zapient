@@ -24,19 +24,19 @@
         sidebarContainer.innerHTML = `
             <aside class="sidebar" id="sidebar">
                 <div class="sidebar-header">
-                    <img src="../assets/images/logo.png" alt="Logo" class="sidebar-logo">
+                    <img src="/static/images/logo.png" alt="Logo" class="sidebar-logo">
                 </div>
                 
                 <nav class="sidebar-nav">
                     <ul>
                         <li class="nav-item" id="nav-ai-hub">
-                            <a href="dashboard.html" class="nav-link">
+                            <a href="/dashboard" class="nav-link">
                                 <i class="fas fa-rocket nav-icon"></i>
                                 <span class="nav-text">AI Hub</span>
                             </a>
                         </li>
                         <li class="nav-item" id="nav-my-agents">
-                            <a href="my-agents.html" class="nav-link">
+                            <a href="/my-agents" class="nav-link">
                                 <i class="fas fa-robot nav-icon"></i>
                                 <span class="nav-text">My AI Agents</span>
                             </a>
@@ -61,58 +61,71 @@
         const headerContainer = document.getElementById('header-container');
         if (!headerContainer) return;
         
-        headerContainer.innerHTML = `
-            <div class="content-header">
-                <div class="user-menu">
-                    <span class="username" id="currentUsername">User</span>
-                    <button class="logout-btn" onclick="app.logout()">Log Out</button>
-                </div>
-            </div>
-        `;
-        
-        // Set current username
-        const currentUser = sessionStorage.getItem('currentUser');
-        if (currentUser) {
-            document.getElementById('currentUsername').textContent = currentUser;
-        }
+        // Fetch the current username
+        fetch('/api/current-user')
+            .then(response => response.json())
+            .then(data => {
+                headerContainer.innerHTML = `
+                    <div class="content-header">
+                        <div class="user-menu">
+                            <span class="username" id="currentUsername">${data.username || 'User'}</span>
+                            <button class="logout-btn" onclick="app.logout()">Log Out</button>
+                        </div>
+                    </div>
+                `;
+            })
+            .catch(error => {
+                console.error('Error fetching current user:', error);
+                headerContainer.innerHTML = `
+                    <div class="content-header">
+                        <div class="user-menu">
+                            <span class="username" id="currentUsername">User</span>
+                            <button class="logout-btn" onclick="app.logout()">Log Out</button>
+                        </div>
+                    </div>
+                `;
+            });
     }
     
     /**
      * Set up event listeners for component interactions
      */
     function setupComponentEvents() {
-        // Sidebar collapse functionality
-        const sidebar = document.getElementById('sidebar');
-        const collapseBtn = document.getElementById('collapse-btn');
-        
-        if (sidebar && collapseBtn) {
-            const sidebarLogo = sidebar.querySelector('.sidebar-logo');
+        // Wait for sidebar to be loaded
+        setTimeout(() => {
+            // Sidebar collapse functionality
+            const sidebar = document.getElementById('sidebar');
+            const collapseBtn = document.getElementById('collapse-btn');
             
-            collapseBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
+            if (sidebar && collapseBtn) {
+                const sidebarLogo = sidebar.querySelector('.sidebar-logo');
                 
-                // Change the logo image
-                if (sidebarLogo) {
-                    if (sidebar.classList.contains('collapsed')) {
-                        sidebarLogo.src = '../assets/images/logo_small.png';
-                    } else {
-                        sidebarLogo.src = '../assets/images/logo.png';
+                collapseBtn.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Change the logo image
+                    if (sidebarLogo) {
+                        if (sidebar.classList.contains('collapsed')) {
+                            sidebarLogo.src = '/static/images/logo_small.png';
+                        } else {
+                            sidebarLogo.src = '/static/images/logo.png';
+                        }
                     }
-                }
-                
-                // Update the button icon
-                const icon = collapseBtn.querySelector('i');
-                if (icon) {
-                    if (sidebar.classList.contains('collapsed')) {
-                        icon.classList.remove('fa-chevron-left');
-                        icon.classList.add('fa-chevron-right');
-                    } else {
-                        icon.classList.remove('fa-chevron-right');
-                        icon.classList.add('fa-chevron-left');
+                    
+                    // Update the button icon
+                    const icon = collapseBtn.querySelector('i');
+                    if (icon) {
+                        if (sidebar.classList.contains('collapsed')) {
+                            icon.classList.remove('fa-chevron-left');
+                            icon.classList.add('fa-chevron-right');
+                        } else {
+                            icon.classList.remove('fa-chevron-right');
+                            icon.classList.add('fa-chevron-left');
+                        }
                     }
-                }
-            });
-        }
+                });
+            }
+        }, 100); // Small delay to ensure sidebar has loaded
     }
     
     /**
@@ -127,17 +140,23 @@
         });
         
         // Set active class based on current path
-        if (currentPath.includes('dashboard.html')) {
+        if (currentPath.includes('/dashboard')) {
             document.getElementById('nav-ai-hub').classList.add('active');
-        } else if (currentPath.includes('my-agents.html')) {
+        } else if (currentPath.includes('/my-agents')) {
             document.getElementById('nav-my-agents').classList.add('active');
         }
         
-        // Config page is also considered part of AI Hub
-        if (currentPath.includes('config.html')) {
+        // Config and manage pages are also considered part of AI Hub
+        if (currentPath.includes('/config') || currentPath.includes('/manage')) {
             document.getElementById('nav-ai-hub').classList.add('active');
         }
     }
+    
+    // Add an API endpoint to get current user
+    fetch('/api/current-user', { method: 'HEAD' })
+        .catch(() => {
+            console.log('API endpoint for current user not available');
+        });
     
     // Initialize components when DOM is loaded
     document.addEventListener('DOMContentLoaded', initComponents);

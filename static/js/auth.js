@@ -1,56 +1,77 @@
 /**
  * Authentication Module
- * Handles user authentication for the Document AI Assistant
+ * Handles user authentication for the Document AI Assistant with Flask backend
  */
 
 // Immediately invoked function expression (IIFE) to avoid polluting the global namespace
 (function() {
-    // Preconfigured credentials for demonstration purposes
-    const validCredentials = [
-        { username: "admin", password: "admin" },
-        { username: "test", password: "test" },
-        { username: "tester1@example.com", password: "test123" },
-        { username: "tester2@example.com", password: "test456" },
-        { username: "demo@example.com", password: "demo789" },
-        { username: "beta@example.com", password: "beta2025" }
-    ];
-    
     // DOM Elements
     const loginForm = document.getElementById("loginForm");
     const errorMessage = document.getElementById("errorMessage");
     
     /**
-     * Authenticates a user against the valid credentials list
-     * @param {string} username - The username to check
-     * @param {string} password - The password to check
-     * @returns {boolean} - Whether the authentication was successful
+     * Initialize the authentication functionality
      */
-    function authenticateUser(username, password) {
-        const userFound = validCredentials.find(
-            user => (user.username === username || user.username === username.toLowerCase()) && 
-                    user.password === password
-        );
-        
-        return !!userFound ? userFound : false;
+    function initAuth() {
+        if (loginForm) {
+            setupLoginForm();
+        }
     }
     
     /**
-     * Handle successful login
-     * @param {string} username - The authenticated username
+     * Set up the login form submission
      */
-    function handleSuccessfulLogin(username) {
-        // Store user information in session storage
-        sessionStorage.setItem('currentUser', username);
+    function setupLoginForm() {
+        loginForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById("username").value;
+            const password = document.getElementById("password").value;
+            
+            // Submit the form using fetch to the Flask backend
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: new URLSearchParams({
+                    'username': username,
+                    'password': password
+                })
+            })
+            .then(response => {
+                if (response.redirected) {
+                    // If the response is a redirect, follow it
+                    window.location.href = response.url;
+                } else {
+                    // If not redirected, there was an error
+                    return response.text().then(text => {
+                        // Show the error message
+                        showErrorMessage();
+                        return Promise.reject(new Error('Login failed'));
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error during login:', error);
+                showErrorMessage();
+            });
+        });
         
-        // Redirect to dashboard
-        window.location.href = "dashboard.html";
+        // Hide error message when user starts typing again
+        document.getElementById("username").addEventListener("input", function() {
+            hideErrorMessage();
+        });
+        
+        document.getElementById("password").addEventListener("input", function() {
+            hideErrorMessage();
+        });
     }
     
     /**
-     * Handle failed login
+     * Show the error message
      */
-    function handleFailedLogin() {
-        // Show error message
+    function showErrorMessage() {
         errorMessage.style.visibility = "visible";
         errorMessage.style.opacity = "1";
         
@@ -61,44 +82,14 @@
         document.getElementById("password").focus();
     }
     
-    // Check if user is already logged in
-    function checkExistingSession() {
-        const currentUser = sessionStorage.getItem('currentUser');
-        
-        if (currentUser && window.location.pathname.includes('login.html')) {
-            window.location.href = "dashboard.html";
-        }
+    /**
+     * Hide the error message
+     */
+    function hideErrorMessage() {
+        errorMessage.style.visibility = "hidden";
+        errorMessage.style.opacity = "0";
     }
     
-    // Event Listeners
-    if (loginForm) {
-        loginForm.addEventListener("submit", function(event) {
-            event.preventDefault();
-            
-            const username = document.getElementById("username").value;
-            const password = document.getElementById("password").value;
-            
-            const user = authenticateUser(username, password);
-            
-            if (user) {
-                handleSuccessfulLogin(user.username);
-            } else {
-                handleFailedLogin();
-            }
-        });
-        
-        // Hide error message when user starts typing again
-        document.getElementById("username").addEventListener("input", function() {
-            errorMessage.style.visibility = "hidden";
-            errorMessage.style.opacity = "0";
-        });
-        
-        document.getElementById("password").addEventListener("input", function() {
-            errorMessage.style.visibility = "hidden";
-            errorMessage.style.opacity = "0";
-        });
-    }
-    
-    // Check for existing session on page load
-    document.addEventListener("DOMContentLoaded", checkExistingSession);
+    // Initialize the authentication functionality when DOM is loaded
+    document.addEventListener("DOMContentLoaded", initAuth);
 })();

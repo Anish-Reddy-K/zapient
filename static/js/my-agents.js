@@ -20,66 +20,64 @@
      * Load and display the agents
      */
     function loadAgents() {
-        try {
-            // Clear the existing grid
-            agentsGrid.innerHTML = '';
-            
-            // Get the agents from localStorage
-            const agentsFolder = JSON.parse(localStorage.getItem('agentsFolder'));
-            
-            if (!agentsFolder || !agentsFolder.agents || Object.keys(agentsFolder.agents).length === 0) {
+        // Clear the existing grid
+        agentsGrid.innerHTML = '';
+        
+        // Fetch agents from the server
+        fetch('/api/agents')
+            .then(response => response.json())
+            .then(data => {
+                if (!data.agents || data.agents.length === 0) {
+                    // Show the no agents message
+                    noAgentsText.style.display = 'block';
+                    
+                    // Add the "Create New Agent" tile at the end
+                    const createNewTile = createNewAgentTile();
+                    agentsGrid.appendChild(createNewTile);
+                    return;
+                }
+                
+                // Hide the no agents message
+                noAgentsText.style.display = 'none';
+                
+                // Display the agents
+                displayAgents(data.agents);
+                
+                // Add the "Create New Agent" tile at the end
+                const createNewTile = createNewAgentTile();
+                agentsGrid.appendChild(createNewTile);
+            })
+            .catch(error => {
+                console.error('Error loading agents:', error);
                 // Show the no agents message
                 noAgentsText.style.display = 'block';
                 
                 // Add the "Create New Agent" tile at the end
                 const createNewTile = createNewAgentTile();
                 agentsGrid.appendChild(createNewTile);
-                return;
-            }
-            
-            // Hide the no agents message
-            noAgentsText.style.display = 'none';
-            
-            // Display the agents
-            displayAgents(agentsFolder.agents);
-            
-            // Add the "Create New Agent" tile at the end
-            const createNewTile = createNewAgentTile();
-            agentsGrid.appendChild(createNewTile);
-        } catch (error) {
-            console.error('Error loading agents:', error);
-            // Show the no agents message
-            noAgentsText.style.display = 'block';
-            
-            // Add the "Create New Agent" tile at the end
-            const createNewTile = createNewAgentTile();
-            agentsGrid.appendChild(createNewTile);
-        }
+            });
     }
     
     /**
      * Display the agents in the UI
-     * @param {Object} agents - The agents to display
+     * @param {Array} agents - The agents to display
      */
     function displayAgents(agents) {
         // Iterate through the agents and create tiles
-        Object.values(agents).forEach(agent => {
-            // Parse the agent config
-            const config = JSON.parse(agent.configFile.content);
-            
+        agents.forEach(agent => {
             // Create the agent tile
             const agentTile = document.createElement('div');
             agentTile.className = 'agent-tile';
             agentTile.innerHTML = `
                 <div class="agent-content">
-                    <h2 class="agent-title">${config.name}</h2>
-                    <p class="agent-date">Created: ${formatDate(config.createdAt)}</p>
+                    <h2 class="agent-title">${agent.name}</h2>
+                    <p class="agent-date">Created: ${formatDate(agent.createdAt)}</p>
                 </div>
                 <div class="agent-actions">
-                    <button class="agent-button interact-btn" data-agent-id="${agent.id}">
+                    <button class="agent-button interact-btn" data-agent-name="${agent.name}">
                         <i class="fas fa-comments"></i> Interact
                     </button>
-                    <button class="agent-button manage-btn" data-agent-id="${agent.id}">
+                    <button class="agent-button manage-btn" data-agent-name="${agent.name}">
                         <i class="fas fa-cog"></i> Manage
                     </button>
                 </div>
@@ -89,13 +87,13 @@
             const interactBtn = agentTile.querySelector('.interact-btn');
             interactBtn.addEventListener('click', function() {
                 // In a real app, this would navigate to an interaction page
-                alert(`Interaction functionality for "${config.name}" is coming soon!`);
+                alert(`Interaction functionality for "${agent.name}" is coming soon!`);
             });
             
             const manageBtn = agentTile.querySelector('.manage-btn');
             manageBtn.addEventListener('click', function() {
-                // Redirect to config page with agent ID as parameter
-                window.location.href = `config.html?agent=${agent.id}`;
+                // Redirect to manage page with agent name as parameter
+                window.location.href = `/manage/${encodeURIComponent(agent.name)}`;
             });
             
             // Add the tile to the grid
@@ -109,7 +107,7 @@
      */
     function createNewAgentTile() {
         const createTile = document.createElement('a');
-        createTile.href = 'config.html';
+        createTile.href = '/config';
         createTile.className = 'create-tile';
         createTile.innerHTML = `
             <div class="create-content">

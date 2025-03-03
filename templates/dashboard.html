@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - AI Assistant</title>
-    <link rel="stylesheet" href="../assets/css/reset.css">
-    <link rel="stylesheet" href="../assets/css/variables.css">
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -24,12 +24,12 @@
             <!-- Central content -->
             <div class="central-content">
                 <div class="hero-section">
-                    <img src="../assets/images/logo_gray.png" alt="Logo" class="hero-logo">
+                    <img src="{{ url_for('static', filename='images/logo_gray.png') }}" alt="Logo" class="hero-logo">
                     <h1 class="hero-title">Build Your AI Team for Smarter Operations</h1>
                     <p class="hero-subtitle">Create specialized AI Agents to supercharge your Frontline Operations</p>
                 </div>
 
-                <a href="config.html" class="create-agent-card">
+                <a href="{{ url_for('config') }}" class="create-agent-card">
                     <div class="create-card-content">
                         <div class="card-icon">
                             <div class="icon-box">
@@ -48,7 +48,7 @@
                     <h3 class="templates-title">Or choose from these templates:</h3>
                     
                     <div class="templates-grid">
-                        <a href="config.html" class="template-card">
+                        <a href="{{ url_for('config') }}" class="template-card">
                             <div class="template-icon">
                                 <i class="fas fa-wrench"></i>
                             </div>
@@ -58,7 +58,7 @@
                             </div>
                         </a>
                         
-                        <a href="config.html" class="template-card">
+                        <a href="{{ url_for('config') }}" class="template-card">
                             <div class="template-icon shield-icon">
                                 <i class="fas fa-shield-alt"></i>
                             </div>
@@ -68,7 +68,7 @@
                             </div>
                         </a>
                         
-                        <a href="config.html" class="template-card">
+                        <a href="{{ url_for('config') }}" class="template-card">
                             <div class="template-icon">
                                 <i class="fas fa-chart-line"></i>
                             </div>
@@ -78,7 +78,7 @@
                             </div>
                         </a>
                         
-                        <a href="config.html" class="template-card">
+                        <a href="{{ url_for('config') }}" class="template-card">
                             <div class="template-icon">
                                 <i class="fas fa-user-cog"></i>
                             </div>
@@ -94,7 +94,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/components.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
 </body>
 </html>
