@@ -207,43 +207,13 @@
 </head>
 <body class="dashboard-body">
     <div class="dashboard-container">
-        <!-- Sidebar Navigation -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <img src="../assets/images/logo.png" alt="Logo" class="sidebar-logo">
-            </div>
-            
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item active">
-                        <a href="dashboard.html" class="nav-link">
-                            <i class="fas fa-rocket nav-icon"></i>
-                            <span class="nav-text">AI Hub</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="fas fa-robot nav-icon"></i>
-                            <span class="nav-text">My AI Agents</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-            
-            <button id="collapse-btn" class="collapse-btn">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-        </aside>
+        <!-- Sidebar Navigation (will be loaded by components.js) -->
+        <div id="sidebar-container"></div>
 
         <!-- Main Content -->
         <main class="main-content">
-            <!-- Main content header -->
-            <div class="content-header">
-                <div class="user-menu">
-                    <span class="username" id="currentUsername">User</span>
-                    <button class="logout-btn" onclick="app.logout()">Log Out</button>
-                </div>
-            </div>
+            <!-- Main content header (will be loaded by components.js) -->
+            <div id="header-container"></div>
 
             <!-- Config Content -->
             <div class="config-content">
@@ -293,40 +263,6 @@
     <!-- Scripts -->
     <script src="../assets/js/app.js"></script>
     <script src="../assets/js/config.js"></script>
-    <script>
-        // Get and display current user
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentUser = sessionStorage.getItem('currentUser');
-            if (currentUser) {
-                document.getElementById('currentUsername').textContent = currentUser;
-            }
-
-            // Sidebar collapse functionality
-            const sidebar = document.getElementById('sidebar');
-            const collapseBtn = document.getElementById('collapse-btn');
-            const sidebarLogo = sidebar.querySelector('.sidebar-logo');
-            
-            collapseBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('collapsed');
-                
-                // Change the logo image
-                if (sidebar.classList.contains('collapsed')) {
-                    sidebarLogo.src = '../assets/images/logo_small.png';
-                } else {
-                    sidebarLogo.src = '../assets/images/logo.png';
-                }
-                
-                // Update the button icon
-                const icon = collapseBtn.querySelector('i');
-                if (sidebar.classList.contains('collapsed')) {
-                    icon.classList.remove('fa-chevron-left');
-                    icon.classList.add('fa-chevron-right');
-                } else {
-                    icon.classList.remove('fa-chevron-right');
-                    icon.classList.add('fa-chevron-left');
-                }
-            });
-        });
-    </script>
+    <script src="../assets/js/components.js"></script>
 </body>
 </html>
