@@ -1,0 +1,146 @@
+/* Processing Status Indicators Styles */
+
+/* File Status Styles */
+.file-status {
+    margin-left: auto;
+    margin-right: 10px;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+}
+
+.file-status-icon {
+    margin-right: 5px;
+}
+
+/* Status colors */
+.status-pending {
+    color: #6b7280; /* Gray */
+}
+
+.status-processing {
+    color: #3b82f6; /* Blue */
+}
+
+.status-partial {
+    color: #f59e0b; /* Orange */
+}
+
+.status-success {
+    color: #10b981; /* Green */
+}
+
+.status-error {
+    color: #ef4444; /* Red */
+}
+
+/* Icon animation for processing status */
+.fa-spin {
+    animation: fa-spin 2s infinite linear;
+}
+
+@keyframes fa-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Processing Notification */
+#processingNotification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: #3b82f6;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    animation: slide-in 0.3s ease-out;
+}
+
+/* Completion Notification */
+.completion-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+    animation: slide-in 0.3s ease-out;
+}
+
+.notification-success {
+    background-color: #10b981;
+}
+
+.notification-warning {
+    background-color: #f59e0b;
+}
+
+.notification-error {
+    background-color: #ef4444;
+}
+
+/* Agent Status on the Dashboard */
+.agent-status {
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    margin-top: 0.5rem;
+}
+
+/* Animation */
+@keyframes slide-in {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slide-out {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+.slide-out {
+    animation: slide-out 0.3s ease-in forwards;
+}
+
+/* Enhanced file status indicators */
+.file-item {
+    position: relative;
+}
+
+.file-icon.fa-spinner {
+    color: #3b82f6; /* Blue for processing */
+}
+
+.file-icon.fa-check-circle {
+    color: #10b981; /* Green for success */
+}
+
+.file-icon.fa-exclamation-circle {
+    color: #ef4444; /* Red for error */
+}

@@ -75,10 +75,32 @@
             // Create the agent tile
             const agentTile = document.createElement('div');
             agentTile.className = 'agent-tile';
+            
+            // Check if agent is being processed
+            const isProcessing = agent.processing_status === 'in_progress' && !agent.processing_complete;
+            let statusIndicator = '';
+            
+            if (isProcessing) {
+                statusIndicator = `
+                    <div class="agent-status status-processing" style="font-size: 0.8rem; color: #3b82f6; display: flex; align-items: center; margin-top: 0.5rem;">
+                        <i class="fas fa-spinner fa-spin" style="margin-right: 5px;"></i>
+                        Processing files...
+                    </div>
+                `;
+            } else if (agent.processing_complete && !agent.files_processed) {
+                statusIndicator = `
+                    <div class="agent-status status-error" style="font-size: 0.8rem; color: #f59e0b; display: flex; align-items: center; margin-top: 0.5rem;">
+                        <i class="fas fa-exclamation-triangle" style="margin-right: 5px;"></i>
+                        Processing issues
+                    </div>
+                `;
+            }
+            
             agentTile.innerHTML = `
                 <div class="agent-content">
                     <h2 class="agent-title">${agent.name}</h2>
                     <p class="agent-date">Created: ${formatDate(agent.createdAt)}</p>
+                    ${statusIndicator}
                 </div>
                 <div class="agent-actions">
                     <button class="agent-button interact-btn" data-agent-name="${agent.name}">
@@ -142,6 +164,9 @@
             day: 'numeric'
         });
     }
+    
+    // Periodically refresh the agent list to show updated statuses
+    setInterval(loadAgents, 10000);
     
     // Initialize the my-agents page when DOM is loaded
     document.addEventListener('DOMContentLoaded', initMyAgents);

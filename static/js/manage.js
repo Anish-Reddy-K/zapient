@@ -20,6 +20,10 @@
     // Original agent name (for tracking name changes)
     let originalAgentName = '';
     
+    // Processing status monitoring
+    let statusInterval = null;
+    let processingComplete = false;
+    
     // Allowed file types
     const allowedFileTypes = [
         'application/pdf',
@@ -40,6 +44,137 @@
         setupFileUpload();
         setupFormSubmission();
         setupDeleteButton();
+        
+        // Start monitoring processing status
+        startProcessingStatusMonitor();
+    }
+    
+    /**
+
+     * Start monitoring processing status
+     */
+    function startProcessingStatusMonitor() {
+        // Check immediately
+        checkProcessingStatus();
+        
+        // Set up interval to check every 2 seconds for better responsiveness
+        statusInterval = setInterval(checkProcessingStatus, 2000);
+    }
+    
+    /**
+     * Stop monitoring processing status
+     */
+    function stopProcessingStatusMonitor() {
+        if (statusInterval) {
+            clearInterval(statusInterval);
+            statusInterval = null;
+        }
+    }
+    
+    /**
+     * Check processing status of files
+     */
+    function checkProcessingStatus() {
+        fetch(`/api/agents/${originalAgentName}/processing-status`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch processing status');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update processing status in the UI
+                if (data.file_status) {
+                    for (const [filename, status] of Object.entries(data.file_status)) {
+                        updateFileStatus(filename, status.status, status.message);
+                    }
+                }
+                
+                // If processing is complete, stop monitoring
+                if (data.processing_complete && !processingComplete) {
+                    processingComplete = true;
+                    stopProcessingStatusMonitor();
+                }
+            })
+            .catch(error => {
+                console.error('Error checking processing status:', error);
+            });
+    }
+    
+    /**
+     * Update file status in the UI
+     * @param {string} filename - The name of the file
+     * @param {string} status - The status of the file
+     * @param {string} message - The status message
+     */
+    function updateFileStatus(filename, status, message) {
+        const fileItem = document.querySelector(`.file-item[data-filename="${filename}"]`);
+        if (!fileItem) return;
+        
+        const statusSpan = fileItem.querySelector('.file-status');
+        if (!statusSpan) return;
+        
+        // Remove all previous status classes
+        statusSpan.className = 'file-status';
+        
+        let statusText = message || status;
+        let statusColor = '#6b7280'; // Default gray
+        let statusClass = '';
+        
+        switch(status) {
+            case 'ready':
+                statusText = 'Ready';
+                statusColor = '#6b7280'; // Gray
+                statusClass = 'status-pending';
+                break;
+            case 'pending':
+                statusText = 'Pending';
+                statusColor = '#6b7280'; // Gray
+                statusClass = 'status-pending';
+                break;
+            case 'processing':
+                statusText = 'Processing...';
+                statusColor = '#3b82f6'; // Blue
+                statusClass = 'status-processing';
+                break;
+            case 'success':
+                statusText = 'Complete';
+                statusColor = '#10b981'; // Green
+                statusClass = 'status-success';
+                break;
+            case 'error':
+                statusText = 'Error';
+                statusColor = '#ef4444'; // Red
+                statusClass = 'status-error';
+                break;
+            case 'unknown':
+                statusText = 'Status Unknown';
+                statusColor = '#6b7280'; // Gray
+                statusClass = 'status-pending';
+                break;
+        }
+        
+        statusSpan.textContent = statusText;
+        statusSpan.style.color = statusColor;
+        statusSpan.classList.add(statusClass);
+        
+        // Update icon based on status
+        const iconSpan = fileItem.querySelector('.file-icon');
+        if (iconSpan) {
+            // Reset classes first
+            iconSpan.className = 'fas file-icon';
+            
+            if (status === 'processing') {
+                iconSpan.classList.add('fa-spinner', 'fa-spin');
+            } else if (status === 'success') {
+                iconSpan.classList.add('fa-check-circle');
+            } else if (status === 'error') {
+                iconSpan.classList.add('fa-exclamation-circle');
+            } else {
+                // Default icon for ready, pending, unknown
+                iconSpan.classList.add('fa-file-pdf');
+            }
+        }
     }
     
     /**
@@ -66,8 +201,16 @@
                 // Load files
                 if (data.files && data.files.length > 0) {
                     data.files.forEach(file => {
-                        uploadedFiles.push(file);
-                        addFileToUI(file);
+                        // For existing files, create a lightweight file object
+                        const fileObj = {
+                            name: file.name,
+                            size: file.size,
+                            type: file.type || 'application/pdf',
+                            isExisting: true
+                        };
+                        
+                        uploadedFiles.push(fileObj);
+                        addFileToUI(fileObj, file.processing_status || 'unknown');
                     });
                 }
             })
@@ -160,7 +303,7 @@
             
             if (!isDuplicate) {
                 uploadedFiles.push(file);
-                addFileToUI(file);
+                addFileToUI(file, 'ready');
             }
         });
         
@@ -173,23 +316,63 @@
     /**
      * Add a file to the UI list
      * @param {File|Object} file - The file to add to the UI
+     * @param {string} status - The processing status of the file
      */
-    function addFileToUI(file) {
+    function addFileToUI(file, status = 'unknown') {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
+        fileItem.dataset.filename = file.name;
         
-        // Determine icon based on file type
-        let iconClass = 'fa-file';
-        const fileName = file.name;
+        // Determine icon class based on status
+        let iconClass = 'fa-file-pdf';
+        if (status === 'processing') {
+            iconClass = 'fa-spinner fa-spin';
+        } else if (status === 'success') {
+            iconClass = 'fa-check-circle';
+        } else if (status === 'error') {
+            iconClass = 'fa-exclamation-circle';
+        }
         
-        if (fileName.match(/\.(pdf)$/i)) {
-            iconClass = 'fa-file-pdf';
+        // Determine status text and class
+        let statusText = 'Unknown';
+        let statusColor = '#6b7280';
+        let statusClass = 'status-pending';
+        
+        switch(status) {
+            case 'ready':
+                statusText = 'Ready';
+                statusColor = '#6b7280'; // Gray
+                statusClass = 'status-pending';
+                break;
+            case 'pending':
+                statusText = 'Pending';
+                statusColor = '#6b7280'; // Gray
+                statusClass = 'status-pending';
+                break;
+            case 'processing':
+                statusText = 'Processing...';
+                statusColor = '#3b82f6'; // Blue
+                statusClass = 'status-processing';
+                break;
+            case 'success':
+                statusText = 'Complete';
+                statusColor = '#10b981'; // Green
+                statusClass = 'status-success';
+                break;
+            case 'error':
+                statusText = 'Error';
+                statusColor = '#ef4444'; // Red
+                statusClass = 'status-error';
+                break;
         }
         
         fileItem.innerHTML = `
             <i class="fas ${iconClass} file-icon"></i>
-            <span class="file-name">${fileName}</span>
-            <i class="fas fa-times file-remove" data-filename="${fileName}"></i>
+            <span class="file-name">${file.name}</span>
+            <span class="file-status ${statusClass}" style="margin-left: auto; margin-right: 10px; font-size: 0.8rem; color: ${statusColor};">
+                ${statusText}
+            </span>
+            <i class="fas fa-times file-remove" data-filename="${file.name}"></i>
         `;
         
         fileList.appendChild(fileItem);
@@ -200,7 +383,7 @@
             const fileName = this.getAttribute('data-filename');
             
             // If this is an existing file, delete it from the server
-            const existingFile = uploadedFiles.find(f => f.name === fileName && !(f instanceof File));
+            const existingFile = uploadedFiles.find(f => f.name === fileName && f.isExisting);
             
             if (existingFile) {
                 // Delete the file from the server
@@ -267,6 +450,8 @@
                     const formData = new FormData();
                     newFiles.forEach(file => {
                         formData.append('files', file);
+                        // Update status to processing immediately in the UI
+                        updateFileStatus(file.name, 'processing', 'Processing...');
                     });
                     
                     return fetch(`/api/agents/${agentName}/upload`, {
@@ -283,9 +468,24 @@
                 }
                 return response;
             })
-            .then(() => {
-                // Redirect without showing success message
-                window.location.href = '/my-agents';
+            .then(data => {
+                if (data.files && data.files.length > 0) {
+                    // Restart processing status monitoring to track new files
+                    processingComplete = false;
+                    stopProcessingStatusMonitor();
+                    startProcessingStatusMonitor();
+                    
+                    // Show success message
+                    alert('Agent updated and files are being processed.');
+                } else {
+                    // Show success message
+                    alert('Agent updated successfully.');
+                }
+                
+                // If name changed, redirect to new manage URL
+                if (agentName !== originalAgentName) {
+                    window.location.href = `/manage/${encodeURIComponent(agentName)}`;
+                }
             })
             .catch(error => {
                 console.error('Error updating agent:', error);
@@ -300,6 +500,9 @@
     function setupDeleteButton() {
         deleteButton.addEventListener('click', function() {
             if (confirm(`Are you sure you want to delete the agent "${originalAgentName}"? This cannot be undone.`)) {
+                // Stop status monitoring
+                stopProcessingStatusMonitor();
+                
                 fetch(`/api/agents/${originalAgentName}`, {
                     method: 'DELETE'
                 })
@@ -314,6 +517,16 @@
             }
         });
     }
+    
+    /**
+     * Clean up when leaving page
+     */
+    function cleanup() {
+        stopProcessingStatusMonitor();
+    }
+    
+    // Add event listener for page unload to clean up
+    window.addEventListener('beforeunload', cleanup);
     
     // Initialize the manage page when DOM is loaded
     document.addEventListener('DOMContentLoaded', initManage);

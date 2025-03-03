@@ -23,6 +23,11 @@
         '.pdf'
     ];
     
+    // For tracking the current agent's status
+    let currentAgentName = null;
+    let processingStatusInterval = null;
+    let processingComplete = false;
+    
     /**
      * Initialize the configuration page
      */
@@ -150,16 +155,14 @@
     function addFileToUI(file) {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
-        
-        // Determine icon based on file type
-        let iconClass = 'fa-file';
-        if (file.type && file.type.includes('pdf') || (file.name && file.name.endsWith('.pdf'))) {
-            iconClass = 'fa-file-pdf';
-        }
+        fileItem.dataset.filename = file.name;
         
         fileItem.innerHTML = `
-            <i class="fas ${iconClass} file-icon"></i>
+            <i class="fas fa-file-pdf file-icon"></i>
             <span class="file-name">${file.name}</span>
+            <span class="file-status status-pending" style="margin-left: auto; margin-right: 10px; font-size: 0.8rem; color: #6b7280;">
+                Ready
+            </span>
             <i class="fas fa-times file-remove" data-filename="${file.name}"></i>
         `;
         
@@ -175,6 +178,77 @@
     }
     
     /**
+     * Update file status in the UI
+     * @param {string} filename - The name of the file
+     * @param {string} status - The status of the file
+     * @param {string} message - The status message
+     */
+    function updateFileStatus(filename, status, message) {
+        const fileItem = document.querySelector(`.file-item[data-filename="${filename}"]`);
+        if (!fileItem) return;
+        
+        const statusSpan = fileItem.querySelector('.file-status');
+        if (!statusSpan) return;
+        
+        // Remove all previous status classes
+        statusSpan.className = 'file-status';
+        
+        let statusText = message || status;
+        let statusColor = '#6b7280'; // Default gray
+        let statusClass = '';
+        
+        switch(status) {
+            case 'ready':
+                statusText = 'Ready';
+                statusColor = '#6b7280'; // Gray
+                statusClass = 'status-pending';
+                break;
+            case 'pending':
+                statusText = 'Pending';
+                statusColor = '#6b7280'; // Gray
+                statusClass = 'status-pending';
+                break;
+            case 'processing':
+                statusText = 'Processing...';
+                statusColor = '#3b82f6'; // Blue
+                statusClass = 'status-processing';
+                break;
+            case 'success':
+                statusText = 'Complete';
+                statusColor = '#10b981'; // Green
+                statusClass = 'status-success';
+                break;
+            case 'error':
+                statusText = 'Error';
+                statusColor = '#ef4444'; // Red
+                statusClass = 'status-error';
+                break;
+        }
+        
+        statusSpan.textContent = statusText;
+        statusSpan.style.color = statusColor;
+        statusSpan.classList.add(statusClass);
+        
+        // Update icon based on status
+        const iconSpan = fileItem.querySelector('.file-icon');
+        if (iconSpan) {
+            // Reset classes first
+            iconSpan.className = 'fas file-icon';
+            
+            if (status === 'processing') {
+                iconSpan.classList.add('fa-spinner', 'fa-spin');
+            } else if (status === 'success') {
+                iconSpan.classList.add('fa-check-circle');
+            } else if (status === 'error') {
+                iconSpan.classList.add('fa-exclamation-circle');
+            } else {
+                // Default icon for ready, pending
+                iconSpan.classList.add('fa-file-pdf');
+            }
+        }
+    }
+    
+    /**
      * Remove a file from the uploaded files array
      * @param {string} fileName - The name of the file to remove
      */
@@ -183,11 +257,165 @@
     }
     
     /**
+     * Start monitoring processing status
+     */
+    function startProcessingStatusMonitor(agentName) {
+        if (!agentName) return;
+        
+        currentAgentName = agentName;
+        processingComplete = false;
+        
+        // Check immediately
+        checkProcessingStatus();
+        
+        // Set up interval to check every 2 seconds
+        processingStatusInterval = setInterval(checkProcessingStatus, 2000);
+    }
+    
+    /**
+     * Stop monitoring processing status
+     */
+    function stopProcessingStatusMonitor() {
+        if (processingStatusInterval) {
+            clearInterval(processingStatusInterval);
+            processingStatusInterval = null;
+        }
+    }
+    
+    /**
+     * Check processing status of files
+     */
+    function checkProcessingStatus() {
+        if (!currentAgentName) return;
+        
+        fetch(`/api/agents/${currentAgentName}/processing-status`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Failed to fetch processing status');
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Update processing status in the UI
+                if (data.file_status) {
+                    Object.entries(data.file_status).forEach(([filename, status]) => {
+                        updateFileStatus(filename, status.status, status.message);
+                    });
+                }
+                
+                // Check if processing is complete
+                if (data.processing_complete && !processingComplete) {
+                    processingComplete = true;
+                    
+                    // Update UI to reflect completion
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Create Another Agent';
+                    
+                    // You could show a success message
+                    showCompletionMessage(data.files_processed);
+                    
+                    // Stop monitoring after a short delay
+                    setTimeout(() => {
+                        stopProcessingStatusMonitor();
+                    }, 5000);
+                }
+            })
+            .catch(error => {
+                console.error('Error checking processing status:', error);
+            });
+    }
+    
+    /**
+     * Show completion message
+     * @param {boolean} success - Whether processing was successful
+     */
+    function showCompletionMessage(success) {
+        // Create a success message under the submit button
+        const messageContainer = document.createElement('div');
+        messageContainer.className = success ? 'success-message' : 'warning-message';
+        messageContainer.style.cssText = `
+            margin-top: 1rem;
+            padding: 0.75rem;
+            border-radius: 0.25rem;
+            background-color: ${success ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)'};
+            border: 1px solid ${success ? '#10b981' : '#f59e0b'};
+            color: ${success ? '#10b981' : '#f59e0b'};
+            font-size: 0.9rem;
+            text-align: center;
+        `;
+        
+        messageContainer.innerHTML = `
+            <i class="fas ${success ? 'fa-check-circle' : 'fa-exclamation-triangle'}" style="margin-right: 0.5rem;"></i>
+            ${success ? 'All files have been successfully processed!' : 'Processing completed with some issues.'}
+        `;
+        
+        // Add message after the buttons row
+        const buttonsRow = document.querySelector('.buttons-row');
+        if (buttonsRow) {
+            buttonsRow.insertAdjacentElement('afterend', messageContainer);
+        }
+        
+        // Auto-remove after 10 seconds
+        setTimeout(() => {
+            if (messageContainer.parentNode) {
+                messageContainer.remove();
+            }
+        }, 10000);
+    }
+    
+    /**
+     * Reset the form after successful submission
+     */
+    function resetForm() {
+        // Clear form fields
+        agentNameInput.value = '';
+        agentPersonaInput.value = '';
+        
+        // Clear file list
+        fileList.innerHTML = '';
+        uploadedFiles = [];
+        
+        // Reset button
+        submitButton.disabled = false;
+        submitButton.textContent = 'Create Agent';
+        
+        // Reset processing status
+        currentAgentName = null;
+        processingComplete = false;
+        stopProcessingStatusMonitor();
+    }
+    
+    /**
+     * Create a new agent container form
+     */
+    function createNewAgentForm() {
+        // Remove any completion messages
+        const messages = document.querySelectorAll('.success-message, .warning-message');
+        messages.forEach(msg => msg.remove());
+        
+        // Reset the form
+        resetForm();
+        
+        // Preload template data if available
+        preloadTemplateData();
+    }
+    
+    /**
      * Set up the form submission
      */
     function setupFormSubmission() {
         agentConfigForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // If processing is already complete and the button says "Create Another Agent"
+            if (processingComplete && submitButton.textContent === 'Create Another Agent') {
+                createNewAgentForm();
+                return;
+            }
+            
+            // Disable submit button to prevent multiple submissions
+            submitButton.disabled = true;
+            submitButton.textContent = 'Creating...';
             
             const agentName = agentNameInput.value;
             const agentPersona = agentPersonaInput.value;
@@ -209,20 +437,34 @@
                     throw new Error(data.error);
                 }
                 
+                // Start monitoring this agent's status
+                startProcessingStatusMonitor(agentName);
+                
                 // If there are files to upload, upload them
                 if (uploadedFiles.length > 0) {
                     const formData = new FormData();
                     uploadedFiles.forEach(file => {
                         formData.append('files', file);
+                        // Update status to processing immediately in the UI
+                        updateFileStatus(file.name, 'processing', 'Processing...');
                     });
+                    
+                    // Update button to reflect file processing
+                    submitButton.textContent = 'Processing Files...';
                     
                     return fetch(`/api/agents/${agentName}/upload`, {
                         method: 'POST',
                         body: formData
                     });
+                } else {
+                    // No files to process, enable button immediately
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Create Another Agent';
+                    
+                    // Show a simple completion message
+                    showCompletionMessage(true);
+                    return Promise.resolve({ message: 'No files to upload' });
                 }
-                
-                return Promise.resolve({ message: 'No files to upload' });
             })
             .then(response => {
                 if (response instanceof Response) {
@@ -230,17 +472,20 @@
                 }
                 return response;
             })
-            .then(() => {
-                // Redirect without showing success message
-                window.location.href = '/my-agents';
-            })
             .catch(error => {
                 console.error('Error creating agent:', error);
                 alert('There was an error creating your AI Agent: ' + error.message);
+                
+                // Re-enable submit button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Create Agent';
             });
         });
     }
     
     // Initialize the configuration page when DOM is loaded
     document.addEventListener('DOMContentLoaded', initConfig);
+    
+    // Expose the status monitoring function for external access
+    window.startProcessingStatusMonitor = startProcessingStatusMonitor;
 })();

@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/status-indicators.css') }}">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -267,5 +268,18 @@
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
     <script src="{{ url_for('static', filename='js/config.js') }}"></script>
     <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+    
+    {% if agent_name %}
+    <script>
+        // If redirected back after creating an agent, start monitoring status
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                if (window.startProcessingStatusMonitor) {
+                    window.startProcessingStatusMonitor("{{ agent_name }}");
+                }
+            }, 500);
+        });
+    </script>
+    {% endif %}
 </body>
 </html>
