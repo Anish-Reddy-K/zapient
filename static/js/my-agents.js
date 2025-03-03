@@ -82,7 +82,7 @@
                 </div>
                 <div class="agent-actions">
                     <button class="agent-button interact-btn" data-agent-name="${agent.name}">
-                        <i class="fas fa-comments"></i> Interact
+                        <i class="fa-solid fa-message"></i> Interact
                     </button>
                     <button class="agent-button manage-btn" data-agent-name="${agent.name}">
                         <i class="fas fa-cog"></i> Manage

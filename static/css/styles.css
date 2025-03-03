@@ -108,7 +108,7 @@ button:hover {
     font-size: 0.9rem;
 }
 
-input::placeholder {
+input::placeholder, textarea::placeholder {
     color: #A0AEC0;
     opacity: 1;
 }
