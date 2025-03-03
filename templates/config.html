@@ -72,6 +72,12 @@
             border-color: var(--color-accent);
             box-shadow: 0 0 0 2px rgba(10, 133, 209, 0.2);
         }
+
+        .dropzone-subtext {
+            color: #6b7280;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
         
         .form-textarea {
             resize: vertical;
@@ -239,9 +245,10 @@
                         <div id="fileDropzone" class="dropzone">
                             <input type="file" id="fileInput" multiple style="display: none;">
                             <div class="dropzone-icon">
-                                <i class="fas fa-cloud-upload-alt"></i>
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
                             </div>
                             <p class="dropzone-text">Drag and drop files here or click to browse</p>
+                            <p class="dropzone-subtext">Supported file types: .pdf</p>
                         </div>
                         
                         <div id="fileList" class="file-list"></div>

@@ -170,16 +170,6 @@
     align-items: center;
 }
 
-.username {
-    margin-right: 1rem;
-    font-weight: var(--font-weight-medium);
-}
-
-.logout-btn {
-    width: auto;
-    padding: 0.4rem 1rem;
-    font-size: 0.8rem;
-}
 
 /* Central Content */
 .central-content {
@@ -380,6 +370,53 @@
     font-weight: normal;
 }
 
+/* Add this to dashboard.css to enhance the user menu styling */
+
+.user-menu {
+    display: flex;
+    align-items: center;
+    background-color: var(--color-neutral);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid var(--color-supporting);
+    height: 40px;
+}
+
+.username {
+    font-weight: var(--font-weight-medium);
+    color: var(--color-primary);
+    font-size: 0.9rem;
+    padding: 0 1rem;
+    border-right: 1px solid var(--color-supporting);
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.logout-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: transparent;
+    color: #6b7280;
+    border: none;
+    padding: 0 1rem;
+    font-size: 0.85rem;
+    transition: color var(--transition-fast);
+    height: 100%;
+    margin: 0;
+}
+
+.logout-btn:hover {
+    color: var(--color-error);
+    background-color: transparent;
+}
+
+.logout-icon {
+    margin-right: 0.4rem;
+    font-size: 0.9rem;
+}
+
 /* Responsive adjustments for templates */
 @media (max-width: 768px) {
     .templates-grid {
@@ -413,3 +450,5 @@
         padding: 1.5rem;
     }
 }
+
+

@@ -247,10 +247,24 @@ def upload_files(agent_name):
     if not os.path.exists(uploads_dir):
         os.makedirs(uploads_dir)
     
+    # Define allowed file extensions
+    ALLOWED_EXTENSIONS = {'pdf'}
+    
+    # Function to check if file extension is allowed
+    def allowed_file(filename):
+        return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+    
     uploaded_files = []
+    rejected_files = []
     
     for file in request.files.getlist('files'):
         filename = secure_filename(file.filename)
+        
+        # Check if file extension is allowed
+        if not allowed_file(filename):
+            rejected_files.append(filename)
+            continue
+        
         file_path = os.path.join(uploads_dir, filename)
         file.save(file_path)
         
@@ -261,7 +275,16 @@ def upload_files(agent_name):
             "lastModified": os.path.getmtime(file_path)
         })
     
-    return jsonify({"message": "Files uploaded successfully", "files": uploaded_files})
+    response = {
+        "message": "Files uploaded successfully",
+        "files": uploaded_files
+    }
+    
+    if rejected_files:
+        response["rejected_files"] = rejected_files
+        response["rejection_reason"] = "Only PDF files are supported"
+    
+    return jsonify(response)
 
 @app.route('/api/agents/<agent_name>/files/<filename>', methods=['DELETE'])
 def delete_file(agent_name, filename):
@@ -287,6 +310,17 @@ def get_file(agent_name, filename):
     uploads_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name, 'uploads')
     
     return send_from_directory(uploads_dir, secure_filename(filename))
+
+@app.route('/api/current-user', methods=['GET'])
+def get_current_user():
+    if 'username' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    username = session['username']
+    
+    return jsonify({
+        "username": username
+    })
 
 if __name__ == '__main__':
     app.run(debug=True)

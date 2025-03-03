@@ -20,6 +20,12 @@
     // Original agent name (for tracking name changes)
     let originalAgentName = '';
     
+    // Allowed file types
+    const allowedFileTypes = [
+        'application/pdf',
+        '.pdf'
+    ];
+    
     /**
      * Initialize the manage page
      */
@@ -73,9 +79,33 @@
     }
     
     /**
+     * Check if file type is allowed
+     * @param {File} file - The file to check
+     * @returns {boolean} - Whether the file type is allowed
+     */
+    function isFileTypeAllowed(file) {
+        // Check if mime type is in allowed list
+        if (allowedFileTypes.includes(file.type)) {
+            return true;
+        }
+        
+        // If mime type check fails, check file extension
+        const fileName = file.name.toLowerCase();
+        return allowedFileTypes.some(type => {
+            if (type.startsWith('.')) {
+                return fileName.endsWith(type);
+            }
+            return false;
+        });
+    }
+    
+    /**
      * Set up the file upload functionality
      */
     function setupFileUpload() {
+        // Set the accept attribute on file input
+        fileInput.setAttribute('accept', '.pdf,application/pdf');
+        
         // Click on dropzone to trigger file input
         fileDropzone.addEventListener('click', function() {
             fileInput.click();
@@ -116,8 +146,15 @@
      */
     function handleFiles(files) {
         const filesArray = Array.from(files);
+        let rejectedFiles = [];
         
         filesArray.forEach(file => {
+            // First check if file type is allowed
+            if (!isFileTypeAllowed(file)) {
+                rejectedFiles.push(file.name);
+                return;
+            }
+            
             // Check if file is already in the list
             const isDuplicate = uploadedFiles.some(f => f.name === file.name);
             
@@ -126,6 +163,11 @@
                 addFileToUI(file);
             }
         });
+        
+        // Show alert if any files were rejected
+        if (rejectedFiles.length > 0) {
+            alert(`The following files were not added because they are not supported: ${rejectedFiles.join(', ')}\nOnly PDF files are supported.`);
+        }
     }
     
     /**
@@ -140,16 +182,8 @@
         let iconClass = 'fa-file';
         const fileName = file.name;
         
-        if (fileName.match(/\.(jpg|jpeg|png|gif|bmp)$/i)) {
-            iconClass = 'fa-file-image';
-        } else if (fileName.match(/\.(pdf)$/i)) {
+        if (fileName.match(/\.(pdf)$/i)) {
             iconClass = 'fa-file-pdf';
-        } else if (fileName.match(/\.(doc|docx)$/i)) {
-            iconClass = 'fa-file-word';
-        } else if (fileName.match(/\.(xls|xlsx|csv)$/i)) {
-            iconClass = 'fa-file-excel';
-        } else if (fileName.match(/\.(txt|md|rtf)$/i)) {
-            iconClass = 'fa-file-alt';
         }
         
         fileItem.innerHTML = `
@@ -250,8 +284,7 @@
                 return response;
             })
             .then(() => {
-                // Show success message and redirect
-                alert(`AI Agent "${agentName}" updated successfully!`);
+                // Redirect without showing success message
                 window.location.href = '/my-agents';
             })
             .catch(error => {
@@ -272,7 +305,6 @@
                 })
                 .then(response => response.json())
                 .then(() => {
-                    alert(`AI Agent "${originalAgentName}" deleted successfully!`);
                     window.location.href = '/my-agents';
                 })
                 .catch(error => {

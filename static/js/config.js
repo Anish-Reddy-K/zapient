@@ -17,6 +17,12 @@
     // Files array to store uploaded files
     let uploadedFiles = [];
     
+    // Allowed file types
+    const allowedFileTypes = [
+        'application/pdf',
+        '.pdf'
+    ];
+    
     /**
      * Initialize the configuration page
      */
@@ -46,9 +52,33 @@
     }
     
     /**
+     * Check if file type is allowed
+     * @param {File} file - The file to check
+     * @returns {boolean} - Whether the file type is allowed
+     */
+    function isFileTypeAllowed(file) {
+        // Check if mime type is in allowed list
+        if (allowedFileTypes.includes(file.type)) {
+            return true;
+        }
+        
+        // If mime type check fails, check file extension
+        const fileName = file.name.toLowerCase();
+        return allowedFileTypes.some(type => {
+            if (type.startsWith('.')) {
+                return fileName.endsWith(type);
+            }
+            return false;
+        });
+    }
+    
+    /**
      * Set up the file upload functionality
      */
     function setupFileUpload() {
+        // Set the accept attribute on file input
+        fileInput.setAttribute('accept', '.pdf,application/pdf');
+        
         // Click on dropzone to trigger file input
         fileDropzone.addEventListener('click', function() {
             fileInput.click();
@@ -89,8 +119,15 @@
      */
     function handleFiles(files) {
         const filesArray = Array.from(files);
+        let rejectedFiles = [];
         
         filesArray.forEach(file => {
+            // First check if file type is allowed
+            if (!isFileTypeAllowed(file)) {
+                rejectedFiles.push(file.name);
+                return;
+            }
+            
             // Check if file is already in the list
             const isDuplicate = uploadedFiles.some(f => f.name === file.name && f.size === file.size);
             
@@ -99,6 +136,11 @@
                 addFileToUI(file);
             }
         });
+        
+        // Show alert if any files were rejected
+        if (rejectedFiles.length > 0) {
+            alert(`The following files were not added because they are not supported: ${rejectedFiles.join(', ')}\nOnly PDF files are supported.`);
+        }
     }
     
     /**
@@ -111,16 +153,8 @@
         
         // Determine icon based on file type
         let iconClass = 'fa-file';
-        if (file.type && file.type.includes('image')) {
-            iconClass = 'fa-file-image';
-        } else if (file.type && file.type.includes('pdf')) {
+        if (file.type && file.type.includes('pdf') || (file.name && file.name.endsWith('.pdf'))) {
             iconClass = 'fa-file-pdf';
-        } else if (file.type && file.type.includes('word') || (file.name && (file.name.endsWith('.doc') || file.name.endsWith('.docx')))) {
-            iconClass = 'fa-file-word';
-        } else if (file.type && file.type.includes('excel') || (file.name && (file.name.endsWith('.xls') || file.name.endsWith('.xlsx')))) {
-            iconClass = 'fa-file-excel';
-        } else if (file.type && file.type.includes('text')) {
-            iconClass = 'fa-file-alt';
         }
         
         fileItem.innerHTML = `
@@ -197,8 +231,7 @@
                 return response;
             })
             .then(() => {
-                // Show success message and redirect
-                alert(`AI Agent "${agentName}" created successfully!`);
+                // Redirect without showing success message
                 window.location.href = '/my-agents';
             })
             .catch(error => {

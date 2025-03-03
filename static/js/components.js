@@ -99,11 +99,16 @@
         fetch('/api/current-user')
             .then(response => response.json())
             .then(data => {
+                const username = data.username || 'User';
+                
                 headerContainer.innerHTML = `
                     <div class="content-header">
                         <div class="user-menu">
-                            <span class="username" id="currentUsername">${data.username || 'User'}</span>
-                            <button class="logout-btn" onclick="app.logout()">Log Out</button>
+                            <span class="username" id="currentUsername">${username}</span>
+                            <button class="logout-btn" onclick="app.logout()">
+                                <i class="fas fa-sign-out-alt logout-icon"></i>
+                                Log Out
+                            </button>
                         </div>
                     </div>
                 `;
@@ -114,7 +119,10 @@
                     <div class="content-header">
                         <div class="user-menu">
                             <span class="username" id="currentUsername">User</span>
-                            <button class="logout-btn" onclick="app.logout()">Log Out</button>
+                            <button class="logout-btn" onclick="app.logout()">
+                                <i class="fas fa-sign-out-alt logout-icon"></i>
+                                Log Out
+                            </button>
                         </div>
                     </div>
                 `;

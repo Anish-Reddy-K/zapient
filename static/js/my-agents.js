@@ -40,8 +40,15 @@
                 // Hide the no agents message
                 noAgentsText.style.display = 'none';
                 
+                // Sort agents chronologically - newest first
+                const sortedAgents = data.agents.sort((a, b) => {
+                    const dateA = new Date(a.createdAt);
+                    const dateB = new Date(b.createdAt);
+                    return dateB - dateA; // Newest first
+                });
+                
                 // Display the agents
-                displayAgents(data.agents);
+                displayAgents(sortedAgents);
                 
                 // Add the "Create New Agent" tile at the end
                 const createNewTile = createNewAgentTile();
