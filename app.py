@@ -1,3 +1,5 @@
+# app.py
+
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify, send_from_directory
 import os
 import json
@@ -14,6 +16,9 @@ import random
 
 # Import the file processor module
 from file_processor import process_agent_files
+
+# NEW: Import the background prompt analysis
+from prompt_analyzer import analyze_prompt_background
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -558,6 +563,7 @@ def send_message(agent_name):
     """
     Appends the user's message and the AI's response
     to the agent-level chat_history.json.
+    Also spawns a background prompt-analysis job.
     """
     if 'username' not in session:
         return jsonify({"error": "Not authenticated"}), 401
@@ -595,13 +601,12 @@ def send_message(agent_name):
         "content": user_message
     })
 
-    # FAKE AI RESPONSE (you would replace this with a real AI call)
+    # FAKE AI RESPONSE (replace with your real LLM call if desired)
     fake_response = {
         "content": (
             "**Welcome to the Chat**\n\n"
             "This is a **test message** with *markdown* formatting.\n\n"
             "This is a **test message** with *markdown* formatting.\n\n"
-            "This is a **test message** with *markdown* formatting This is a **test message** with *markdown* formatting.\n\n"
             "- First item\n- Second item\n\n"
             "For further reading, see [^1]."
         ),
@@ -625,7 +630,26 @@ def send_message(agent_name):
     with open(chat_file, 'w') as f:
         json.dump(chat_history, f, indent=2)
 
-    # Return the assistant message
+    # ========================================
+    # LAUNCH PROMPT ANALYSIS IN BACKGROUND
+    # ========================================
+    api_key = os.environ.get('GEMINI_API_KEY')
+    background_thread = threading.Thread(
+        target=analyze_prompt_background,
+        args=(
+            api_key,
+            DATA_DIR,
+            username,
+            agent_name,
+            conversation_id,
+            user_message
+        )
+    )
+    background_thread.daemon = True
+    background_thread.start()
+    # ----------------------------------------
+
+    # Return the assistant's message
     return jsonify({
         "conversation_id": conversation_id,
         "message": fake_response
@@ -699,6 +723,7 @@ def generate_ai_response(username, agent_name, user_message):
             best_match = r
 
     # Create random citations (if PDFs exist)
+    import random
     num_citations = min(len(files), 2)
     citations = []
     for i in range(num_citations):

@@ -1,0 +1,65 @@
+{
+  "conversations": [
+    {
+      "conversation_id": "default",
+      "messages": [
+        {
+          "role": "user",
+          "content": "what are the common first aid practices for ammonia?"
+        },
+        {
+          "role": "assistant",
+          "content": "**Welcome to the Chat**\n\nThis is a **test message** with *markdown* formatting.\n\nThis is a **test message** with *markdown* formatting.\n\n- First item\n- Second item\n\nFor further reading, see [^1].",
+          "citations": [
+            {
+              "id": 1,
+              "file": "documentation.txt",
+              "page": 5,
+              "text": "Detailed reference for further reading."
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": "How do I install widget A? Also, how do I configure advanced mode?"
+        },
+        {
+          "role": "assistant",
+          "content": "**Welcome to the Chat**\n\nThis is a **test message** with *markdown* formatting.\n\nThis is a **test message** with *markdown* formatting.\n\n- First item\n- Second item\n\nFor further reading, see [^1].",
+          "citations": [
+            {
+              "id": 1,
+              "file": "documentation.txt",
+              "page": 5,
+              "text": "Detailed reference for further reading."
+            }
+          ]
+        }
+      ],
+      "analysis": [
+        {
+          "original_query": "what are the common first aid practices for ammonia?",
+          "sub_queries": [],
+          "keywords": [
+            "first aid",
+            "ammonia",
+            "practices"
+          ]
+        },
+        {
+          "original_query": "How do I install widget A? Also, how do I configure advanced mode?",
+          "sub_queries": [
+            "How do I install widget A?",
+            "How do I configure advanced mode?"
+          ],
+          "keywords": [
+            "install",
+            "widget A",
+            "configure",
+            "advanced mode"
+          ]
+        }
+      ]
+    }
+  ]
+}
