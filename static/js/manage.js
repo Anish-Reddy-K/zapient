@@ -14,25 +14,26 @@
     const agentPersonaInput = document.getElementById('agentPersona');
     const deleteButton = document.getElementById('deleteAgentBtn');
     const updateButton = document.querySelector('.update-btn');
-    
+
     // Files array to store uploaded files
     let uploadedFiles = [];
-    
+
     // Original agent name (for tracking name changes)
     let originalAgentName = '';
-    
+
     // Processing status monitoring
     let statusInterval = null;
     let processingComplete = false;
     let processingSuccessMessage = null;
     let newFilesUploaded = false;
-    
+    let filesCurrentlyProcessing = false; // Flag to track if any files are processing
+
     // Allowed file types
     const allowedFileTypes = [
         'application/pdf',
         '.pdf'
     ];
-    
+
     /**
      * Initialize the manage page
      */
@@ -40,29 +41,38 @@
         // Get the agent name from the URL path
         const pathParts = window.location.pathname.split('/');
         originalAgentName = decodeURIComponent(pathParts[pathParts.length - 1]);
-        
+
         // Load agent data
         loadAgentData(originalAgentName);
-        
+
         setupFileUpload();
         setupFormSubmission();
         setupDeleteButton();
-        
-        // Start monitoring processing status
-        startProcessingStatusMonitor();
+
+        resetUpdateButtonState('Update Agent'); // Initial button state
     }
-    
+
+    /**
+     * Reset update button state
+     * @param {string} text - The text to set on the button
+     * @param {boolean} disabled - Whether to disable the button
+     */
+    function resetUpdateButtonState(text, disabled = false) {
+        updateButton.textContent = text;
+        updateButton.disabled = disabled;
+    }
+
     /**
      * Start monitoring processing status
      */
     function startProcessingStatusMonitor() {
         // Check immediately
         checkProcessingStatus();
-        
+
         // Set up interval to check every 2 seconds for better responsiveness
         statusInterval = setInterval(checkProcessingStatus, 2000);
     }
-    
+
     /**
      * Stop monitoring processing status
      */
@@ -72,11 +82,13 @@
             statusInterval = null;
         }
     }
-    
+
     /**
      * Check processing status of files
      */
     function checkProcessingStatus() {
+        if (!originalAgentName) return;
+
         fetch(`/api/agents/${originalAgentName}/processing-status`)
             .then(response => {
                 if (!response.ok) {
@@ -89,25 +101,33 @@
                 if (data.file_status) {
                     let allFilesSuccessful = true;
                     let anyProcessing = false;
-                    
+
                     for (const [filename, status] of Object.entries(data.file_status)) {
                         updateFileStatus(filename, status.status, status.message);
-                        
+
                         // Check if any file has an error status
                         if (status.status === 'error') {
                             allFilesSuccessful = false;
                         }
-                        
+
                         // Check if any file is still processing
                         if (status.status === 'processing' || status.status === 'pending') {
                             anyProcessing = true;
                         }
                     }
-                    
+
+                    filesCurrentlyProcessing = anyProcessing; // Update processing files flag
+
                     // If we've uploaded new files and none are processing anymore
                     if (newFilesUploaded && !anyProcessing && data.processing_complete) {
                         // Only show completion message if not already shown
                         if (!processingComplete) {
+                            processingComplete = true;
+                            showProcessingCompleteMessage(allFilesSuccessful);
+                        }
+                    } else if (!anyProcessing && newFilesUploaded) {
+                        // If new files were uploaded and processing is complete, but message not shown yet (error case or quick processing)
+                        if (!processingComplete && data.processing_complete) {
                             processingComplete = true;
                             showProcessingCompleteMessage(allFilesSuccessful);
                         }
@@ -118,17 +138,25 @@
                 console.error('Error checking processing status:', error);
             });
     }
-    
+
+    /**
+     * Remove processing complete message from UI
+     */
+    function removeProcessingCompleteMessage() {
+        if (processingSuccessMessage && processingSuccessMessage.parentNode) {
+            processingSuccessMessage.remove();
+            processingSuccessMessage = null; // Reset message
+        }
+    }
+
+
     /**
      * Show processing complete message
      * @param {boolean} success - Whether processing was successful
      */
     function showProcessingCompleteMessage(success) {
-        // Remove any existing message
-        if (processingSuccessMessage && processingSuccessMessage.parentNode) {
-            processingSuccessMessage.remove();
-        }
-        
+        removeProcessingCompleteMessage(); // Ensure no old message exists
+
         // Create a success message above the buttons
         processingSuccessMessage = document.createElement('div');
         processingSuccessMessage.className = success ? 'success-message' : 'warning-message';
@@ -142,23 +170,23 @@
             font-size: 0.9rem;
             text-align: center;
         `;
-        
+
         processingSuccessMessage.innerHTML = `
             <i class="fas ${success ? 'fa-check-circle' : 'fa-exclamation-triangle'}" style="margin-right: 0.5rem;"></i>
             ${success ? 'All files have been successfully processed!' : 'Processing completed with some issues.'}
         `;
-        
+
         // Insert the message before the buttons row
         const buttonsRow = document.querySelector('.buttons-row');
         if (buttonsRow) {
             buttonsRow.parentNode.insertBefore(processingSuccessMessage, buttonsRow);
         }
-        
+
         // Update the button text to indicate returning to agents list
-        updateButton.textContent = 'Save & Return to Agents';
-        updateButton.disabled = false;
+        resetUpdateButtonState('Save & Return to Agents');
+        processingComplete = true; // Mark processing complete
     }
-    
+
     /**
      * Update file status in the UI
      * @param {string} filename - The name of the file
@@ -168,17 +196,17 @@
     function updateFileStatus(filename, status, message) {
         const fileItem = document.querySelector(`.file-item[data-filename="${filename}"]`);
         if (!fileItem) return;
-        
+
         const statusSpan = fileItem.querySelector('.file-status');
         if (!statusSpan) return;
-        
+
         // Remove all previous status classes
         statusSpan.className = 'file-status';
-        
+
         let statusText = message || status;
         let statusColor = '#6b7280'; // Default gray
         let statusClass = '';
-        
+
         switch(status) {
             case 'ready':
                 statusText = 'Ready';
@@ -211,17 +239,17 @@
                 statusClass = 'status-pending';
                 break;
         }
-        
+
         statusSpan.textContent = statusText;
         statusSpan.style.color = statusColor;
         statusSpan.classList.add(statusClass);
-        
+
         // Update icon based on status
         const iconSpan = fileItem.querySelector('.file-icon');
         if (iconSpan) {
             // Reset classes first
             iconSpan.className = 'fas file-icon';
-            
+
             if (status === 'processing') {
                 iconSpan.classList.add('fa-spinner', 'fa-spin');
             } else if (status === 'success') {
@@ -234,7 +262,7 @@
             }
         }
     }
-    
+
     /**
      * Load agent data from the server
      * @param {string} agentName - The name of the agent to load
@@ -251,11 +279,11 @@
                 // Populate form fields
                 agentNameInput.value = data.name;
                 agentPersonaInput.value = data.persona;
-                
+
                 // Clear file list first
                 fileList.innerHTML = '';
                 uploadedFiles = [];
-                
+
                 // Load files
                 if (data.files && data.files.length > 0) {
                     data.files.forEach(file => {
@@ -266,11 +294,14 @@
                             type: file.type || 'application/pdf',
                             isExisting: true
                         };
-                        
+
                         uploadedFiles.push(fileObj);
                         addFileToUI(fileObj, file.processing_status || 'unknown');
                     });
                 }
+
+                // Start status monitoring after loading agent data and files
+                startProcessingStatusMonitor();
             })
             .catch(error => {
                 console.error('Error loading agent data:', error);
@@ -278,7 +309,7 @@
                 window.location.href = '/my-agents';
             });
     }
-    
+
     /**
      * Check if file type is allowed
      * @param {File} file - The file to check
@@ -289,7 +320,7 @@
         if (allowedFileTypes.includes(file.type)) {
             return true;
         }
-        
+
         // If mime type check fails, check file extension
         const fileName = file.name.toLowerCase();
         return allowedFileTypes.some(type => {
@@ -299,48 +330,48 @@
             return false;
         });
     }
-    
+
     /**
      * Set up the file upload functionality
      */
     function setupFileUpload() {
         // Set the accept attribute on file input
         fileInput.setAttribute('accept', '.pdf,application/pdf');
-        
+
         // Click on dropzone to trigger file input
         fileDropzone.addEventListener('click', function() {
             fileInput.click();
         });
-        
+
         // Handle file selection through the input
         fileInput.addEventListener('change', function(e) {
             handleFiles(e.target.files);
         });
-        
+
         // Handle drag and drop events
         fileDropzone.addEventListener('dragover', function(e) {
             e.preventDefault();
             e.stopPropagation();
             fileDropzone.style.borderColor = 'var(--color-accent)';
         });
-        
+
         fileDropzone.addEventListener('dragleave', function(e) {
             e.preventDefault();
             e.stopPropagation();
             fileDropzone.style.borderColor = 'var(--color-supporting)';
         });
-        
+
         fileDropzone.addEventListener('drop', function(e) {
             e.preventDefault();
             e.stopPropagation();
             fileDropzone.style.borderColor = 'var(--color-supporting)';
-            
+
             if (e.dataTransfer.files.length > 0) {
                 handleFiles(e.dataTransfer.files);
             }
         });
     }
-    
+
     /**
      * Handle the files that were selected or dropped
      * @param {FileList} files - The files to handle
@@ -348,29 +379,32 @@
     function handleFiles(files) {
         const filesArray = Array.from(files);
         let rejectedFiles = [];
-        
+
         filesArray.forEach(file => {
             // First check if file type is allowed
             if (!isFileTypeAllowed(file)) {
                 rejectedFiles.push(file.name);
                 return;
             }
-            
+
             // Check if file is already in the list
             const isDuplicate = uploadedFiles.some(f => f.name === file.name);
-            
+
             if (!isDuplicate) {
                 uploadedFiles.push(file);
                 addFileToUI(file, 'ready');
+                removeProcessingCompleteMessage(); // New file added, remove complete message
+                processingComplete = false; // Reset processing complete status
+                resetUpdateButtonState('Update Agent'); // Reset button state
             }
         });
-        
+
         // Show alert if any files were rejected
         if (rejectedFiles.length > 0) {
             alert(`The following files were not added because they are not supported: ${rejectedFiles.join(', ')}\nOnly PDF files are supported.`);
         }
     }
-    
+
     /**
      * Add a file to the UI list
      * @param {File|Object} file - The file to add to the UI
@@ -380,7 +414,7 @@
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
         fileItem.dataset.filename = file.name;
-        
+
         // Determine icon class based on status
         let iconClass = 'fa-file-pdf';
         if (status === 'processing') {
@@ -390,12 +424,12 @@
         } else if (status === 'error') {
             iconClass = 'fa-exclamation-circle';
         }
-        
+
         // Determine status text and class
         let statusText = 'Unknown';
         let statusColor = '#6b7280';
         let statusClass = 'status-pending';
-        
+
         switch(status) {
             case 'ready':
                 statusText = 'Ready';
@@ -423,7 +457,7 @@
                 statusClass = 'status-error';
                 break;
         }
-        
+
         fileItem.innerHTML = `
             <i class="fas ${iconClass} file-icon"></i>
             <span class="file-name">${file.name}</span>
@@ -432,17 +466,17 @@
             </span>
             <i class="fas fa-times file-remove" data-filename="${file.name}"></i>
         `;
-        
+
         fileList.appendChild(fileItem);
-        
+
         // Add event listener to remove button
         const removeBtn = fileItem.querySelector('.file-remove');
         removeBtn.addEventListener('click', function() {
             const fileName = this.getAttribute('data-filename');
-            
+
             // If this is an existing file, delete it from the server
             const existingFile = uploadedFiles.find(f => f.name === fileName && f.isExisting);
-            
+
             if (existingFile) {
                 // Delete the file from the server
                 fetch(`/api/agents/${originalAgentName}/files/${fileName}`, {
@@ -452,6 +486,11 @@
                 .then(() => {
                     removeFile(fileName);
                     fileItem.remove();
+                    if (uploadedFiles.length === 0) { // If no files left, reset button to Update Agent
+                        resetUpdateButtonState('Update Agent');
+                        processingComplete = false;
+                        removeProcessingCompleteMessage();
+                    }
                 })
                 .catch(error => {
                     console.error('Error deleting file:', error);
@@ -461,10 +500,15 @@
                 // Just remove from local array and UI
                 removeFile(fileName);
                 fileItem.remove();
+                if (uploadedFiles.length === 0) { // If no files left, reset button to Update Agent
+                    resetUpdateButtonState('Update Agent');
+                    processingComplete = false;
+                    removeProcessingCompleteMessage();
+                }
             }
         });
     }
-    
+
     /**
      * Remove a file from the uploaded files array
      * @param {string} fileName - The name of the file to remove
@@ -472,37 +516,35 @@
     function removeFile(fileName) {
         uploadedFiles = uploadedFiles.filter(file => file.name !== fileName);
     }
-    
+
     /**
      * Set up the form submission
      */
     function setupFormSubmission() {
         agentManageForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            
+
             // Get current button text
             const currentButtonText = updateButton.textContent;
-            
+
             // If button says "Save & Return to Agents", just redirect
             if (currentButtonText === 'Save & Return to Agents') {
                 window.location.href = '/my-agents';
                 return;
             }
-            
+
             // If there are files in processing state, prevent submission
-            const processingFiles = document.querySelectorAll('.file-status.status-processing');
-            if (processingFiles.length > 0) {
+            if (filesCurrentlyProcessing) {
                 alert('Please wait for all files to finish processing before updating the agent.');
                 return;
             }
-            
+
             // Disable button while processing
-            updateButton.disabled = true;
-            updateButton.textContent = 'Updating...';
-            
+            resetUpdateButtonState('Updating...', true); // Button state during agent update
+
             const agentName = agentNameInput.value;
             const agentPersona = agentPersonaInput.value;
-            
+
             // First update the agent
             fetch(`/api/agents/${originalAgentName}`, {
                 method: 'PUT',
@@ -519,10 +561,10 @@
                 if (data.error) {
                     throw new Error(data.error);
                 }
-                
+
                 // Filter out only new files (not already on the server)
                 const newFiles = uploadedFiles.filter(file => file instanceof File);
-                
+
                 // If there are new files to upload, upload them
                 if (newFiles.length > 0) {
                     const formData = new FormData();
@@ -531,19 +573,20 @@
                         // Update status to processing immediately in the UI
                         updateFileStatus(file.name, 'processing', 'Processing...');
                     });
-                    
+
                     // Flag that we've uploaded new files
                     newFilesUploaded = true;
-                    
+                    filesCurrentlyProcessing = true; // Mark files as processing
+
                     // Update button text
-                    updateButton.textContent = 'Processing Files...';
-                    
+                    resetUpdateButtonState('Processing Files...', true); // Button state during file processing
+
                     return fetch(`/api/agents/${agentName}/upload`, {
                         method: 'POST',
                         body: formData
                     });
                 }
-                
+
                 // No new files, just redirect
                 window.location.href = '/my-agents';
                 return Promise.resolve({ message: 'No new files to upload' });
@@ -557,14 +600,14 @@
             .catch(error => {
                 console.error('Error updating agent:', error);
                 alert('There was an error updating your AI Agent: ' + error.message);
-                
+
                 // Re-enable update button
-                updateButton.disabled = false;
-                updateButton.textContent = 'Update Agent';
+                resetUpdateButtonState('Update Agent'); // Reset button on error
+                stopProcessingStatusMonitor(); // Stop status monitor on error
             });
         });
     }
-    
+
     /**
      * Set up the delete button
      */
@@ -573,7 +616,7 @@
             if (confirm(`Are you sure you want to delete the agent "${originalAgentName}"? This cannot be undone.`)) {
                 // Stop status monitoring
                 stopProcessingStatusMonitor();
-                
+
                 fetch(`/api/agents/${originalAgentName}`, {
                     method: 'DELETE'
                 })
@@ -588,17 +631,17 @@
             }
         });
     }
-    
+
     /**
      * Clean up when leaving page
      */
     function cleanup() {
         stopProcessingStatusMonitor();
     }
-    
+
     // Add event listener for page unload to clean up
     window.addEventListener('beforeunload', cleanup);
-    
+
     // Initialize the manage page when DOM is loaded
     document.addEventListener('DOMContentLoaded', initManage);
 })();
