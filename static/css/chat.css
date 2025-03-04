@@ -21,10 +21,7 @@
 }
 
 .chat-header {
-    /* Adjust the padding or height as needed */
-    padding: 0.25rem 1rem;  /* Lower padding reduces header height */
-    /* Optionally add a height property: */
-    height: 50px;
+    padding: 0.25rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -58,16 +55,20 @@
 
 /* Clear chat button */
 .clear-chat-button {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    vertical-align: middle;
     background: none;
     border: 1px solid var(--color-supporting);
     color: var(--color-primary);
-    padding: 0.2rem 0.5rem;  /* Reduced padding */
+    padding: 0.2rem 0.5rem;
     border-radius: var(--border-radius-md);
     cursor: pointer;
     transition: background-color var(--transition-fast);
     font-size: 0.8rem;
-    width: auto;
-    height: 30px;
+    height: 25px;
+    width: 100px;
 }
 
 .clear-chat-button:hover {
@@ -81,15 +82,9 @@
     background-color: #f9fafb;
 }
 
-.welcome-message {
-    display: flex;
-    margin-bottom: 1.5rem;
-    animation: fadeIn 0.3s ease-out;
-}
-
 .message-wrapper {
     display: flex;
-    margin-bottom: 0.75rem;  /* Reduced vertical spacing */
+    margin-bottom: 0.75rem;
     animation: fadeIn 0.3s ease-out;
 }
 
@@ -101,7 +96,7 @@
     flex-direction: row;
 }
 
-/* Remove avatar related spacing by hiding the avatar containers if still present */
+/* Remove avatars if you don't use them */
 .agent-avatar,
 .user-avatar {
     display: none;
@@ -109,7 +104,7 @@
 
 .message-content {
     max-width: 80%;
-    padding: 0.5rem;  /* Reduced padding for a more compact message */
+    padding: 0.5rem;
     border-radius: 0.5rem;
     position: relative;
 }
@@ -140,33 +135,6 @@
     text-align: left;
 }
 
-/* Message content styling */
-.message-content p {
-    margin-bottom: 0.75rem;
-}
-
-.message-content p:last-child {
-    margin-bottom: 0;
-}
-
-.message-content ul, .message-content ol {
-    margin-left: 1.5rem;
-    margin-bottom: 0.75rem;
-}
-
-.message-content ul {
-    list-style-type: disc;
-}
-
-.message-content ol {
-    list-style-type: decimal;
-}
-
-.message-content a {
-    color: inherit;
-    text-decoration: underline;
-}
-
 /* Citation styles */
 .citation-marker {
     font-size: 0.8em;
@@ -178,15 +146,14 @@
     text-decoration: none;
 }
 
-.user-message .citation-marker {
-    color: white;
-}
+/* Removed: .user-message .citation-marker { color: white; } */
 
+/* Citation tooltip */
 .citation-tooltip {
     position: fixed;
     z-index: 1000;
     display: none;
-    max-width: 400px;
+    max-width: 250px; /* Smaller width */
     box-shadow: var(--shadow-lg);
     border-radius: var(--border-radius-md);
     overflow: hidden;
@@ -198,17 +165,9 @@
 }
 
 .citation-header {
-    padding: 0.75rem 1rem;
-    background-color: #f3f4f6;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--color-supporting);
-}
-
-.citation-title {
-    font-weight: 500;
-    color: var(--color-primary);
+    justify-content: flex-end;
+    padding: 0.3rem;
 }
 
 .citation-close {
@@ -229,31 +188,24 @@
 }
 
 .citation-body {
-    padding: 1rem;
+    padding: 0.75rem; /* make it fairly small */
     color: var(--color-primary);
+    font-size: 0.9rem;
 }
 
 .citation-file {
     font-weight: 500;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.25rem;
 }
 
 .citation-page {
     color: #6b7280;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
 }
 
-.citation-text {
-    margin-top: 0.75rem;
-    border-left: 3px solid var(--color-accent);
-    padding-left: 0.75rem;
-    font-style: italic;
-    color: #4b5563;
-}
-
-/* Input area */
+/* Input container */
 .chat-input-container {
-    padding: 0.5rem 1rem; /* Reduced padding */
+    padding: 0.5rem 1rem;
     border-top: 1px solid var(--color-supporting);
     background-color: white;
 }
@@ -263,7 +215,7 @@
     align-items: center;
     border: 1px solid var(--color-supporting);
     border-radius: 0.5rem;
-    padding: 0.3rem;  /* Reduced padding for a less tall input area */
+    padding: 0.3rem;
     background-color: white;
 }
 
@@ -271,9 +223,9 @@
     flex: 1;
     border: none;
     resize: none;
-    padding: 0;         /* Remove extra top spacing */
-    max-height: 250px;
-    overflow: hidden;   /* Hide any scrollbar */
+    padding: 0;
+    max-height: 100px;
+    overflow: hidden;
     line-height: 1.4;
     font-size: 0.95rem;
     outline: none;
@@ -283,15 +235,15 @@
 .send-button {
     background-color: var(--color-accent);
     color: white;
-    width: 36px;
-    height: 36px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
     border: none;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    margin-left: 0.75rem;
+    margin-left: 0.5rem;
     transition: background-color var(--transition-fast);
     flex-shrink: 0;
 }

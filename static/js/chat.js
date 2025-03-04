@@ -2,8 +2,6 @@
  * Chat Module
  * Handles chat functionality with AI agents
  */
-
-// Immediately invoked function expression (IIFE) to avoid polluting the global namespace
 (function() {
     // DOM Elements
     const chatMessages = document.getElementById('chatMessages');
@@ -12,7 +10,8 @@
     const citationTooltip = document.getElementById('citationTooltip');
     const citationBody = document.getElementById('citationBody');
     const closeCitationTooltip = document.getElementById('closeCitationTooltip');
-    
+    const clearChatButton = document.getElementById('clearChatButton');
+
     // State variables
     let conversationId = null;
     let isWaitingForResponse = false;
@@ -23,7 +22,7 @@
      */
     function initChat() {
         setupEventListeners();
-        //loadChatHistory();
+        loadChatHistory();    // UNCOMMENTED to load existing conversation
         adjustTextareaHeight();
     }
     
@@ -44,15 +43,15 @@
                     
                     // Get the most recent conversation
                     const recentConversation = conversations[0];
-                    conversationId = recentConversation.id;
+                    conversationId = recentConversation.conversation_id;
                     
-                    // Display messages from the most recent conversation
+                    // Display messages
                     recentConversation.messages.forEach(message => {
                         if (message.role === 'user') {
                             appendUserMessage(message);
                         } else if (message.role === 'assistant') {
                             appendAgentMessage(message);
-                            // Store citations from the agent message
+                            // Store citations from the agent message if present
                             if (message.citations) {
                                 citations = [...citations, ...message.citations];
                             }
@@ -86,7 +85,6 @@
         // Auto-resize textarea as the user types
         messageInput.addEventListener('input', function() {
             adjustTextareaHeight();
-            
             // Enable/disable send button based on input
             sendButton.disabled = messageInput.value.trim() === '' || isWaitingForResponse;
         });
@@ -104,12 +102,15 @@
             citationTooltip.style.display = 'none';
         });
         
-        // Set up citation click handling (delegated event)
+        // Citation click handling (delegated event)
         chatMessages.addEventListener('click', function(e) {
             if (e.target.classList.contains('citation-marker')) {
                 showCitationTooltip(e.target);
             }
         });
+
+        // Clear chat
+        clearChatButton.addEventListener('click', clearChat);
     }
     
     /**
@@ -125,13 +126,11 @@
      */
     function sendMessage() {
         const message = messageInput.value.trim();
-        
-        // Don't send empty messages
         if (message === '' || isWaitingForResponse) {
             return;
         }
         
-        // Display user message immediately
+        // Append the user message immediately
         const userMessageObj = {
             role: 'user',
             content: message,
@@ -139,26 +138,18 @@
         };
         appendUserMessage(userMessageObj);
         
-        // Clear input field and reset height
+        // Clear input and disable send button
         messageInput.value = '';
         adjustTextareaHeight();
         sendButton.disabled = true;
         
-        // Scroll to bottom
         scrollToBottom();
-        
-        // Show loading indicator
         appendLoadingIndicator();
-        
-        // Set waiting flag
         isWaitingForResponse = true;
         
-        // Send message to the server
         fetch(`/api/agents/${AGENT_NAME}/send-message`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 message: message,
                 conversation_id: conversationId
@@ -166,51 +157,37 @@
         })
         .then(response => response.json())
         .then(data => {
-            // Remove loading indicator
-            removeLoadingIndicator();
-            
-            // Update conversation ID if this is a new conversation
-            if (!conversationId) {
-                conversationId = data.conversation_id;
-            }
-            
-            // Display agent message
-            appendAgentMessage(data.message);
-            
-            // Store citations
-            if (data.message.citations) {
-                citations = [...citations, ...data.message.citations];
-            }
-            
-            // Reset waiting flag
-            isWaitingForResponse = false;
-            
-            // Re-enable send button if there's text
-            sendButton.disabled = messageInput.value.trim() === '';
-            
-            // Scroll to bottom
-            scrollToBottom();
+            setTimeout(() => {
+                removeLoadingIndicator();
+                
+                if (!conversationId) {
+                    conversationId = data.conversation_id;
+                }
+                
+                // The assistant's message
+                appendAgentMessage(data.message);
+                
+                // Add any citations
+                if (data.message.citations) {
+                    citations = [...citations, ...data.message.citations];
+                }
+                
+                isWaitingForResponse = false;
+                sendButton.disabled = messageInput.value.trim() === '';
+                scrollToBottom();
+            }, 500);  // Smaller artificial delay
         })
         .catch(error => {
             console.error('Error sending message:', error);
             removeLoadingIndicator();
-            appendErrorMessage();
+            appendErrorMessage();  // Provide fallback
             isWaitingForResponse = false;
             sendButton.disabled = messageInput.value.trim() === '';
-        
-            // Remove or comment out the red border styling:
-            // messageInput.parentElement.style.border = '1px solid #ef4444';
-            
-            // Optionally, remove any error-specific styling:
-            // setTimeout(() => {
-            //     messageInput.parentElement.style.border = '';
-            // }, 2000);
         });
     }
     
     /**
      * Append a user message to the chat
-     * @param {Object} message - The message object
      */
     function appendUserMessage(message) {
         const messageElement = document.createElement('div');
@@ -225,7 +202,6 @@
     
     /**
      * Append an agent message to the chat
-     * @param {Object} message - The message object
      */
     function appendAgentMessage(message) {
         const messageElement = document.createElement('div');
@@ -239,18 +215,13 @@
                 <div class="markdown-content">${processedContent}</div>
             </div>
         `;
-        
         chatMessages.appendChild(messageElement);
     }
     
     /**
      * Process message content to render markdown and handle citations
-     * @param {string} content - The message content
-     * @param {Array} messageCitations - The citations for this message
-     * @returns {string} - The processed HTML content
      */
     function processMessageContent(content, messageCitations) {
-        // Replace citation markers first
         let processedContent = content;
         if (messageCitations && messageCitations.length > 0) {
             messageCitations.forEach(citation => {
@@ -266,7 +237,7 @@
     }
     
     /**
-     * Append a loading indicator to the chat
+     * Append a loading indicator
      */
     function appendLoadingIndicator() {
         const loadingElement = document.createElement('div');
@@ -274,22 +245,18 @@
         loadingElement.id = 'loadingIndicator';
         
         loadingElement.innerHTML = `
-            <div class="agent-avatar">
-                <i class="fas fa-robot"></i>
-            </div>
             <div class="typing-indicator">
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
                 <div class="typing-dot"></div>
             </div>
         `;
-        
         chatMessages.appendChild(loadingElement);
         scrollToBottom();
     }
     
     /**
-     * Remove the loading indicator from the chat
+     * Remove the loading indicator
      */
     function removeLoadingIndicator() {
         const loadingIndicator = document.getElementById('loadingIndicator');
@@ -305,12 +272,21 @@
         const messageElement = document.createElement('div');
         messageElement.className = 'message-wrapper agent-message';
         
+        const fakeMessage = {
+             content: "## Error\n\nCould not process your request. [^1]",
+             citations: [{
+                 id: 1,
+                 file: "Error.log",
+                 page: 999,
+                 text: "No additional info"
+             }]
+        };
+        
+        const processedContent = processMessageContent(fakeMessage.content, fakeMessage.citations);
+        
         messageElement.innerHTML = `
-            <div class="agent-avatar">
-                <i class="fas fa-robot"></i>
-            </div>
             <div class="message-content">
-                <p>Sorry, I encountered an error processing your request. Please try again.</p>
+                <div class="markdown-content">${processedContent}</div>
             </div>
         `;
         
@@ -320,7 +296,6 @@
     
     /**
      * Show the citation tooltip
-     * @param {HTMLElement} target - The citation marker element
      */
     function showCitationTooltip(target) {
         const citationId = parseInt(target.getAttribute('data-citation-id'));
@@ -330,25 +305,20 @@
             return;
         }
         
-        // Fill in citation details
         citationBody.innerHTML = `
             <div class="citation-file">${citation.file}</div>
             <div class="citation-page">Page ${citation.page}</div>
-            <div class="citation-text">${citation.text}</div>
         `;
         
-        // Position the tooltip near the citation marker
         const rect = target.getBoundingClientRect();
         citationTooltip.style.left = `${rect.left}px`;
         citationTooltip.style.top = `${rect.bottom + 10}px`;
         
-        // Show the tooltip
         citationTooltip.style.display = 'block';
         
         // Reposition if off-screen
         const tooltipRect = citationTooltip.getBoundingClientRect();
         const viewportWidth = window.innerWidth;
-        
         if (tooltipRect.right > viewportWidth) {
             const overflow = tooltipRect.right - viewportWidth;
             citationTooltip.style.left = `${rect.left - overflow - 20}px`;
@@ -363,18 +333,7 @@
     }
     
     /**
-     * Format a timestamp to a human-readable time
-     * @param {Date} date - The date to format
-     * @returns {string} - The formatted time
-     */
-    function formatTime(date) {
-        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    }
-    
-    /**
-     * Escape HTML to prevent XSS
-     * @param {string} html - The string to escape
-     * @returns {string} - The escaped string
+     * Utility: escape HTML
      */
     function escapeHTML(html) {
         const div = document.createElement('div');
@@ -383,16 +342,15 @@
     }
     
     /**
-     * Escape a string for use in a regular expression
-     * @param {string} string - The string to escape
-     * @returns {string} - The escaped string
+     * Utility: escape string for RegExp
      */
     function escapeRegExp(string) {
         return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
 
-    document.getElementById('clearChatButton').addEventListener('click', clearChat);
-
+    /**
+     * Clear chat
+     */
     function clearChat() {
         if (confirm('Are you sure you want to clear all chat history?')) {
             fetch(`/api/agents/${AGENT_NAME}/clear-chat`, {
@@ -402,7 +360,7 @@
             .catch(error => console.error('Error clearing chat:', error));
         }
     }
-    
-    // Initialize the chat when DOM is loaded
+
+    // Initialize on DOM load
     document.addEventListener('DOMContentLoaded', initChat);
 })();
