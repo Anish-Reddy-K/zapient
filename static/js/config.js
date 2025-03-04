@@ -27,6 +27,7 @@
     let currentAgentName = null;
     let processingStatusInterval = null;
     let processingComplete = false;
+    let processingSuccessMessage = null;
     
     /**
      * Initialize the configuration page
@@ -152,6 +153,10 @@
      * Add a file to the UI list
      * @param {File} file - The file to add to the UI
      */
+    /**
+     * Add a file to the UI list
+     * @param {File} file - The file to add to the UI
+     */
     function addFileToUI(file) {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';
@@ -172,8 +177,35 @@
         const removeBtn = fileItem.querySelector('.file-remove');
         removeBtn.addEventListener('click', function() {
             const fileName = this.getAttribute('data-filename');
-            removeFile(fileName);
-            fileItem.remove();
+            
+            // If we have a current agent name and this is a newly uploaded file
+            if (currentAgentName && processingComplete) {
+                // Try to delete the file from the server
+                fetch(`/api/agents/${currentAgentName}/files/${fileName}`, {
+                    method: 'DELETE'
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to delete file from server');
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    // Remove from local array and UI
+                    removeFile(fileName);
+                    fileItem.remove();
+                })
+                .catch(error => {
+                    console.error('Error deleting file:', error);
+                    // Still remove from UI since the user expects it
+                    removeFile(fileName);
+                    fileItem.remove();
+                });
+            } else {
+                // Just remove from local array and UI
+                removeFile(fileName);
+                fileItem.remove();
+            }
         });
     }
     
@@ -214,7 +246,7 @@
                 statusClass = 'status-processing';
                 break;
             case 'success':
-                statusText = 'Complete';
+                statusText = 'Processed';  // Changed from "Complete" to "Processed"
                 statusColor = '#10b981'; // Green
                 statusClass = 'status-success';
                 break;
@@ -309,15 +341,18 @@
                     
                     // Update UI to reflect completion
                     submitButton.disabled = false;
-                    submitButton.textContent = 'Create Another Agent';
+                    submitButton.textContent = 'Confirm Agent Creation';
                     
-                    // You could show a success message
-                    showCompletionMessage(data.files_processed);
+                    // Remove any existing message
+                    if (processingSuccessMessage && processingSuccessMessage.parentNode) {
+                        processingSuccessMessage.remove();
+                    }
                     
-                    // Stop monitoring after a short delay
-                    setTimeout(() => {
-                        stopProcessingStatusMonitor();
-                    }, 5000);
+                    // Show a success message above the button
+                    showProcessingCompleteMessage(data.files_processed);
+                    
+                    // Stop monitoring
+                    stopProcessingStatusMonitor();
                 }
             })
             .catch(error => {
@@ -326,15 +361,20 @@
     }
     
     /**
-     * Show completion message
+     * Show processing complete message
      * @param {boolean} success - Whether processing was successful
      */
-    function showCompletionMessage(success) {
-        // Create a success message under the submit button
-        const messageContainer = document.createElement('div');
-        messageContainer.className = success ? 'success-message' : 'warning-message';
-        messageContainer.style.cssText = `
-            margin-top: 1rem;
+    function showProcessingCompleteMessage(success) {
+        // Remove any existing message
+        if (processingSuccessMessage && processingSuccessMessage.parentNode) {
+            processingSuccessMessage.remove();
+        }
+        
+        // Create a success message above the confirm button
+        processingSuccessMessage = document.createElement('div');
+        processingSuccessMessage.className = success ? 'success-message' : 'warning-message';
+        processingSuccessMessage.style.cssText = `
+            margin-bottom: 1rem;
             padding: 0.75rem;
             border-radius: 0.25rem;
             background-color: ${success ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)'};
@@ -344,60 +384,16 @@
             text-align: center;
         `;
         
-        messageContainer.innerHTML = `
+        processingSuccessMessage.innerHTML = `
             <i class="fas ${success ? 'fa-check-circle' : 'fa-exclamation-triangle'}" style="margin-right: 0.5rem;"></i>
             ${success ? 'All files have been successfully processed!' : 'Processing completed with some issues.'}
         `;
         
-        // Add message after the buttons row
+        // Insert the message before the buttons row
         const buttonsRow = document.querySelector('.buttons-row');
         if (buttonsRow) {
-            buttonsRow.insertAdjacentElement('afterend', messageContainer);
+            buttonsRow.parentNode.insertBefore(processingSuccessMessage, buttonsRow);
         }
-        
-        // Auto-remove after 10 seconds
-        setTimeout(() => {
-            if (messageContainer.parentNode) {
-                messageContainer.remove();
-            }
-        }, 10000);
-    }
-    
-    /**
-     * Reset the form after successful submission
-     */
-    function resetForm() {
-        // Clear form fields
-        agentNameInput.value = '';
-        agentPersonaInput.value = '';
-        
-        // Clear file list
-        fileList.innerHTML = '';
-        uploadedFiles = [];
-        
-        // Reset button
-        submitButton.disabled = false;
-        submitButton.textContent = 'Create Agent';
-        
-        // Reset processing status
-        currentAgentName = null;
-        processingComplete = false;
-        stopProcessingStatusMonitor();
-    }
-    
-    /**
-     * Create a new agent container form
-     */
-    function createNewAgentForm() {
-        // Remove any completion messages
-        const messages = document.querySelectorAll('.success-message, .warning-message');
-        messages.forEach(msg => msg.remove());
-        
-        // Reset the form
-        resetForm();
-        
-        // Preload template data if available
-        preloadTemplateData();
     }
     
     /**
@@ -407,9 +403,10 @@
         agentConfigForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
-            // If processing is already complete and the button says "Create Another Agent"
-            if (processingComplete && submitButton.textContent === 'Create Another Agent') {
-                createNewAgentForm();
+            // If processing is already complete and button is in "Confirm" state
+            if (processingComplete && submitButton.textContent === 'Confirm Agent Creation') {
+                // Go to the My AI Agents page
+                window.location.href = '/my-agents';
                 return;
             }
             
@@ -459,10 +456,10 @@
                 } else {
                     // No files to process, enable button immediately
                     submitButton.disabled = false;
-                    submitButton.textContent = 'Create Another Agent';
+                    submitButton.textContent = 'Confirm Agent Creation';
                     
                     // Show a simple completion message
-                    showCompletionMessage(true);
+                    showProcessingCompleteMessage(true);
                     return Promise.resolve({ message: 'No files to upload' });
                 }
             })
