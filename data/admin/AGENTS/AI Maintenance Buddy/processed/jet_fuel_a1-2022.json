@@ -3,7 +3,7 @@
     "filename": "jet_fuel_a1-2022.pdf",
     "file_path": "/Users/anishreddy/Code/zapient/data/admin/AGENTS/AI Maintenance Buddy/uploads/jet_fuel_a1-2022.pdf",
     "file_hash": "84291538dd884d5cafe8dea8749839abeb61e63f95a47e0969be30ec275f13dd",
-    "extraction_date": "2025-03-04T01:41:57.735690",
+    "extraction_date": "2025-03-04T01:52:55.975228",
     "title": "",
     "author": "yasmeen.alimat",
     "subject": "",
@@ -528,16 +528,16 @@
   "advanced_metadata": {
     "intent": "Safety",
     "semantic_queries": [
-      "Jet fuel A-1 safety data sheet",
-      "NFPA classification of Jet fuel",
-      "Hazards of kerosene"
+      "Jet Fuel (A-1) safety data sheet",
+      "NFPA classification of Jet Fuel",
+      "hazard identification of kerosene"
     ],
     "keywords": [
       "Jet Fuel (A-1)",
       "MSDS",
       "NFPA",
       "Flammability",
-      "Health Hazard",
+      "Health",
       "Reactivity",
       "Kerosene",
       "Petroleum Distillates",

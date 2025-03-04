@@ -5,47 +5,38 @@
       "messages": [
         {
           "role": "user",
-          "content": "what are the common first aid practices for ammonia?"
+          "content": "How do I install widget A? Also, how do I configure advanced mode?"
         },
         {
           "role": "assistant",
-          "content": "**Welcome to the Chat**\n\nThis is a **test message** with *markdown* formatting.\n\nThis is a **test message** with *markdown* formatting.\n\n- First item\n- Second item\n\nFor further reading, see [^1].",
+          "content": "This is a **test** assistant response with *markdown*.\n\nSee [^1].",
           "citations": [
             {
               "id": 1,
-              "file": "documentation.txt",
+              "file": "demo.pdf",
               "page": 5,
-              "text": "Detailed reference for further reading."
+              "text": "Sample reference"
             }
           ]
         },
         {
           "role": "user",
-          "content": "How do I install widget A? Also, how do I configure advanced mode?"
+          "content": "csncer"
         },
         {
           "role": "assistant",
-          "content": "**Welcome to the Chat**\n\nThis is a **test message** with *markdown* formatting.\n\nThis is a **test message** with *markdown* formatting.\n\n- First item\n- Second item\n\nFor further reading, see [^1].",
+          "content": "This is a **test** assistant response with *markdown*.\n\nSee [^1].",
           "citations": [
             {
               "id": 1,
-              "file": "documentation.txt",
+              "file": "demo.pdf",
               "page": 5,
-              "text": "Detailed reference for further reading."
+              "text": "Sample reference"
             }
           ]
         }
       ],
       "analysis": [
-        {
-          "original_query": "what are the common first aid practices for ammonia?",
-          "sub_queries": [],
-          "keywords": [
-            "first aid",
-            "ammonia",
-            "practices"
-          ]
-        },
         {
           "original_query": "How do I install widget A? Also, how do I configure advanced mode?",
           "sub_queries": [
@@ -57,6 +48,13 @@
             "widget A",
             "configure",
             "advanced mode"
+          ]
+        },
+        {
+          "original_query": "csncer",
+          "sub_queries": [],
+          "keywords": [
+            "cancer"
           ]
         }
       ]

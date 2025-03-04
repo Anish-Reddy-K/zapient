@@ -1,0 +1,868 @@
+{
+  "default": {
+    "How do I install widget A? Also, how do I configure advanced mode?": {
+      "semantic_chunks": [
+        {
+          "text": "tionary statement\nPrevention Obtain special instructions before use. Do not handle until all\nsafety precautions have been read and understood. Wear\nprotective gloves/protective clothing/eye protection/face\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 1",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 2
+        },
+        {
+          "text": "Skin Protection : Impervious gloves such as nitrile recommended to prevent skin\ncontact.\nEye protection : Wear chemical safety goggles to avoid eye contact.\nOther : Impervious coveralls, apron and boots is required to prevent\nskin contact and contamination of personal clothing. A safety\nshower and eye wash should be available in the immediate work\narea.\nSection 9: Physical and Chemical Properties\nColor : Pale yellow\nPhysical state : Liquid\nOdor : Aromatic hydrocarbon odor\nFlash point : > 40 \u2218C\nFlammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ignition temperature : > 210\u00b0C\nSection 10: Stability",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 0
+        },
+        {
+          "text": "ection 4: First Aid Measures\nEye : Immediately flush eyes with water for several minutes. Get medical attention if\ncontact irritation persists.\nSkin : Remove contaminated clothing and flush skin with water for several minutes.\ncontact Wash thoroughly with soap and water. Get medical attention if irritation develops\nor persists. Launder clothing before reuse. Discard contaminated shoes.\nInhalation : Move to fresh air. If breathing is difficult, give oxygen. If not breathing, give\nartificial respiration. Get medical attention.\nIngestion : Do not induce vomiting. Rinse mouth with water. Get immed",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 2
+        },
+        {
+          "text": "tions for safe handling : Avoid contact with the eyes, skin and clothing. Avoid\nbreathing vapors or mists. Wear protective clothing and\nequipment. Use only with adequate ventilation. Wash\nthoroughly with soap and water after handling. Keep\ncontainers closed when not in use. Keep product away from\nheat, sparks, flames and all other sources of ignition. Do not\npermit smoking in use or storage areas. Use with non-\nsparking tools and explosion proof equipment. Electrically\nbond and ground containers for transfer.\nDo not cut, drill, grind or weld on or near containers, even\nempty containers. Do not",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 2
+        },
+        {
+          "text": "ironment Department\nRevision Date : Jan/2022\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 5",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 5,
+          "chunk_index": 3
+        },
+        {
+          "text": "induce vomiting. Rinse mouth with water. Get immediate medical\nattention.\nMost important symptoms/effects, acute and delayed: May cause eye irritation. Causes skin\nirritation with redness and drying. Inhalation may cause respiratory irritation and central nervous\nsystem effects. Harmful or fatal if swallowed. Aspiration during swallowing or vomiting may cause lung\ndamage. May cause cancer. May cause genetic defects.\nIndication of immediate medical attention and special treatment, if necessary: Immediate medical\nattention is required for ingestion.\nSection 5: Firefighting Measures\nSuitable exti",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 3
+        },
+        {
+          "text": "e aquatic environment with long-\neffects term adverse effects. Releases to the environment should be avoided.\nSection 13: Disposal Considerations\nDisposal of waste material must be performed in accordance with Local regulations.\nSection 14: Transport information\nTransport of this product is carried out in compliance with local legislation, taking into account\nsafety and environmental precautions.\nSection 15: Regulatory information\nEPA SARA 311 Hazard Classification: Acute Health, Chronic Health, Fire Hazard .\nSection 16: Other information\nThe information provided in this Safety Data Sheet is c",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 5,
+          "chunk_index": 1
+        },
+        {
+          "text": "taminated clothing. Rinse\nskin with water/shower. In case of fire: Use for extinction. If skin\nirritation or rash occurs: Get medical advice/attention. Take off\ncontaminated clothing and wash before re-use. If inhaled: Remove\nperson to fresh air and keep comfortable for breathing. Call a\ndoctor if you fell unwell. If swallowed: Immediately call a poison\ncenter/doctor.\nStorage Store locked up. Store in a well-ventilated place. Keep container\ntightly closed. Keep cool.\nDisposal Dispose of contents/container in accordance with local regulations.\nSection 4: First Aid Measures\nEye : Immediately flu",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 1
+        },
+        {
+          "text": "Special protective equipment : Firefighters should wear full emergency equipment and a\nand precautions for fire-fighters NIOSH approved positive pressure self-contained breathing\napparatus. Cool fire exposed container with water. Do not\nallow run-off from firefighting to enter drains or water\ncourses.\nSection 6: Accidental Release Measures\nPersonal precautions, protective : Wear appropriate protective equipment. Eliminate ignitions\nequipment, and emergency sources and ventilate the area with explosion proof\nprocedures equipment. Wash thoroughly after handling.\nEnvironmental hazards : Avoid rel",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 0
+        },
+        {
+          "text": "protection. Keep away from heat/sparks/open flames and hot\nsurfaces. No smoking. Keep container tightly closed. Ground/bond\ncontainer and receiving equipment. Use explosion-proof\nelectrical/ventilating/lighting equipment. Use only non-sparking\ntools. Take precautionary measures against static discharges.\nWash thoroughly after handling. Avoid breathing\ndust/fume/gas/mist/vapors/spray. Use only outdoors or in a well-\nventilated area.\nResponse If exposed or concerned: Get medical advice/attention. If on skin\n(or hair): Take off immediately all contaminated clothing. Rinse\nskin with water/shower. ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 0
+        }
+      ],
+      "keyword_chunks": [
+        {
+          "text": "nation of personal clothing. A safety\nshower and eye wash should be available in the immediate work\narea.\nSection 9: Physical and Chemical Properties\nColor : Pale yellow\nPhysical state : Liquid\nOdor : Aromatic hydrocarbon odor\nFlash point : > 40 \u2218C\nFlammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ig",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 1
+        },
+        {
+          "text": "firmed Animal\nCarcinogen with Unknown Relevance to Humans)\nGerm Cell Mutagenicity Category 1B\nPrecautionary statement\nPrevention Obtain special instructions before use. Do not handle until all\nsafety precautions have been read and understood. Wear\nprotective gloves/protective clothing/eye protection",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 4
+        },
+        {
+          "text": " Take precautionary measures against static discharges.\nWash thoroughly after handling. Avoid breathing\ndust/fume/gas/mist/vapors/spray. Use only outdoors or in a well-\nventilated area.\nResponse If exposed or concerned: Get medical advice/attention. If on skin\n(or hair): Take off immediately all con",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 1
+        },
+        {
+          "text": "If on skin\n(or hair): Take off immediately all contaminated clothing. Rinse\nskin with water/shower. In case of fire: Use for extinction. If skin\nirritation or rash occurs: Get medical advice/attention. Take off\ncontaminated clothing and wash before re-use. If inhaled: Remove\nperson to fresh air and ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 2
+        },
+        {
+          "text": "e-use. If inhaled: Remove\nperson to fresh air and keep comfortable for breathing. Call a\ndoctor if you fell unwell. If swallowed: Immediately call a poison\ncenter/doctor.\nStorage Store locked up. Store in a well-ventilated place. Keep container\ntightly closed. Keep cool.\nDisposal Dispose of contents",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 3
+        },
+        {
+          "text": ": Move to fresh air. If breathing is difficult, give oxygen. If not breathing, give\nartificial respiration. Get medical attention.\nIngestion : Do not induce vomiting. Rinse mouth with water. Get immediate medical\nattention.\nMost important symptoms/effects, acute and delayed: May cause eye irritation",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 6
+        },
+        {
+          "text": "nguishing media : Use water fog, alcohol foam, carbon dioxide, or dry chemical.\nDo not use a steady stream of water. Product may float on\nthe surface of water and create a floating fire hazard.\nSpecific hazards arising from the : This product is flammable and forms explosive mixtures with\nchemical a",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 9
+        },
+        {
+          "text": "Special protective equipment : Firefighters should wear full emergency equipment and a\nand precautions for fire-fighters NIOSH approved positive pressure self-contained breathing\napparatus. Cool fire exposed container with water. Do not\nallow run-off from firefighting to enter drains or water\ncourse",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 0
+        },
+        {
+          "text": " only with adequate ventilation. Wash\nthoroughly with soap and water after handling. Keep\ncontainers closed when not in use. Keep product away from\nheat, sparks, flames and all other sources of ignition. Do not\npermit smoking in use or storage areas. Use with non-\nsparking tools and explosion proof ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 5
+        },
+        {
+          "text": " Use with non-\nsparking tools and explosion proof equipment. Electrically\nbond and ground containers for transfer.\nDo not cut, drill, grind or weld on or near containers, even\nempty containers. Do not reuse containers. Empty\ncontainers retain product residues which can be hazardous.\nFollow all SDS p",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 6
+        },
+        {
+          "text": " residues which can be hazardous.\nFollow all SDS precautions when handling empty containers.\nConditions for safe storage, : Store in accordance with regulations for the storage of\nincluding any incompatibilities flammable liquids. Store in a dry, well ventilated area away\nfrom heat, direct sunlight ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 7
+        },
+        {
+          "text": "Skin Protection : Impervious gloves such as nitrile recommended to prevent skin\ncontact.\nEye protection : Wear chemical safety goggles to avoid eye contact.\nOther : Impervious coveralls, apron and boots is required to prevent\nskin contact and contamination of personal clothing. A safety\nshower and e",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 0
+        },
+        {
+          "text": "lammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ignition temperature : > 210\u00b0C\nSection 10: Stability and Reactivity\nReactivity : This product is not expected to be reactive.\nChemical stability : The product is stable\nPossibility of hazardous reactions : None known.\nConditions to avoid : Keep away fr",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 2
+        },
+        {
+          "text": "Jordan Petroleum Refinery Company LTD.\nSafety and Environment Department\nMaterial Safety Datasheet : Jet Fuel (A-1)\nNFPA Classification : JPRC PR-04\nFlammability 2\n2\nHealth 1\n1 0 Reactivity 0\nSection 1: Product and Company Identification\nProduct Name : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany:",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 0
+        },
+        {
+          "text": " : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany: Jordan Petroleum Refinery Company LTD.\nAmman \u2013 Jordan.\nTEL: + 962 6 4630151 or 4657600\nFAX: + 962 6 4657934 or 4657939\nP.O.BOX: 3396 Amman 11181 \u2013 Jordan\nP.O.BOX: 1079 Amman 11118 \u2013 Jordan\nWebsite: http://www.jopetrol.com.jo\nE-mail: addewan@jopetrol",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 1
+        },
+        {
+          "text": "ttp://www.jopetrol.com.jo\nE-mail: addewan@jopetrol.com.jo\nSection 2: Composition / Information on ingredients\nComponent CAS Number %\nKerosene (Petroleum), sweetened 91770-15-9 70-100\nDistillates (Petroleum), Mildly 8-47-64742 0-30\nHydrotreated kerosene\nSection 3: Hazard Identification\nClassification",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 2
+        },
+        {
+          "text": "ne\nSection 3: Hazard Identification\nClassification:\nPhysical : Health :\nFlammable Liquid. Aspiration Toxicity Category 1\nSkin Irritation Category 2\nSpecific Target Organ Toxicity Single Exposure\nCategory 3 (Nervous System)\nCarcinogen Category 1A (Confirmed Animal\nCarcinogen with Unknown Relevance to",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 3
+        },
+        {
+          "text": "otective gloves/protective clothing/eye protection/face\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 1",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 5
+        },
+        {
+          "text": "protection. Keep away from heat/sparks/open flames and hot\nsurfaces. No smoking. Keep container tightly closed. Ground/bond\ncontainer and receiving equipment. Use explosion-proof\nelectrical/ventilating/lighting equipment. Use only non-sparking\ntools. Take precautionary measures against static discha",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 0
+        },
+        {
+          "text": "ly closed. Keep cool.\nDisposal Dispose of contents/container in accordance with local regulations.\nSection 4: First Aid Measures\nEye : Immediately flush eyes with water for several minutes. Get medical attention if\ncontact irritation persists.\nSkin : Remove contaminated clothing and flush skin with ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 4
+        },
+        {
+          "text": " Remove contaminated clothing and flush skin with water for several minutes.\ncontact Wash thoroughly with soap and water. Get medical attention if irritation develops\nor persists. Launder clothing before reuse. Discard contaminated shoes.\nInhalation : Move to fresh air. If breathing is difficult, gi",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 5
+        },
+        {
+          "text": "fects, acute and delayed: May cause eye irritation. Causes skin\nirritation with redness and drying. Inhalation may cause respiratory irritation and central nervous\nsystem effects. Harmful or fatal if swallowed. Aspiration during swallowing or vomiting may cause lung\ndamage. May cause cancer. May cau",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 7
+        },
+        {
+          "text": "g may cause lung\ndamage. May cause cancer. May cause genetic defects.\nIndication of immediate medical attention and special treatment, if necessary: Immediate medical\nattention is required for ingestion.\nSection 5: Firefighting Measures\nSuitable extinguishing media : Use water fog, alcohol foam, car",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 8
+        },
+        {
+          "text": "mable and forms explosive mixtures with\nchemical air. Vapors are heavier than air and will travel along surfaces\nto remote ignition sources and flash back. Closed containers\nmay explode if exposed to extreme heat. Combustion may\nproduce carbon oxides and other products of incomplete\ncombustion.\nIssu",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 10
+        },
+        {
+          "text": " and other products of incomplete\ncombustion.\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 2",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 11
+        }
+      ]
+    },
+    "How do I install widget A?": {
+      "semantic_chunks": [
+        {
+          "text": "ironment Department\nRevision Date : Jan/2022\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 5",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 5,
+          "chunk_index": 3
+        },
+        {
+          "text": "tions for safe handling : Avoid contact with the eyes, skin and clothing. Avoid\nbreathing vapors or mists. Wear protective clothing and\nequipment. Use only with adequate ventilation. Wash\nthoroughly with soap and water after handling. Keep\ncontainers closed when not in use. Keep product away from\nheat, sparks, flames and all other sources of ignition. Do not\npermit smoking in use or storage areas. Use with non-\nsparking tools and explosion proof equipment. Electrically\nbond and ground containers for transfer.\nDo not cut, drill, grind or weld on or near containers, even\nempty containers. Do not",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 2
+        },
+        {
+          "text": "taminated clothing. Rinse\nskin with water/shower. In case of fire: Use for extinction. If skin\nirritation or rash occurs: Get medical advice/attention. Take off\ncontaminated clothing and wash before re-use. If inhaled: Remove\nperson to fresh air and keep comfortable for breathing. Call a\ndoctor if you fell unwell. If swallowed: Immediately call a poison\ncenter/doctor.\nStorage Store locked up. Store in a well-ventilated place. Keep container\ntightly closed. Keep cool.\nDisposal Dispose of contents/container in accordance with local regulations.\nSection 4: First Aid Measures\nEye : Immediately flu",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 1
+        },
+        {
+          "text": " and other products of incomplete\ncombustion.\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 2",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 5
+        },
+        {
+          "text": "tionary statement\nPrevention Obtain special instructions before use. Do not handle until all\nsafety precautions have been read and understood. Wear\nprotective gloves/protective clothing/eye protection/face\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 1",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 2
+        },
+        {
+          "text": "Special protective equipment : Firefighters should wear full emergency equipment and a\nand precautions for fire-fighters NIOSH approved positive pressure self-contained breathing\napparatus. Cool fire exposed container with water. Do not\nallow run-off from firefighting to enter drains or water\ncourses.\nSection 6: Accidental Release Measures\nPersonal precautions, protective : Wear appropriate protective equipment. Eliminate ignitions\nequipment, and emergency sources and ventilate the area with explosion proof\nprocedures equipment. Wash thoroughly after handling.\nEnvironmental hazards : Avoid rel",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 0
+        },
+        {
+          "text": "Skin Protection : Impervious gloves such as nitrile recommended to prevent skin\ncontact.\nEye protection : Wear chemical safety goggles to avoid eye contact.\nOther : Impervious coveralls, apron and boots is required to prevent\nskin contact and contamination of personal clothing. A safety\nshower and eye wash should be available in the immediate work\narea.\nSection 9: Physical and Chemical Properties\nColor : Pale yellow\nPhysical state : Liquid\nOdor : Aromatic hydrocarbon odor\nFlash point : > 40 \u2218C\nFlammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ignition temperature : > 210\u00b0C\nSection 10: Stability",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 0
+        },
+        {
+          "text": "ection 4: First Aid Measures\nEye : Immediately flush eyes with water for several minutes. Get medical attention if\ncontact irritation persists.\nSkin : Remove contaminated clothing and flush skin with water for several minutes.\ncontact Wash thoroughly with soap and water. Get medical attention if irritation develops\nor persists. Launder clothing before reuse. Discard contaminated shoes.\nInhalation : Move to fresh air. If breathing is difficult, give oxygen. If not breathing, give\nartificial respiration. Get medical attention.\nIngestion : Do not induce vomiting. Rinse mouth with water. Get immed",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 2
+        },
+        {
+          "text": "on.\nSection 5: Firefighting Measures\nSuitable extinguishing media : Use water fog, alcohol foam, carbon dioxide, or dry chemical.\nDo not use a steady stream of water. Product may float on\nthe surface of water and create a floating fire hazard.\nSpecific hazards arising from the : This product is flammable and forms explosive mixtures with\nchemical air. Vapors are heavier than air and will travel along surfaces\nto remote ignition sources and flash back. Closed containers\nmay explode if exposed to extreme heat. Combustion may\nproduce carbon oxides and other products of incomplete\ncombustion.\nIssu",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 4
+        },
+        {
+          "text": "e aquatic environment with long-\neffects term adverse effects. Releases to the environment should be avoided.\nSection 13: Disposal Considerations\nDisposal of waste material must be performed in accordance with Local regulations.\nSection 14: Transport information\nTransport of this product is carried out in compliance with local legislation, taking into account\nsafety and environmental precautions.\nSection 15: Regulatory information\nEPA SARA 311 Hazard Classification: Acute Health, Chronic Health, Fire Hazard .\nSection 16: Other information\nThe information provided in this Safety Data Sheet is c",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 5,
+          "chunk_index": 1
+        }
+      ],
+      "keyword_chunks": [
+        {
+          "text": "nation of personal clothing. A safety\nshower and eye wash should be available in the immediate work\narea.\nSection 9: Physical and Chemical Properties\nColor : Pale yellow\nPhysical state : Liquid\nOdor : Aromatic hydrocarbon odor\nFlash point : > 40 \u2218C\nFlammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ig",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 1
+        },
+        {
+          "text": "firmed Animal\nCarcinogen with Unknown Relevance to Humans)\nGerm Cell Mutagenicity Category 1B\nPrecautionary statement\nPrevention Obtain special instructions before use. Do not handle until all\nsafety precautions have been read and understood. Wear\nprotective gloves/protective clothing/eye protection",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 4
+        },
+        {
+          "text": " Take precautionary measures against static discharges.\nWash thoroughly after handling. Avoid breathing\ndust/fume/gas/mist/vapors/spray. Use only outdoors or in a well-\nventilated area.\nResponse If exposed or concerned: Get medical advice/attention. If on skin\n(or hair): Take off immediately all con",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 1
+        },
+        {
+          "text": "If on skin\n(or hair): Take off immediately all contaminated clothing. Rinse\nskin with water/shower. In case of fire: Use for extinction. If skin\nirritation or rash occurs: Get medical advice/attention. Take off\ncontaminated clothing and wash before re-use. If inhaled: Remove\nperson to fresh air and ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 2
+        },
+        {
+          "text": "e-use. If inhaled: Remove\nperson to fresh air and keep comfortable for breathing. Call a\ndoctor if you fell unwell. If swallowed: Immediately call a poison\ncenter/doctor.\nStorage Store locked up. Store in a well-ventilated place. Keep container\ntightly closed. Keep cool.\nDisposal Dispose of contents",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 3
+        },
+        {
+          "text": ": Move to fresh air. If breathing is difficult, give oxygen. If not breathing, give\nartificial respiration. Get medical attention.\nIngestion : Do not induce vomiting. Rinse mouth with water. Get immediate medical\nattention.\nMost important symptoms/effects, acute and delayed: May cause eye irritation",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 6
+        },
+        {
+          "text": "nguishing media : Use water fog, alcohol foam, carbon dioxide, or dry chemical.\nDo not use a steady stream of water. Product may float on\nthe surface of water and create a floating fire hazard.\nSpecific hazards arising from the : This product is flammable and forms explosive mixtures with\nchemical a",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 9
+        },
+        {
+          "text": "Special protective equipment : Firefighters should wear full emergency equipment and a\nand precautions for fire-fighters NIOSH approved positive pressure self-contained breathing\napparatus. Cool fire exposed container with water. Do not\nallow run-off from firefighting to enter drains or water\ncourse",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 0
+        },
+        {
+          "text": " only with adequate ventilation. Wash\nthoroughly with soap and water after handling. Keep\ncontainers closed when not in use. Keep product away from\nheat, sparks, flames and all other sources of ignition. Do not\npermit smoking in use or storage areas. Use with non-\nsparking tools and explosion proof ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 5
+        },
+        {
+          "text": " Use with non-\nsparking tools and explosion proof equipment. Electrically\nbond and ground containers for transfer.\nDo not cut, drill, grind or weld on or near containers, even\nempty containers. Do not reuse containers. Empty\ncontainers retain product residues which can be hazardous.\nFollow all SDS p",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 6
+        },
+        {
+          "text": " residues which can be hazardous.\nFollow all SDS precautions when handling empty containers.\nConditions for safe storage, : Store in accordance with regulations for the storage of\nincluding any incompatibilities flammable liquids. Store in a dry, well ventilated area away\nfrom heat, direct sunlight ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 7
+        },
+        {
+          "text": "Skin Protection : Impervious gloves such as nitrile recommended to prevent skin\ncontact.\nEye protection : Wear chemical safety goggles to avoid eye contact.\nOther : Impervious coveralls, apron and boots is required to prevent\nskin contact and contamination of personal clothing. A safety\nshower and e",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 0
+        },
+        {
+          "text": "lammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ignition temperature : > 210\u00b0C\nSection 10: Stability and Reactivity\nReactivity : This product is not expected to be reactive.\nChemical stability : The product is stable\nPossibility of hazardous reactions : None known.\nConditions to avoid : Keep away fr",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 2
+        },
+        {
+          "text": "Jordan Petroleum Refinery Company LTD.\nSafety and Environment Department\nMaterial Safety Datasheet : Jet Fuel (A-1)\nNFPA Classification : JPRC PR-04\nFlammability 2\n2\nHealth 1\n1 0 Reactivity 0\nSection 1: Product and Company Identification\nProduct Name : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany:",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 0
+        },
+        {
+          "text": " : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany: Jordan Petroleum Refinery Company LTD.\nAmman \u2013 Jordan.\nTEL: + 962 6 4630151 or 4657600\nFAX: + 962 6 4657934 or 4657939\nP.O.BOX: 3396 Amman 11181 \u2013 Jordan\nP.O.BOX: 1079 Amman 11118 \u2013 Jordan\nWebsite: http://www.jopetrol.com.jo\nE-mail: addewan@jopetrol",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 1
+        },
+        {
+          "text": "ttp://www.jopetrol.com.jo\nE-mail: addewan@jopetrol.com.jo\nSection 2: Composition / Information on ingredients\nComponent CAS Number %\nKerosene (Petroleum), sweetened 91770-15-9 70-100\nDistillates (Petroleum), Mildly 8-47-64742 0-30\nHydrotreated kerosene\nSection 3: Hazard Identification\nClassification",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 2
+        },
+        {
+          "text": "ne\nSection 3: Hazard Identification\nClassification:\nPhysical : Health :\nFlammable Liquid. Aspiration Toxicity Category 1\nSkin Irritation Category 2\nSpecific Target Organ Toxicity Single Exposure\nCategory 3 (Nervous System)\nCarcinogen Category 1A (Confirmed Animal\nCarcinogen with Unknown Relevance to",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 3
+        },
+        {
+          "text": "otective gloves/protective clothing/eye protection/face\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 1",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 5
+        },
+        {
+          "text": "protection. Keep away from heat/sparks/open flames and hot\nsurfaces. No smoking. Keep container tightly closed. Ground/bond\ncontainer and receiving equipment. Use explosion-proof\nelectrical/ventilating/lighting equipment. Use only non-sparking\ntools. Take precautionary measures against static discha",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 0
+        },
+        {
+          "text": "ly closed. Keep cool.\nDisposal Dispose of contents/container in accordance with local regulations.\nSection 4: First Aid Measures\nEye : Immediately flush eyes with water for several minutes. Get medical attention if\ncontact irritation persists.\nSkin : Remove contaminated clothing and flush skin with ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 4
+        },
+        {
+          "text": " Remove contaminated clothing and flush skin with water for several minutes.\ncontact Wash thoroughly with soap and water. Get medical attention if irritation develops\nor persists. Launder clothing before reuse. Discard contaminated shoes.\nInhalation : Move to fresh air. If breathing is difficult, gi",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 5
+        },
+        {
+          "text": "fects, acute and delayed: May cause eye irritation. Causes skin\nirritation with redness and drying. Inhalation may cause respiratory irritation and central nervous\nsystem effects. Harmful or fatal if swallowed. Aspiration during swallowing or vomiting may cause lung\ndamage. May cause cancer. May cau",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 7
+        },
+        {
+          "text": "g may cause lung\ndamage. May cause cancer. May cause genetic defects.\nIndication of immediate medical attention and special treatment, if necessary: Immediate medical\nattention is required for ingestion.\nSection 5: Firefighting Measures\nSuitable extinguishing media : Use water fog, alcohol foam, car",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 8
+        },
+        {
+          "text": "mable and forms explosive mixtures with\nchemical air. Vapors are heavier than air and will travel along surfaces\nto remote ignition sources and flash back. Closed containers\nmay explode if exposed to extreme heat. Combustion may\nproduce carbon oxides and other products of incomplete\ncombustion.\nIssu",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 10
+        },
+        {
+          "text": " and other products of incomplete\ncombustion.\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 2",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 11
+        }
+      ]
+    },
+    "How do I configure advanced mode?": {
+      "semantic_chunks": [
+        {
+          "text": "ection 4: First Aid Measures\nEye : Immediately flush eyes with water for several minutes. Get medical attention if\ncontact irritation persists.\nSkin : Remove contaminated clothing and flush skin with water for several minutes.\ncontact Wash thoroughly with soap and water. Get medical attention if irritation develops\nor persists. Launder clothing before reuse. Discard contaminated shoes.\nInhalation : Move to fresh air. If breathing is difficult, give oxygen. If not breathing, give\nartificial respiration. Get medical attention.\nIngestion : Do not induce vomiting. Rinse mouth with water. Get immed",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 2
+        },
+        {
+          "text": "Skin Protection : Impervious gloves such as nitrile recommended to prevent skin\ncontact.\nEye protection : Wear chemical safety goggles to avoid eye contact.\nOther : Impervious coveralls, apron and boots is required to prevent\nskin contact and contamination of personal clothing. A safety\nshower and eye wash should be available in the immediate work\narea.\nSection 9: Physical and Chemical Properties\nColor : Pale yellow\nPhysical state : Liquid\nOdor : Aromatic hydrocarbon odor\nFlash point : > 40 \u2218C\nFlammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ignition temperature : > 210\u00b0C\nSection 10: Stability",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 0
+        },
+        {
+          "text": "lurred vision, nausea,\nnumbness, drowsiness, anesthesia, and coma.\nSkin Contact : Skin contact may cause irritation, redness and defatting of the\nskin.\nEye Contact : Eye contact may cause mild irritation with redness, tearing\nand pain.\nIngestion : Swallowing may cause gastrointestinal irritation, nausea,\nvomiting, diarrhea, vertigo, drowsiness, mental confusion,\nstaggering gait, slurred speech, convulsions, unconsciousness\nand death due to circulatory failure. Aspiration during\nswallowing or vomiting may cause lung damage.\nChronic Effects of : Prolonged occupational overexposure may cause derm",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 2
+        },
+        {
+          "text": "tionary statement\nPrevention Obtain special instructions before use. Do not handle until all\nsafety precautions have been read and understood. Wear\nprotective gloves/protective clothing/eye protection/face\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 1",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 2
+        },
+        {
+          "text": "e aquatic environment with long-\neffects term adverse effects. Releases to the environment should be avoided.\nSection 13: Disposal Considerations\nDisposal of waste material must be performed in accordance with Local regulations.\nSection 14: Transport information\nTransport of this product is carried out in compliance with local legislation, taking into account\nsafety and environmental precautions.\nSection 15: Regulatory information\nEPA SARA 311 Hazard Classification: Acute Health, Chronic Health, Fire Hazard .\nSection 16: Other information\nThe information provided in this Safety Data Sheet is c",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 5,
+          "chunk_index": 1
+        },
+        {
+          "text": "ontrols / Personal protection\nExposure limit for Kerosene (Main component of Jet Fuel) : 200 mg/m3, skin TWA ACGIH TLV\nAppropriate engineering : Use with local exhaust ventilation to maintain exposures below\ncontrols the occupational exposure limits. Use explosion proof\nequipment where required.\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 3",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 4
+        },
+        {
+          "text": "induce vomiting. Rinse mouth with water. Get immediate medical\nattention.\nMost important symptoms/effects, acute and delayed: May cause eye irritation. Causes skin\nirritation with redness and drying. Inhalation may cause respiratory irritation and central nervous\nsystem effects. Harmful or fatal if swallowed. Aspiration during swallowing or vomiting may cause lung\ndamage. May cause cancer. May cause genetic defects.\nIndication of immediate medical attention and special treatment, if necessary: Immediate medical\nattention is required for ingestion.\nSection 5: Firefighting Measures\nSuitable exti",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 3
+        },
+        {
+          "text": "Prolonged occupational overexposure may cause dermatitis.\nOverexposure Reports have associated repeated and prolonged\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 4",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 3
+        },
+        {
+          "text": "ironment Department\nRevision Date : Jan/2022\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 5",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 5,
+          "chunk_index": 3
+        },
+        {
+          "text": "protection. Keep away from heat/sparks/open flames and hot\nsurfaces. No smoking. Keep container tightly closed. Ground/bond\ncontainer and receiving equipment. Use explosion-proof\nelectrical/ventilating/lighting equipment. Use only non-sparking\ntools. Take precautionary measures against static discharges.\nWash thoroughly after handling. Avoid breathing\ndust/fume/gas/mist/vapors/spray. Use only outdoors or in a well-\nventilated area.\nResponse If exposed or concerned: Get medical advice/attention. If on skin\n(or hair): Take off immediately all contaminated clothing. Rinse\nskin with water/shower. ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 0
+        }
+      ],
+      "keyword_chunks": [
+        {
+          "text": "nation of personal clothing. A safety\nshower and eye wash should be available in the immediate work\narea.\nSection 9: Physical and Chemical Properties\nColor : Pale yellow\nPhysical state : Liquid\nOdor : Aromatic hydrocarbon odor\nFlash point : > 40 \u2218C\nFlammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ig",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 1
+        },
+        {
+          "text": "firmed Animal\nCarcinogen with Unknown Relevance to Humans)\nGerm Cell Mutagenicity Category 1B\nPrecautionary statement\nPrevention Obtain special instructions before use. Do not handle until all\nsafety precautions have been read and understood. Wear\nprotective gloves/protective clothing/eye protection",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 4
+        },
+        {
+          "text": " Take precautionary measures against static discharges.\nWash thoroughly after handling. Avoid breathing\ndust/fume/gas/mist/vapors/spray. Use only outdoors or in a well-\nventilated area.\nResponse If exposed or concerned: Get medical advice/attention. If on skin\n(or hair): Take off immediately all con",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 1
+        },
+        {
+          "text": "If on skin\n(or hair): Take off immediately all contaminated clothing. Rinse\nskin with water/shower. In case of fire: Use for extinction. If skin\nirritation or rash occurs: Get medical advice/attention. Take off\ncontaminated clothing and wash before re-use. If inhaled: Remove\nperson to fresh air and ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 2
+        },
+        {
+          "text": "e-use. If inhaled: Remove\nperson to fresh air and keep comfortable for breathing. Call a\ndoctor if you fell unwell. If swallowed: Immediately call a poison\ncenter/doctor.\nStorage Store locked up. Store in a well-ventilated place. Keep container\ntightly closed. Keep cool.\nDisposal Dispose of contents",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 3
+        },
+        {
+          "text": ": Move to fresh air. If breathing is difficult, give oxygen. If not breathing, give\nartificial respiration. Get medical attention.\nIngestion : Do not induce vomiting. Rinse mouth with water. Get immediate medical\nattention.\nMost important symptoms/effects, acute and delayed: May cause eye irritation",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 6
+        },
+        {
+          "text": "nguishing media : Use water fog, alcohol foam, carbon dioxide, or dry chemical.\nDo not use a steady stream of water. Product may float on\nthe surface of water and create a floating fire hazard.\nSpecific hazards arising from the : This product is flammable and forms explosive mixtures with\nchemical a",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 9
+        },
+        {
+          "text": "Special protective equipment : Firefighters should wear full emergency equipment and a\nand precautions for fire-fighters NIOSH approved positive pressure self-contained breathing\napparatus. Cool fire exposed container with water. Do not\nallow run-off from firefighting to enter drains or water\ncourse",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 0
+        },
+        {
+          "text": " only with adequate ventilation. Wash\nthoroughly with soap and water after handling. Keep\ncontainers closed when not in use. Keep product away from\nheat, sparks, flames and all other sources of ignition. Do not\npermit smoking in use or storage areas. Use with non-\nsparking tools and explosion proof ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 5
+        },
+        {
+          "text": " Use with non-\nsparking tools and explosion proof equipment. Electrically\nbond and ground containers for transfer.\nDo not cut, drill, grind or weld on or near containers, even\nempty containers. Do not reuse containers. Empty\ncontainers retain product residues which can be hazardous.\nFollow all SDS p",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 6
+        },
+        {
+          "text": " residues which can be hazardous.\nFollow all SDS precautions when handling empty containers.\nConditions for safe storage, : Store in accordance with regulations for the storage of\nincluding any incompatibilities flammable liquids. Store in a dry, well ventilated area away\nfrom heat, direct sunlight ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 7
+        },
+        {
+          "text": "Skin Protection : Impervious gloves such as nitrile recommended to prevent skin\ncontact.\nEye protection : Wear chemical safety goggles to avoid eye contact.\nOther : Impervious coveralls, apron and boots is required to prevent\nskin contact and contamination of personal clothing. A safety\nshower and e",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 0
+        },
+        {
+          "text": "lammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ignition temperature : > 210\u00b0C\nSection 10: Stability and Reactivity\nReactivity : This product is not expected to be reactive.\nChemical stability : The product is stable\nPossibility of hazardous reactions : None known.\nConditions to avoid : Keep away fr",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 2
+        },
+        {
+          "text": "Jordan Petroleum Refinery Company LTD.\nSafety and Environment Department\nMaterial Safety Datasheet : Jet Fuel (A-1)\nNFPA Classification : JPRC PR-04\nFlammability 2\n2\nHealth 1\n1 0 Reactivity 0\nSection 1: Product and Company Identification\nProduct Name : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany:",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 0
+        },
+        {
+          "text": " : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany: Jordan Petroleum Refinery Company LTD.\nAmman \u2013 Jordan.\nTEL: + 962 6 4630151 or 4657600\nFAX: + 962 6 4657934 or 4657939\nP.O.BOX: 3396 Amman 11181 \u2013 Jordan\nP.O.BOX: 1079 Amman 11118 \u2013 Jordan\nWebsite: http://www.jopetrol.com.jo\nE-mail: addewan@jopetrol",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 1
+        },
+        {
+          "text": "ttp://www.jopetrol.com.jo\nE-mail: addewan@jopetrol.com.jo\nSection 2: Composition / Information on ingredients\nComponent CAS Number %\nKerosene (Petroleum), sweetened 91770-15-9 70-100\nDistillates (Petroleum), Mildly 8-47-64742 0-30\nHydrotreated kerosene\nSection 3: Hazard Identification\nClassification",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 2
+        },
+        {
+          "text": "ne\nSection 3: Hazard Identification\nClassification:\nPhysical : Health :\nFlammable Liquid. Aspiration Toxicity Category 1\nSkin Irritation Category 2\nSpecific Target Organ Toxicity Single Exposure\nCategory 3 (Nervous System)\nCarcinogen Category 1A (Confirmed Animal\nCarcinogen with Unknown Relevance to",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 3
+        },
+        {
+          "text": "otective gloves/protective clothing/eye protection/face\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 1",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 5
+        },
+        {
+          "text": "protection. Keep away from heat/sparks/open flames and hot\nsurfaces. No smoking. Keep container tightly closed. Ground/bond\ncontainer and receiving equipment. Use explosion-proof\nelectrical/ventilating/lighting equipment. Use only non-sparking\ntools. Take precautionary measures against static discha",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 0
+        },
+        {
+          "text": "ly closed. Keep cool.\nDisposal Dispose of contents/container in accordance with local regulations.\nSection 4: First Aid Measures\nEye : Immediately flush eyes with water for several minutes. Get medical attention if\ncontact irritation persists.\nSkin : Remove contaminated clothing and flush skin with ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 4
+        },
+        {
+          "text": " Remove contaminated clothing and flush skin with water for several minutes.\ncontact Wash thoroughly with soap and water. Get medical attention if irritation develops\nor persists. Launder clothing before reuse. Discard contaminated shoes.\nInhalation : Move to fresh air. If breathing is difficult, gi",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 5
+        },
+        {
+          "text": "fects, acute and delayed: May cause eye irritation. Causes skin\nirritation with redness and drying. Inhalation may cause respiratory irritation and central nervous\nsystem effects. Harmful or fatal if swallowed. Aspiration during swallowing or vomiting may cause lung\ndamage. May cause cancer. May cau",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 7
+        },
+        {
+          "text": "g may cause lung\ndamage. May cause cancer. May cause genetic defects.\nIndication of immediate medical attention and special treatment, if necessary: Immediate medical\nattention is required for ingestion.\nSection 5: Firefighting Measures\nSuitable extinguishing media : Use water fog, alcohol foam, car",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 8
+        },
+        {
+          "text": "mable and forms explosive mixtures with\nchemical air. Vapors are heavier than air and will travel along surfaces\nto remote ignition sources and flash back. Closed containers\nmay explode if exposed to extreme heat. Combustion may\nproduce carbon oxides and other products of incomplete\ncombustion.\nIssu",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 10
+        },
+        {
+          "text": " and other products of incomplete\ncombustion.\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 2",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 11
+        }
+      ]
+    },
+    "csncer": {
+      "semantic_chunks": [
+        {
+          "text": "ironment Department\nRevision Date : Jan/2022\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 5",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 5,
+          "chunk_index": 3
+        },
+        {
+          "text": "nformation provided in this Safety Data Sheet is correct to the best of our knowledge,\ninformation and belief at the date of its publication. The information given is designed only as\nguidance for safe handling, use, processing, storage, disposal and release and is not to be\nconsidered a warranty or quality specification. The information relates only to the specific material\ndesignated and may not be valid for such material used in combination with any other materials or\nin any process, unless specified in the text.\nPrepared by : Safety and Environment Department\nRevision Date : Jan/2022\nIssue",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 5,
+          "chunk_index": 2
+        },
+        {
+          "text": "tions for safe handling : Avoid contact with the eyes, skin and clothing. Avoid\nbreathing vapors or mists. Wear protective clothing and\nequipment. Use only with adequate ventilation. Wash\nthoroughly with soap and water after handling. Keep\ncontainers closed when not in use. Keep product away from\nheat, sparks, flames and all other sources of ignition. Do not\npermit smoking in use or storage areas. Use with non-\nsparking tools and explosion proof equipment. Electrically\nbond and ground containers for transfer.\nDo not cut, drill, grind or weld on or near containers, even\nempty containers. Do not",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 2
+        },
+        {
+          "text": "Jordan Petroleum Refinery Company LTD.\nSafety and Environment Department\nMaterial Safety Datasheet : Jet Fuel (A-1)\nNFPA Classification : JPRC PR-04\nFlammability 2\n2\nHealth 1\n1 0 Reactivity 0\nSection 1: Product and Company Identification\nProduct Name : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany: Jordan Petroleum Refinery Company LTD.\nAmman \u2013 Jordan.\nTEL: + 962 6 4630151 or 4657600\nFAX: + 962 6 4657934 or 4657939\nP.O.BOX: 3396 Amman 11181 \u2013 Jordan\nP.O.BOX: 1079 Amman 11118 \u2013 Jordan\nWebsite: http://www.jopetrol.com.jo\nE-mail: addewan@jopetrol.com.jo\nSection 2: Composition / Information on in",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 0
+        },
+        {
+          "text": "taminated clothing. Rinse\nskin with water/shower. In case of fire: Use for extinction. If skin\nirritation or rash occurs: Get medical advice/attention. Take off\ncontaminated clothing and wash before re-use. If inhaled: Remove\nperson to fresh air and keep comfortable for breathing. Call a\ndoctor if you fell unwell. If swallowed: Immediately call a poison\ncenter/doctor.\nStorage Store locked up. Store in a well-ventilated place. Keep container\ntightly closed. Keep cool.\nDisposal Dispose of contents/container in accordance with local regulations.\nSection 4: First Aid Measures\nEye : Immediately flu",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 1
+        },
+        {
+          "text": "ection 4: First Aid Measures\nEye : Immediately flush eyes with water for several minutes. Get medical attention if\ncontact irritation persists.\nSkin : Remove contaminated clothing and flush skin with water for several minutes.\ncontact Wash thoroughly with soap and water. Get medical attention if irritation develops\nor persists. Launder clothing before reuse. Discard contaminated shoes.\nInhalation : Move to fresh air. If breathing is difficult, give oxygen. If not breathing, give\nartificial respiration. Get medical attention.\nIngestion : Do not induce vomiting. Rinse mouth with water. Get immed",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 2
+        },
+        {
+          "text": "tionary statement\nPrevention Obtain special instructions before use. Do not handle until all\nsafety precautions have been read and understood. Wear\nprotective gloves/protective clothing/eye protection/face\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 1",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 2
+        },
+        {
+          "text": "lurred vision, nausea,\nnumbness, drowsiness, anesthesia, and coma.\nSkin Contact : Skin contact may cause irritation, redness and defatting of the\nskin.\nEye Contact : Eye contact may cause mild irritation with redness, tearing\nand pain.\nIngestion : Swallowing may cause gastrointestinal irritation, nausea,\nvomiting, diarrhea, vertigo, drowsiness, mental confusion,\nstaggering gait, slurred speech, convulsions, unconsciousness\nand death due to circulatory failure. Aspiration during\nswallowing or vomiting may cause lung damage.\nChronic Effects of : Prolonged occupational overexposure may cause derm",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 2
+        },
+        {
+          "text": "Skin Protection : Impervious gloves such as nitrile recommended to prevent skin\ncontact.\nEye protection : Wear chemical safety goggles to avoid eye contact.\nOther : Impervious coveralls, apron and boots is required to prevent\nskin contact and contamination of personal clothing. A safety\nshower and eye wash should be available in the immediate work\narea.\nSection 9: Physical and Chemical Properties\nColor : Pale yellow\nPhysical state : Liquid\nOdor : Aromatic hydrocarbon odor\nFlash point : > 40 \u2218C\nFlammability limits : Lower: 0.7\nUpper: 5.0\nAuto-ignition temperature : > 210\u00b0C\nSection 10: Stability",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 4,
+          "chunk_index": 0
+        },
+        {
+          "text": "protection. Keep away from heat/sparks/open flames and hot\nsurfaces. No smoking. Keep container tightly closed. Ground/bond\ncontainer and receiving equipment. Use explosion-proof\nelectrical/ventilating/lighting equipment. Use only non-sparking\ntools. Take precautionary measures against static discharges.\nWash thoroughly after handling. Avoid breathing\ndust/fume/gas/mist/vapors/spray. Use only outdoors or in a well-\nventilated area.\nResponse If exposed or concerned: Get medical advice/attention. If on skin\n(or hair): Take off immediately all contaminated clothing. Rinse\nskin with water/shower. ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 0
+        }
+      ],
+      "keyword_chunks": [
+        {
+          "text": "Jordan Petroleum Refinery Company LTD.\nSafety and Environment Department\nMaterial Safety Datasheet : Jet Fuel (A-1)\nNFPA Classification : JPRC PR-04\nFlammability 2\n2\nHealth 1\n1 0 Reactivity 0\nSection 1: Product and Company Identification\nProduct Name : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany:",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 0
+        },
+        {
+          "text": " : Jet Fuel (A-1)\nMSDS Number: JPRC PR-04\nCompany: Jordan Petroleum Refinery Company LTD.\nAmman \u2013 Jordan.\nTEL: + 962 6 4630151 or 4657600\nFAX: + 962 6 4657934 or 4657939\nP.O.BOX: 3396 Amman 11181 \u2013 Jordan\nP.O.BOX: 1079 Amman 11118 \u2013 Jordan\nWebsite: http://www.jopetrol.com.jo\nE-mail: addewan@jopetrol",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 1
+        },
+        {
+          "text": "ttp://www.jopetrol.com.jo\nE-mail: addewan@jopetrol.com.jo\nSection 2: Composition / Information on ingredients\nComponent CAS Number %\nKerosene (Petroleum), sweetened 91770-15-9 70-100\nDistillates (Petroleum), Mildly 8-47-64742 0-30\nHydrotreated kerosene\nSection 3: Hazard Identification\nClassification",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 2
+        },
+        {
+          "text": "ne\nSection 3: Hazard Identification\nClassification:\nPhysical : Health :\nFlammable Liquid. Aspiration Toxicity Category 1\nSkin Irritation Category 2\nSpecific Target Organ Toxicity Single Exposure\nCategory 3 (Nervous System)\nCarcinogen Category 1A (Confirmed Animal\nCarcinogen with Unknown Relevance to",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 3
+        },
+        {
+          "text": "firmed Animal\nCarcinogen with Unknown Relevance to Humans)\nGerm Cell Mutagenicity Category 1B\nPrecautionary statement\nPrevention Obtain special instructions before use. Do not handle until all\nsafety precautions have been read and understood. Wear\nprotective gloves/protective clothing/eye protection",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 4
+        },
+        {
+          "text": "otective gloves/protective clothing/eye protection/face\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 1",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 1,
+          "chunk_index": 5
+        },
+        {
+          "text": "protection. Keep away from heat/sparks/open flames and hot\nsurfaces. No smoking. Keep container tightly closed. Ground/bond\ncontainer and receiving equipment. Use explosion-proof\nelectrical/ventilating/lighting equipment. Use only non-sparking\ntools. Take precautionary measures against static discha",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 0
+        },
+        {
+          "text": " Take precautionary measures against static discharges.\nWash thoroughly after handling. Avoid breathing\ndust/fume/gas/mist/vapors/spray. Use only outdoors or in a well-\nventilated area.\nResponse If exposed or concerned: Get medical advice/attention. If on skin\n(or hair): Take off immediately all con",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 1
+        },
+        {
+          "text": "If on skin\n(or hair): Take off immediately all contaminated clothing. Rinse\nskin with water/shower. In case of fire: Use for extinction. If skin\nirritation or rash occurs: Get medical advice/attention. Take off\ncontaminated clothing and wash before re-use. If inhaled: Remove\nperson to fresh air and ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 2
+        },
+        {
+          "text": "e-use. If inhaled: Remove\nperson to fresh air and keep comfortable for breathing. Call a\ndoctor if you fell unwell. If swallowed: Immediately call a poison\ncenter/doctor.\nStorage Store locked up. Store in a well-ventilated place. Keep container\ntightly closed. Keep cool.\nDisposal Dispose of contents",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 3
+        },
+        {
+          "text": "ly closed. Keep cool.\nDisposal Dispose of contents/container in accordance with local regulations.\nSection 4: First Aid Measures\nEye : Immediately flush eyes with water for several minutes. Get medical attention if\ncontact irritation persists.\nSkin : Remove contaminated clothing and flush skin with ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 4
+        },
+        {
+          "text": " Remove contaminated clothing and flush skin with water for several minutes.\ncontact Wash thoroughly with soap and water. Get medical attention if irritation develops\nor persists. Launder clothing before reuse. Discard contaminated shoes.\nInhalation : Move to fresh air. If breathing is difficult, gi",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 5
+        },
+        {
+          "text": ": Move to fresh air. If breathing is difficult, give oxygen. If not breathing, give\nartificial respiration. Get medical attention.\nIngestion : Do not induce vomiting. Rinse mouth with water. Get immediate medical\nattention.\nMost important symptoms/effects, acute and delayed: May cause eye irritation",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 6
+        },
+        {
+          "text": "fects, acute and delayed: May cause eye irritation. Causes skin\nirritation with redness and drying. Inhalation may cause respiratory irritation and central nervous\nsystem effects. Harmful or fatal if swallowed. Aspiration during swallowing or vomiting may cause lung\ndamage. May cause cancer. May cau",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 7
+        },
+        {
+          "text": "g may cause lung\ndamage. May cause cancer. May cause genetic defects.\nIndication of immediate medical attention and special treatment, if necessary: Immediate medical\nattention is required for ingestion.\nSection 5: Firefighting Measures\nSuitable extinguishing media : Use water fog, alcohol foam, car",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 8
+        },
+        {
+          "text": "nguishing media : Use water fog, alcohol foam, carbon dioxide, or dry chemical.\nDo not use a steady stream of water. Product may float on\nthe surface of water and create a floating fire hazard.\nSpecific hazards arising from the : This product is flammable and forms explosive mixtures with\nchemical a",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 9
+        },
+        {
+          "text": "mable and forms explosive mixtures with\nchemical air. Vapors are heavier than air and will travel along surfaces\nto remote ignition sources and flash back. Closed containers\nmay explode if exposed to extreme heat. Combustion may\nproduce carbon oxides and other products of incomplete\ncombustion.\nIssu",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 10
+        },
+        {
+          "text": " and other products of incomplete\ncombustion.\nIssue date: Jan,2022 Issue : 2\nSafety and Environment Dep/J.B Page 2",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 2,
+          "chunk_index": 11
+        },
+        {
+          "text": "Special protective equipment : Firefighters should wear full emergency equipment and a\nand precautions for fire-fighters NIOSH approved positive pressure self-contained breathing\napparatus. Cool fire exposed container with water. Do not\nallow run-off from firefighting to enter drains or water\ncourse",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 0
+        },
+        {
+          "text": " from firefighting to enter drains or water\ncourses.\nSection 6: Accidental Release Measures\nPersonal precautions, protective : Wear appropriate protective equipment. Eliminate ignitions\nequipment, and emergency sources and ventilate the area with explosion proof\nprocedures equipment. Wash thoroughly",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 1
+        },
+        {
+          "text": "losion proof\nprocedures equipment. Wash thoroughly after handling.\nEnvironmental hazards : Avoid release into the environment. Report spill as required\nby local regulations.\nMethods and materials for : Contain with an inert absorbent and place into a closable\ncontainment and cleaning up container fo",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 2
+        },
+        {
+          "text": " closable\ncontainment and cleaning up container for disposal. Use non-sparking tools and\nequipment. If spill has not ignited, use water spray to\ndisperse the vapors and protect personnel attempting to\nstop leak. Prevent entry in storm sewers and waterways.\nRunoff can cause a fire or explosion hazard",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 3
+        },
+        {
+          "text": "rways.\nRunoff can cause a fire or explosion hazard in sewers.\nSection 7: Handling and storage\nPrecautions for safe handling : Avoid contact with the eyes, skin and clothing. Avoid\nbreathing vapors or mists. Wear protective clothing and\nequipment. Use only with adequate ventilation. Wash\nthoroughly w",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 4
+        },
+        {
+          "text": " only with adequate ventilation. Wash\nthoroughly with soap and water after handling. Keep\ncontainers closed when not in use. Keep product away from\nheat, sparks, flames and all other sources of ignition. Do not\npermit smoking in use or storage areas. Use with non-\nsparking tools and explosion proof ",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 5
+        },
+        {
+          "text": " Use with non-\nsparking tools and explosion proof equipment. Electrically\nbond and ground containers for transfer.\nDo not cut, drill, grind or weld on or near containers, even\nempty containers. Do not reuse containers. Empty\ncontainers retain product residues which can be hazardous.\nFollow all SDS p",
+          "doc_filename": "jet_fuel_a1-2022.json",
+          "page_number": 3,
+          "chunk_index": 6
+        }
+      ]
+    }
+  }
+}

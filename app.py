@@ -563,7 +563,7 @@ def send_message(agent_name):
     """
     Appends the user's message and the AI's response
     to the agent-level chat_history.json.
-    Also spawns a background prompt-analysis job.
+    Also spawns a background prompt-analysis & retrieval job.
     """
     if 'username' not in session:
         return jsonify({"error": "Not authenticated"}), 401
@@ -574,7 +574,8 @@ def send_message(agent_name):
     username = session['username']
 
     # Load or create local chat file for this agent
-    chat_file = os.path.join(DATA_DIR, username, 'AGENTS', agent_name, 'chat_history.json')
+    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+    chat_file = os.path.join(agent_dir, 'chat_history.json')
     if not os.path.exists(chat_file):
         os.makedirs(os.path.dirname(chat_file), exist_ok=True)
         with open(chat_file, 'w') as f:
@@ -583,10 +584,7 @@ def send_message(agent_name):
     with open(chat_file, 'r') as f:
         chat_history = json.load(f)
 
-    # Chat history is expected to be { "conversations": [ {...}, ... ] }
     conversations = chat_history.get("conversations", [])
-
-    # Find existing conversation or create a new one
     conversation = next((c for c in conversations if c["conversation_id"] == conversation_id), None)
     if not conversation:
         conversation = {
@@ -601,55 +599,38 @@ def send_message(agent_name):
         "content": user_message
     })
 
-    # FAKE AI RESPONSE (replace with your real LLM call if desired)
+    # Example: Dummy assistant response
     fake_response = {
         "content": (
-            "**Welcome to the Chat**\n\n"
-            "This is a **test message** with *markdown* formatting.\n\n"
-            "This is a **test message** with *markdown* formatting.\n\n"
-            "- First item\n- Second item\n\n"
-            "For further reading, see [^1]."
+            "This is a **test** assistant response with *markdown*.\n\n"
+            "See [^1]."
         ),
         "citations": [{
             "id": 1,
-            "file": "documentation.txt",
+            "file": "demo.pdf",
             "page": 5,
-            "text": "Detailed reference for further reading."
+            "text": "Sample reference"
         }]
     }
-
-    # Append assistant message
     conversation["messages"].append({
         "role": "assistant",
         "content": fake_response["content"],
         "citations": fake_response["citations"]
     })
 
-    # Save updated chat history
     chat_history["conversations"] = conversations
     with open(chat_file, 'w') as f:
         json.dump(chat_history, f, indent=2)
 
-    # ========================================
-    # LAUNCH PROMPT ANALYSIS IN BACKGROUND
-    # ========================================
+    # Launch prompt analysis + retrieval in background
     api_key = os.environ.get('GEMINI_API_KEY')
-    background_thread = threading.Thread(
+    thread = threading.Thread(
         target=analyze_prompt_background,
-        args=(
-            api_key,
-            DATA_DIR,
-            username,
-            agent_name,
-            conversation_id,
-            user_message
-        )
+        args=(api_key, DATA_DIR, username, agent_name, conversation_id, user_message)
     )
-    background_thread.daemon = True
-    background_thread.start()
-    # ----------------------------------------
+    thread.daemon = True
+    thread.start()
 
-    # Return the assistant's message
     return jsonify({
         "conversation_id": conversation_id,
         "message": fake_response
