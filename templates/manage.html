@@ -210,8 +210,13 @@
             font-style: italic;
         }
     
-        .primary-btn:hover {
+        .primary-btn:hover:not(:disabled) {
             background-color: var(--color-accent-hover);
+        }
+        
+        .primary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
         }
         
         .danger-btn:hover {
@@ -276,7 +281,7 @@
                         <button type="button" id="deleteAgentBtn" class="primary-btn danger-btn" title="Delete Agent">
                             <i class="fas fa-trash"></i>
                         </button>
-                        <button type="submit" class="primary-btn update-btn">Update Agent</button>
+                        <button type="submit" class="primary-btn update-btn">Save</button>
                     </div>
                 </form>
             </div>

@@ -18,15 +18,19 @@
     // Files array to store uploaded files
     let uploadedFiles = [];
 
-    // Original agent name (for tracking name changes)
+    // Original agent data (for tracking changes)
     let originalAgentName = '';
+    let originalAgentPersona = '';
+    let originalFiles = [];
+    
+    // Flag to track if changes have been made
+    let hasChanges = false;
 
     // Processing status monitoring
     let statusInterval = null;
-    let processingComplete = false;
-    let processingSuccessMessage = null;
-    let newFilesUploaded = false;
     let filesCurrentlyProcessing = false; // Flag to track if any files are processing
+    let processingSuccessMessage = null;
+    let justFinishedProcessing = false; // Flag to track if processing just finished
 
     // Allowed file types
     const allowedFileTypes = [
@@ -48,8 +52,44 @@
         setupFileUpload();
         setupFormSubmission();
         setupDeleteButton();
+        setupChangeTracking();
 
-        resetUpdateButtonState('Update Agent'); // Initial button state
+        // Initial button state - set to Save with disabled state until data is loaded
+        updateButton.textContent = 'Save';
+        updateButton.disabled = true;
+    }
+
+    /**
+     * Setup change tracking on form inputs
+     */
+    function setupChangeTracking() {
+        // Track changes on agent name input
+        agentNameInput.addEventListener('input', checkForChanges);
+        
+        // Track changes on agent persona textarea
+        agentPersonaInput.addEventListener('input', checkForChanges);
+    }
+
+    /**
+     * Check if any changes have been made to the agent data
+     */
+    function checkForChanges() {
+        const nameChanged = agentNameInput.value !== originalAgentName;
+        const personaChanged = agentPersonaInput.value !== originalAgentPersona;
+        
+        // Check for new files or deleted files
+        const filesChanged = uploadedFiles.some(file => !file.isExisting) || 
+                            originalFiles.length !== uploadedFiles.length;
+        
+        hasChanges = nameChanged || personaChanged || filesChanged;
+        
+        // If we just finished processing, enable the button regardless of changes
+        if (justFinishedProcessing) {
+            updateButton.disabled = false;
+        } else {
+            // Otherwise, disable only if there are no changes
+            updateButton.disabled = !hasChanges;
+        }
     }
 
     /**
@@ -57,9 +97,15 @@
      * @param {string} text - The text to set on the button
      * @param {boolean} disabled - Whether to disable the button
      */
-    function resetUpdateButtonState(text, disabled = false) {
+    function resetUpdateButtonState(text, disabled = null) {
         updateButton.textContent = text;
-        updateButton.disabled = disabled;
+        
+        // Only update disabled state if explicitly specified, else calculate based on changes
+        if (disabled !== null) {
+            updateButton.disabled = disabled;
+        } else {
+            checkForChanges();
+        }
     }
 
     /**
@@ -86,6 +132,7 @@
     /**
      * Check processing status of files
      */
+
     function checkProcessingStatus() {
         if (!originalAgentName) return;
 
@@ -103,6 +150,7 @@
                     let anyProcessing = false;
 
                     for (const [filename, status] of Object.entries(data.file_status)) {
+                        // Update UI to show current status
                         updateFileStatus(filename, status.status, status.message);
 
                         // Check if any file has an error status
@@ -116,21 +164,70 @@
                         }
                     }
 
-                    filesCurrentlyProcessing = anyProcessing; // Update processing files flag
+                    // Update processing flag
+                    const wasProcessing = filesCurrentlyProcessing;
+                    filesCurrentlyProcessing = anyProcessing;
 
-                    // If we've uploaded new files and none are processing anymore
-                    if (newFilesUploaded && !anyProcessing && data.processing_complete) {
-                        // Only show completion message if not already shown
-                        if (!processingComplete) {
-                            processingComplete = true;
-                            showProcessingCompleteMessage(allFilesSuccessful);
-                        }
-                    } else if (!anyProcessing && newFilesUploaded) {
-                        // If new files were uploaded and processing is complete, but message not shown yet (error case or quick processing)
-                        if (!processingComplete && data.processing_complete) {
-                            processingComplete = true;
-                            showProcessingCompleteMessage(allFilesSuccessful);
-                        }
+                    // If files were processing and now they're done
+                    if (wasProcessing && !anyProcessing && data.processing_complete) {
+                        // Make a direct fetch to get the latest file status
+                        fetch(`/api/agents/${originalAgentName}`)
+                            .then(response => response.json())
+                            .then(agentData => {
+                                // Update all file statuses based on latest data
+                                if (agentData.files && agentData.files.length > 0) {
+                                    agentData.files.forEach(file => {
+                                        // Force update status to 'success' for all processed files
+                                        if (file.processed) {
+                                            updateFileStatus(file.name, 'success', 'Processed');
+                                        }
+                                    });
+                                }
+                                
+                                // Show completion message
+                                showProcessingCompleteMessage(allFilesSuccessful);
+                                
+                                // Set flag that we just finished processing
+                                justFinishedProcessing = true;
+                                
+                                // Update original files to include the newly processed ones
+                                originalFiles = [...uploadedFiles].map(file => {
+                                    if (file instanceof File) {
+                                        return {
+                                            name: file.name,
+                                            size: file.size,
+                                            type: file.type || 'application/pdf',
+                                            isExisting: true,
+                                            processed: true
+                                        };
+                                    }
+                                    return {...file, processed: true};
+                                });
+                                
+                                // Mark all uploaded files as processed and existing
+                                uploadedFiles = uploadedFiles.map(file => {
+                                    if (file instanceof File) {
+                                        return {
+                                            name: file.name,
+                                            size: file.size,
+                                            type: file.type || 'application/pdf',
+                                            isExisting: true,
+                                            processed: true
+                                        };
+                                    }
+                                    return {...file, processed: true};
+                                });
+                                
+                                // Reset button state to enabled with "Save" text
+                                updateButton.textContent = 'Save';
+                                updateButton.disabled = false;
+                                
+                                // Stop monitoring as processing is complete
+                                stopProcessingStatusMonitor();
+                            })
+                            .catch(error => {
+                                console.error('Error fetching updated agent data:', error);
+                            });
                     }
                 }
             })
@@ -148,7 +245,6 @@
             processingSuccessMessage = null; // Reset message
         }
     }
-
 
     /**
      * Show processing complete message
@@ -181,10 +277,11 @@
         if (buttonsRow) {
             buttonsRow.parentNode.insertBefore(processingSuccessMessage, buttonsRow);
         }
-
-        // Update the button text to indicate returning to agents list
-        resetUpdateButtonState('Save & Return to Agents');
-        processingComplete = true; // Mark processing complete
+        
+        // Set a timeout to remove the message after 5 seconds
+        setTimeout(() => {
+            removeProcessingCompleteMessage();
+        }, 5000);
     }
 
     /**
@@ -276,13 +373,18 @@
                 return response.json();
             })
             .then(data => {
+                // Store original values for change tracking
+                originalAgentName = data.name;
+                originalAgentPersona = data.persona || '';
+                
                 // Populate form fields
                 agentNameInput.value = data.name;
-                agentPersonaInput.value = data.persona;
+                agentPersonaInput.value = data.persona || '';
 
                 // Clear file list first
                 fileList.innerHTML = '';
                 uploadedFiles = [];
+                originalFiles = [];
 
                 // Load files
                 if (data.files && data.files.length > 0) {
@@ -292,16 +394,21 @@
                             name: file.name,
                             size: file.size,
                             type: file.type || 'application/pdf',
-                            isExisting: true
+                            isExisting: true,
+                            processed: file.processed || false
                         };
 
                         uploadedFiles.push(fileObj);
+                        originalFiles.push({...fileObj}); // Clone for comparison
                         addFileToUI(fileObj, file.processing_status || 'unknown');
                     });
                 }
 
                 // Start status monitoring after loading agent data and files
                 startProcessingStatusMonitor();
+                
+                // Initialize button state after data is loaded (initially disabled)
+                checkForChanges();
             })
             .catch(error => {
                 console.error('Error loading agent data:', error);
@@ -391,11 +498,16 @@
             const isDuplicate = uploadedFiles.some(f => f.name === file.name);
 
             if (!isDuplicate) {
+                // Mark as unprocessed
+                file.processed = false;
+                
                 uploadedFiles.push(file);
                 addFileToUI(file, 'ready');
                 removeProcessingCompleteMessage(); // New file added, remove complete message
-                processingComplete = false; // Reset processing complete status
-                resetUpdateButtonState('Update Agent'); // Reset button state
+                justFinishedProcessing = false; // Reset processing status
+                
+                // Check for changes after adding files
+                checkForChanges();
             }
         });
 
@@ -486,9 +598,10 @@
                 .then(() => {
                     removeFile(fileName);
                     fileItem.remove();
-                    if (uploadedFiles.length === 0) { // If no files left, reset button to Update Agent
-                        resetUpdateButtonState('Update Agent');
-                        processingComplete = false;
+                    checkForChanges(); // Check for changes after removing file
+                    
+                    if (uploadedFiles.length === 0) { // If no files left
+                        justFinishedProcessing = false;
                         removeProcessingCompleteMessage();
                     }
                 })
@@ -500,9 +613,10 @@
                 // Just remove from local array and UI
                 removeFile(fileName);
                 fileItem.remove();
-                if (uploadedFiles.length === 0) { // If no files left, reset button to Update Agent
-                    resetUpdateButtonState('Update Agent');
-                    processingComplete = false;
+                checkForChanges(); // Check for changes after removing file
+                
+                if (uploadedFiles.length === 0) { // If no files left
+                    justFinishedProcessing = false;
                     removeProcessingCompleteMessage();
                 }
             }
@@ -518,29 +632,43 @@
     }
 
     /**
+     * Check if there are any unprocessed files
+     * @returns {boolean} - Whether there are any unprocessed files
+     */
+    function hasUnprocessedFiles() {
+        return uploadedFiles.some(file => 
+            file instanceof File || // New files are always unprocessed
+            (file.isExisting && !file.processed) // Existing files can be checked
+        );
+    }
+
+    /**
      * Set up the form submission
      */
     function setupFormSubmission() {
         agentManageForm.addEventListener('submit', function(e) {
             e.preventDefault();
 
-            // Get current button text
-            const currentButtonText = updateButton.textContent;
-
-            // If button says "Save & Return to Agents", just redirect
-            if (currentButtonText === 'Save & Return to Agents') {
+            // If there are files in processing state, prevent submission
+            if (filesCurrentlyProcessing) {
+                alert('Please wait for all files to finish processing before saving.');
+                return;
+            }
+            
+            // If no changes and just finished processing some files, go back to agents page
+            if (!hasChanges && justFinishedProcessing) {
+                window.location.href = '/my-agents';
+                return;
+            }
+            
+            // If no changes at all, go back to agents page
+            if (!hasChanges) {
                 window.location.href = '/my-agents';
                 return;
             }
 
-            // If there are files in processing state, prevent submission
-            if (filesCurrentlyProcessing) {
-                alert('Please wait for all files to finish processing before updating the agent.');
-                return;
-            }
-
             // Disable button while processing
-            resetUpdateButtonState('Updating...', true); // Button state during agent update
+            resetUpdateButtonState('Saving...', true); // Button state during agent update
 
             const agentName = agentNameInput.value;
             const agentPersona = agentPersonaInput.value;
@@ -562,6 +690,14 @@
                     throw new Error(data.error);
                 }
 
+                // If we changed the name, update originalAgentName
+                if (agentName !== originalAgentName) {
+                    originalAgentName = agentName;
+                }
+                
+                // Update original persona
+                originalAgentPersona = agentPersona;
+
                 // Filter out only new files (not already on the server)
                 const newFiles = uploadedFiles.filter(file => file instanceof File);
 
@@ -574,12 +710,11 @@
                         updateFileStatus(file.name, 'processing', 'Processing...');
                     });
 
-                    // Flag that we've uploaded new files
-                    newFilesUploaded = true;
-                    filesCurrentlyProcessing = true; // Mark files as processing
+                    // Flag that files are processing
+                    filesCurrentlyProcessing = true;
 
                     // Update button text
-                    resetUpdateButtonState('Processing Files...', true); // Button state during file processing
+                    resetUpdateButtonState('Processing Files...', true);
 
                     return fetch(`/api/agents/${agentName}/upload`, {
                         method: 'POST',
@@ -587,9 +722,58 @@
                     });
                 }
 
-                // No new files, just redirect
-                window.location.href = '/my-agents';
-                return Promise.resolve({ message: 'No new files to upload' });
+                filesCurrentlyProcessing = true;
+                updateButton.textContent = 'Processing Files...';
+                updateButton.disabled = true;  
+
+                // No new files, just update the UI
+                resetUpdateButtonState('Save', true);
+                
+                // Check if we've just finished processing before
+                if (justFinishedProcessing) {
+                    // Redirect back to agents page
+                    window.location.href = '/my-agents';
+                    return Promise.resolve();
+                } else {
+                    // Show a success message
+                    const message = document.createElement('div');
+                    message.className = 'success-message';
+                    message.style.cssText = `
+                        margin-bottom: 1rem;
+                        padding: 0.75rem;
+                        border-radius: 0.25rem;
+                        background-color: rgba(16, 185, 129, 0.1);
+                        border: 1px solid #10b981;
+                        color: #10b981;
+                        font-size: 0.9rem;
+                        text-align: center;
+                    `;
+                    message.innerHTML = `
+                        <i class="fas fa-check-circle" style="margin-right: 0.5rem;"></i>
+                        Agent updated successfully!
+                    `;
+                    
+                    // Insert the message before the buttons row
+                    const buttonsRow = document.querySelector('.buttons-row');
+                    if (buttonsRow) {
+                        buttonsRow.parentNode.insertBefore(message, buttonsRow);
+                    }
+                    
+                    // Remove the message after 3 seconds
+                    setTimeout(() => {
+                        if (message.parentNode) {
+                            message.remove();
+                        }
+                    }, 3000);
+                    
+                    // Reset button state
+                    resetUpdateButtonState('Save', true);
+                    
+                    // Reset hasChanges since we just saved
+                    hasChanges = false;
+                    
+                    return Promise.resolve({ message: 'Agent updated successfully' });
+                }
             })
             .then(response => {
                 if (response instanceof Response) {
@@ -602,7 +786,7 @@
                 alert('There was an error updating your AI Agent: ' + error.message);
 
                 // Re-enable update button
-                resetUpdateButtonState('Update Agent'); // Reset button on error
+                resetUpdateButtonState('Save'); // Reset button on error
                 stopProcessingStatusMonitor(); // Stop status monitor on error
             });
         });

@@ -105,6 +105,63 @@ Return ONLY valid JSON matching this schema:
 }"""
 
 # =============================================================================
+# FILE STATUS MANAGEMENT FUNCTIONS
+# =============================================================================
+def update_file_status(username, agent_name, filename, status, message=None):
+    """Update the status of a file in files.json"""
+    agent_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data', username, 'AGENTS', agent_name)
+    files_json_path = os.path.join(agent_dir, 'files.json')
+    
+    if not os.path.exists(files_json_path):
+        # If files.json doesn't exist, create it
+        files_data = {
+            "files": []
+        }
+    else:
+        # Load existing files.json
+        try:
+            with open(files_json_path, 'r') as f:
+                files_data = json.load(f)
+        except json.JSONDecodeError:
+            # If file is corrupted, create a new one
+            files_data = {
+                "files": []
+            }
+    
+    # Find the file in the list
+    file_found = False
+    for file in files_data['files']:
+        if file['name'] == filename:
+            file['processing_status'] = status
+            if message:
+                file['error_message'] = message
+            else:
+                file['error_message'] = None
+            
+            # If status is 'success', mark as processed
+            if status == 'success':
+                file['processed'] = True
+            
+            file_found = True
+            break
+    
+    if not file_found:
+        # If file not found, add it with the given status
+        logging.warning(f"File {filename} not found in files.json for agent {agent_name}, adding it")
+        files_data['files'].append({
+            "name": filename,
+            "processing_status": status,
+            "processed": status == 'success',
+            "error_message": message
+        })
+    
+    # Save the updated data
+    with open(files_json_path, 'w') as f:
+        json.dump(files_data, f, indent=2)
+    
+    return files_data
+
+# =============================================================================
 # BASIC EXTRACTION FUNCTIONS
 # =============================================================================
 def generate_file_hash(file_path: Path) -> str:
@@ -396,7 +453,10 @@ if HAS_GEMINI:
 def process_document_full(
     pdf_path: Path,
     processed_dir: Path,
-    api_key: str
+    api_key: str,
+    username: str = None,
+    agent_name: str = None,
+    filename: str = None
 ) -> Dict[str, str]:
     """
     Process a PDF document with both basic and advanced extraction.
@@ -420,13 +480,28 @@ def process_document_full(
             result['status'] = 'success'
             result['message'] = f"File {pdf_path.name} already processed"
             result['output_path'] = str(output_path)
+            
+            # Update file status if username and agent_name are provided
+            if username and agent_name and filename:
+                update_file_status(username, agent_name, filename, 'success')
+                
             return result
         
         # Step 1: Basic extraction
         logging.info(f"Starting extraction for {pdf_path.name}")
+        
+        # Update status if username and agent_name are provided
+        if username and agent_name and filename:
+            update_file_status(username, agent_name, filename, 'processing', 'Extracting document content')
+        
         document = extract_document_content(pdf_path)
         if not document:
             result['message'] = f"Failed to extract content from {pdf_path.name}"
+            
+            # Update status if username and agent_name are provided
+            if username and agent_name and filename:
+                update_file_status(username, agent_name, filename, 'error', f"Failed to extract content from {pdf_path.name}")
+                
             return result
         
         # Default fallback metadata in case Gemini fails
@@ -454,6 +529,11 @@ def process_document_full(
         gemini_success = False
         if HAS_GEMINI and api_key:
             logging.info(f"Performing advanced extraction for {pdf_path.name}")
+            
+            # Update status if username and agent_name are provided
+            if username and agent_name and filename:
+                update_file_status(username, agent_name, filename, 'processing', 'Performing advanced metadata extraction')
+                
             try:
                 # Extract text content from all pages
                 full_text = ' '.join(
@@ -496,16 +576,26 @@ def process_document_full(
             result['message'] = f"Successfully processed {pdf_path.name} with basic extraction"
         result['output_path'] = str(output_path)
         
+        # Update file status if username and agent_name are provided
+        if username and agent_name and filename:
+            update_file_status(username, agent_name, filename, 'success', result['message'])
+        
     except Exception as e:
         logging.error(f"Error processing {pdf_path}: {str(e)}")
         result['message'] = str(e)
+        
+        # Update file status if username and agent_name are provided
+        if username and agent_name and filename:
+            update_file_status(username, agent_name, filename, 'error', str(e))
     
     return result
 
 def process_files_batch(
     files: List[Path],
     processed_dir: Path,
-    api_key: str
+    api_key: str,
+    username: str = None,
+    agent_name: str = None
 ) -> Dict[str, Dict[str, str]]:
     """
     Process a batch of PDF files.
@@ -518,7 +608,8 @@ def process_files_batch(
         if file_path.suffix.lower() == '.pdf':
             logging.info(f"Processing {file_path.name}")
             results[file_path.name] = process_document_full(
-                file_path, processed_dir, api_key
+                file_path, processed_dir, api_key, 
+                username=username, agent_name=agent_name, filename=file_path.name
             )
         else:
             logging.warning(f"Skipping non-PDF file: {file_path.name}")
@@ -526,6 +617,10 @@ def process_files_batch(
                 'status': 'skipped',
                 'message': 'Not a PDF file'
             }
+            
+            # Update file status if username and agent_name are provided
+            if username and agent_name:
+                update_file_status(username, agent_name, file_path.name, 'error', 'Not a PDF file')
     
     return results
 
@@ -537,7 +632,6 @@ def process_agent_files(
     agent_name: str,
     agent_dir: str,
     files: List[str],
-    processing_status: Dict[str, Dict[str, str]],
     config_file: str,
     api_key: str = None
 ):
@@ -555,32 +649,18 @@ def process_agent_files(
         
         # Update status for all files to 'processing'
         for filename in files:
-            status_key = f"{username}_{agent_name}_{filename}"
-            processing_status[status_key] = {
-                'status': 'processing',
-                'message': 'Processing document content'
-            }
+            update_file_status(username, agent_name, filename, 'processing', 'Processing document content')
         
         # Process files
         results = process_files_batch(
             file_paths,
             Path(processed_dir),
-            api_key
+            api_key,
+            username=username,
+            agent_name=agent_name
         )
         
-        # Update status for each file
-        for filename, result in results.items():
-            status_key = f"{username}_{agent_name}_{filename}"
-            if result['status'] == 'success':
-                processing_status[status_key] = {
-                    'status': 'success',
-                    'message': 'Processing completed successfully'
-                }
-            else:
-                processing_status[status_key] = {
-                    'status': 'error',
-                    'message': result['message']
-                }
+        # We don't need to update file status here as process_document_full already does it
         
         # Update agent config to indicate processing is complete
         with open(config_file, 'r') as f:
@@ -600,11 +680,7 @@ def process_agent_files(
         
         # Update status for all files to 'error'
         for filename in files:
-            status_key = f"{username}_{agent_name}_{filename}"
-            processing_status[status_key] = {
-                'status': 'error',
-                'message': f"Processing error: {str(e)}"
-            }
+            update_file_status(username, agent_name, filename, 'error', f"Processing error: {str(e)}")
         
         # Update agent config to indicate processing failed
         try:

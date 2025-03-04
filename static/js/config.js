@@ -164,10 +164,6 @@
      * Add a file to the UI list
      * @param {File} file - The file to add to the UI
      */
-    /**
-     * Add a file to the UI list
-     * @param {File} file - The file to add to the UI
-     */
     function addFileToUI(file) {
         const fileItem = document.createElement('div');
         fileItem.className = 'file-item';

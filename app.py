@@ -34,88 +34,109 @@ VALID_USERS = [
     {"username": "test", "password": "test"}
 ]
 
-# Dictionary to track file processing status
-file_processing_status = {}
+# File.json management functions
+def create_files_json(username, agent_name):
+    """Create an initial empty files.json for an agent"""
+    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+    files_json_path = os.path.join(agent_dir, 'files.json')
+    
+    # Create initial empty files.json
+    files_data = {
+        "files": []
+    }
+    
+    with open(files_json_path, 'w') as f:
+        json.dump(files_data, f, indent=2)
+    
+    return files_data
 
-# Initialize file processing status from existing data
-def initialize_file_processing_status():
-    """Initialize file processing status for all existing files across all agents"""
-    if not os.path.exists(DATA_DIR):
-        return
+def get_files_json(username, agent_name):
+    """Get the content of files.json for an agent, create if not exists"""
+    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+    files_json_path = os.path.join(agent_dir, 'files.json')
+    
+    if not os.path.exists(files_json_path):
+        return create_files_json(username, agent_name)
+    
+    try:
+        with open(files_json_path, 'r') as f:
+            return json.load(f)
+    except json.JSONDecodeError:
+        # If file is corrupted, create a new one
+        return create_files_json(username, agent_name)
 
-    for username_dir in os.listdir(DATA_DIR):
-        user_dir = os.path.join(DATA_DIR, username_dir)
-        if not os.path.isdir(user_dir):
-            continue
+def update_file_status(username, agent_name, filename, status, message=None):
+    """Update the status of a file in files.json"""
+    files_data = get_files_json(username, agent_name)
+    
+    # Find the file in the list
+    file_found = False
+    for file in files_data['files']:
+        if file['name'] == filename:
+            file['processing_status'] = status
+            if message:
+                file['error_message'] = message
+            else:
+                file['error_message'] = None
+            
+            # If status is 'success', mark as processed
+            if status == 'success':
+                file['processed'] = True
+            
+            file_found = True
+            break
+    
+    if not file_found:
+        # If file not found, log a warning
+        logging.warning(f"File {filename} not found in files.json for agent {agent_name}")
+    
+    # Save the updated data
+    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+    files_json_path = os.path.join(agent_dir, 'files.json')
+    
+    with open(files_json_path, 'w') as f:
+        json.dump(files_data, f, indent=2)
+    
+    return files_data
 
-        agents_dir = os.path.join(user_dir, 'AGENTS')
-        if not os.path.exists(agents_dir):
-            continue
+def add_file_to_json(username, agent_name, file_info):
+    """Add a file to files.json or update if exists"""
+    files_data = get_files_json(username, agent_name)
+    
+    # Check if file already exists
+    for file in files_data['files']:
+        if file['name'] == file_info['name']:
+            # Update existing file
+            file.update(file_info)
+            break
+    else:
+        # File doesn't exist, add it
+        files_data['files'].append(file_info)
+    
+    # Save the updated data
+    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+    files_json_path = os.path.join(agent_dir, 'files.json')
+    
+    with open(files_json_path, 'w') as f:
+        json.dump(files_data, f, indent=2)
+    
+    return files_data
 
-        for agent_name in os.listdir(agents_dir):
-            agent_dir = os.path.join(agents_dir, agent_name)
-            if not os.path.isdir(agent_dir):
-                continue
-
-            # Check if agent config exists
-            config_file = os.path.join(agent_dir, 'config.json')
-            if not os.path.exists(config_file):
-                continue
-
-            # Load agent config
-            try:
-                with open(config_file, 'r') as f:
-                    config = json.load(f)
-            except:
-                continue
-
-            # Get uploads directory
-            uploads_dir = os.path.join(agent_dir, 'uploads')
-            processed_dir = os.path.join(agent_dir, 'processed')
-
-            if not os.path.exists(uploads_dir):
-                continue
-
-            # Check each file in uploads
-            for filename in os.listdir(uploads_dir):
-                if not os.path.isfile(os.path.join(uploads_dir, filename)):
-                    continue
-
-                # Generate status key
-                status_key = f"{username_dir}_{agent_name}_{filename}"
-
-                # Check if file is processed
-                processed_file = os.path.join(processed_dir, f"{Path(filename).stem}.json")
-                if os.path.exists(processed_file):
-                    # File is successfully processed
-                    file_processing_status[status_key] = {
-                        'status': 'success',
-                        'message': 'Processing completed successfully'
-                    }
-                else:
-                    # Check if agent has processing completed flag
-                    if config.get('processing_complete', False):
-                        if not config.get('files_processed', False):
-                            # Processing completed with errors
-                            file_processing_status[status_key] = {
-                                'status': 'error',
-                                'message': 'Processing failed'
-                            }
-                        else:
-                            # This is a new file waiting to be processed
-                            file_processing_status[status_key] = {
-                                'status': 'pending',
-                                'message': 'Waiting to be processed'
-                            }
-                    else:
-                        # Agent is still processing
-                        file_processing_status[status_key] = {
-                            'status': 'processing',
-                            'message': 'Processing in progress'
-                        }
-
-# Initialize file processing status on startup
-initialize_file_processing_status()
+def remove_file_from_json(username, agent_name, filename):
+    """Remove a file from files.json"""
+    files_data = get_files_json(username, agent_name)
+    
+    # Remove the file from the list
+    files_data['files'] = [file for file in files_data['files'] if file['name'] != filename]
+    
+    # Save the updated data
+    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+    files_json_path = os.path.join(agent_dir, 'files.json')
+    
+    with open(files_json_path, 'w') as f:
+        json.dump(files_data, f, indent=2)
+    
+    return files_data
 
 # Routes
 @app.route('/')
@@ -223,30 +244,36 @@ def get_agent(agent_name):
     with open(config_file, 'r') as f:
         config = json.load(f)
 
-    # Get the list of files
-    uploads_dir = os.path.join(agent_dir, 'uploads')
-    files = []
+    # Get files data from files.json
+    files_data = get_files_json(username, agent_name)
+    
+    # If no files in files.json, check uploads directory
+    if not files_data['files']:
+        uploads_dir = os.path.join(agent_dir, 'uploads')
+        if os.path.exists(uploads_dir):
+            for file_name in os.listdir(uploads_dir):
+                file_path = os.path.join(uploads_dir, file_name)
+                if os.path.isfile(file_path):
+                    # Check if file is processed
+                    processed_file = os.path.join(agent_dir, 'processed', f"{Path(file_name).stem}.json")
+                    processed = os.path.exists(processed_file)
+                    
+                    # Add file to files.json
+                    file_info = {
+                        "name": file_name,
+                        "size": os.path.getsize(file_path),
+                        "type": "application/pdf" if file_name.lower().endswith('.pdf') else "",
+                        "lastModified": os.path.getmtime(file_path),
+                        "processed": processed,
+                        "processing_status": "success" if processed else "pending",
+                        "error_message": None
+                    }
+                    add_file_to_json(username, agent_name, file_info)
+        
+        # Reload files_data after potential updates
+        files_data = get_files_json(username, agent_name)
 
-    if os.path.exists(uploads_dir):
-        for file_name in os.listdir(uploads_dir):
-            file_path = os.path.join(uploads_dir, file_name)
-            if os.path.isfile(file_path):
-                # Check processing status for this file
-                status_key = f"{username}_{agent_name}_{file_name}"
-                processing_status = file_processing_status.get(status_key, {
-                    'status': 'unknown',
-                    'message': 'Status unknown'
-                })
-
-                files.append({
-                    "name": file_name,
-                    "size": os.path.getsize(file_path),
-                    "type": "application/pdf" if file_name.lower().endswith('.pdf') else "",
-                    "lastModified": os.path.getmtime(file_path),
-                    "processing_status": processing_status.get('status', 'unknown') # Return status here
-                })
-
-    config['files'] = files
+    config['files'] = files_data['files']
 
     return jsonify(config)
 
@@ -289,6 +316,9 @@ def create_agent():
 
     with open(os.path.join(agent_dir, 'config.json'), 'w') as f:
         json.dump(config, f)
+
+    # Create files.json
+    create_files_json(username, agent_name)
 
     return jsonify({"message": "Agent created successfully", "agent": config})
 
@@ -342,15 +372,6 @@ def delete_agent(agent_name):
     # Delete agent directory and all contents
     shutil.rmtree(agent_dir)
 
-    # Clean up processing status entries for this agent
-    keys_to_remove = []
-    for key in file_processing_status:
-        if key.startswith(f"{username}_{agent_name}_"):
-            keys_to_remove.append(key)
-
-    for key in keys_to_remove:
-        file_processing_status.pop(key, None)
-
     return jsonify({"message": "Agent deleted successfully"})
 
 @app.route('/api/agents/<agent_name>/upload', methods=['POST'])
@@ -390,12 +411,17 @@ def upload_files(agent_name):
         file_path = os.path.join(uploads_dir, filename)
         file.save(file_path)
 
-        # Initialize processing status
-        status_key = f"{username}_{agent_name}_{filename}"
-        file_processing_status[status_key] = {
-            'status': 'pending',
-            'message': 'File uploaded, awaiting processing'
+        # Add file to files.json
+        file_info = {
+            "name": filename,
+            "size": os.path.getsize(file_path),
+            "type": file.content_type,
+            "lastModified": os.path.getmtime(file_path),
+            "processed": False,
+            "processing_status": "pending",
+            "error_message": None
         }
+        add_file_to_json(username, agent_name, file_info)
 
         uploaded_files.append({
             "name": filename,
@@ -426,7 +452,7 @@ def upload_files(agent_name):
         file_names = [file['name'] for file in uploaded_files]
         processing_thread = threading.Thread(
             target=process_agent_files,
-            args=(username, agent_name, agent_dir, file_names, file_processing_status, config_file, api_key)
+            args=(username, agent_name, agent_dir, file_names, config_file, api_key)
         )
         processing_thread.daemon = True
         processing_thread.start()
@@ -458,12 +484,16 @@ def get_processing_status(agent_name):
     with open(config_file, 'r') as f:
         config = json.load(f)
 
-    # Get status for specific files
+    # Get file status from files.json
+    files_data = get_files_json(username, agent_name)
+    
+    # Convert to the expected format for the frontend
     file_status = {}
-    for key, status in file_processing_status.items():
-        if key.startswith(f"{username}_{agent_name}_"):
-            filename = key.split('_', 2)[2]
-            file_status[filename] = status
+    for file in files_data['files']:
+        file_status[file['name']] = {
+            'status': file['processing_status'],
+            'message': file['error_message'] if 'error_message' in file and file['error_message'] else ''
+        }
 
     return jsonify({
         "agent_name": agent_name,
@@ -491,10 +521,8 @@ def delete_file(agent_name, filename):
     if os.path.exists(processed_path):
         os.remove(processed_path)
 
-    # Remove from status tracking
-    status_key = f"{username}_{agent_name}_{filename}"
-    if status_key in file_processing_status:
-        del file_processing_status[status_key]
+    # Remove from files.json
+    remove_file_from_json(username, agent_name, filename)
 
     return jsonify({"message": "File deleted successfully"})
 
