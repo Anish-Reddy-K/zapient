@@ -1,0 +1,89 @@
+{
+  "conversations": [
+    {
+      "conversation_id": "default",
+      "messages": [
+        {
+          "role": "user",
+          "content": "what are some first aid measures for jet fuel?"
+        },
+        {
+          "role": "assistant",
+          "content": "If exposed to jet fuel, get medical advice/attention [^2]. If it contacts skin or hair, immediately remove all contaminated clothing and rinse skin with water or shower [^2].",
+          "citations": [
+            {
+              "id": 1,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 3,
+              "text": "ontrols / Personal protection Exposure limit for Kerosene (Main component of Jet Fuel) : 200 mg/m3,"
+            },
+            {
+              "id": 2,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 2,
+              "text": "protection. Keep away from heat/sparks/open flames and hot surfaces. No smoking. Keep container tigh"
+            },
+            {
+              "id": 3,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 3,
+              "text": "Special protective equipment : Firefighters should wear full emergency equipment and a and precautio"
+            },
+            {
+              "id": 4,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 2,
+              "text": "on. Section 5: Firefighting Measures Suitable extinguishing media : Use water fog, alcohol foam, car"
+            },
+            {
+              "id": 5,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 4,
+              "text": "Skin Protection : Impervious gloves such as nitrile recommended to prevent skin contact. Eye protect"
+            }
+          ]
+        },
+        {
+          "role": "user",
+          "content": "what are some firefighting measure for jet fuel?"
+        },
+        {
+          "role": "assistant",
+          "content": "Use water fog, alcohol foam, carbon dioxide, or dry chemical to extinguish a jet fuel fire.  Do not use a steady stream of water, as the product may float on the surface and create a floating fire hazard [^1]. Firefighters should wear full emergency equipment and a NIOSH approved positive pressure self-contained breathing apparatus. Cool fire-exposed containers with water, but prevent run-off from entering drains or water courses [^3].",
+          "citations": [
+            {
+              "id": 1,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 2,
+              "text": "on. Section 5: Firefighting Measures Suitable extinguishing media : Use water fog, alcohol foam, car"
+            },
+            {
+              "id": 2,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 3,
+              "text": "ontrols / Personal protection Exposure limit for Kerosene (Main component of Jet Fuel) : 200 mg/m3,"
+            },
+            {
+              "id": 3,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 3,
+              "text": "Special protective equipment : Firefighters should wear full emergency equipment and a and precautio"
+            },
+            {
+              "id": 4,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 1,
+              "text": "Jordan Petroleum Refinery Company LTD. Safety and Environment Department Material Safety Datasheet :"
+            },
+            {
+              "id": 5,
+              "file": "jet_fuel_a1-2022.json",
+              "page": 2,
+              "text": "and other products of incomplete combustion. Issue date: Jan,2022 Issue : 2 Safety and Environment"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
