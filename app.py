@@ -8,6 +8,10 @@ import threading
 import logging
 from pathlib import Path
 from dotenv import load_dotenv
+import uuid
+import re
+import datetime
+import random
 
 # Import the file processor module
 from file_processor import process_agent_files
@@ -282,45 +286,73 @@ def create_agent():
     if 'username' not in session:
         return jsonify({"error": "Not authenticated"}), 401
 
-    data = request.json
-    username = session['username']
+    try:
+        data = request.json
+        if not data:
+            return jsonify({"error": "Invalid JSON data"}), 400
+            
+        username = session['username']
+        agent_name = data.get('name')
+        agent_persona = data.get('persona')
 
-    agent_name = data.get('name')
-    agent_persona = data.get('persona')
+        if not agent_name:
+            return jsonify({"error": "Agent name is required"}), 400
+        
+        # Check if agent name contains invalid characters
+        if not re.match(r'^[a-zA-Z0-9_\- ]+$', agent_name):
+            return jsonify({"error": "Agent name contains invalid characters. Use only letters, numbers, spaces, hyphens and underscores."}), 400
 
-    if not agent_name:
-        return jsonify({"error": "Agent name is required"}), 400
+        # Create agent directory
+        agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+        uploads_dir = os.path.join(agent_dir, 'uploads')
+        processed_dir = os.path.join(agent_dir, 'processed')
 
-    # Create agent directory
-    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
-    uploads_dir = os.path.join(agent_dir, 'uploads')
-    processed_dir = os.path.join(agent_dir, 'processed')
+        if os.path.exists(agent_dir):
+            return jsonify({"error": "Agent with this name already exists"}), 400
 
-    if os.path.exists(agent_dir):
-        return jsonify({"error": "Agent with this name already exists"}), 400
+        # Create directories with error handling
+        try:
+            os.makedirs(agent_dir, exist_ok=True)
+            os.makedirs(uploads_dir, exist_ok=True)
+            os.makedirs(processed_dir, exist_ok=True)
+        except OSError as e:
+            logging.error(f"Error creating directories for agent {agent_name}: {str(e)}")
+            return jsonify({"error": f"Failed to create agent directories: {str(e)}"}), 500
 
-    os.makedirs(agent_dir)
-    os.makedirs(uploads_dir)
-    os.makedirs(processed_dir, exist_ok=True)
+        # Create config file
+        config = {
+            "name": agent_name,
+            "persona": agent_persona if agent_persona else "",
+            "createdAt": datetime.datetime.now().isoformat(),
+            "updatedAt": datetime.datetime.now().isoformat(),
+            "createdBy": username,
+            "files_processed": False,
+            "processing_complete": False
+        }
 
-    # Create config file
-    config = {
-        "name": agent_name,
-        "persona": agent_persona,
-        "createdAt": datetime.datetime.now().isoformat(),
-        "updatedAt": datetime.datetime.now().isoformat(),
-        "createdBy": username,
-        "files_processed": False,
-        "processing_complete": False
-    }
+        try:
+            with open(os.path.join(agent_dir, 'config.json'), 'w') as f:
+                json.dump(config, f)
+        except IOError as e:
+            logging.error(f"Error creating config file for agent {agent_name}: {str(e)}")
+            # Clean up the created directories
+            shutil.rmtree(agent_dir, ignore_errors=True)
+            return jsonify({"error": f"Failed to create agent configuration: {str(e)}"}), 500
 
-    with open(os.path.join(agent_dir, 'config.json'), 'w') as f:
-        json.dump(config, f)
+        # Create files.json
+        try:
+            create_files_json(username, agent_name)
+        except Exception as e:
+            logging.error(f"Error creating files.json for agent {agent_name}: {str(e)}")
+            # Clean up the created directories
+            shutil.rmtree(agent_dir, ignore_errors=True)
+            return jsonify({"error": f"Failed to initialize agent files: {str(e)}"}), 500
 
-    # Create files.json
-    create_files_json(username, agent_name)
-
-    return jsonify({"message": "Agent created successfully", "agent": config})
+        return jsonify({"message": "Agent created successfully", "agent": config})
+    
+    except Exception as e:
+        logging.error(f"Unexpected error creating agent: {str(e)}")
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
 
 @app.route('/api/agents/<agent_name>', methods=['PUT'])
 def update_agent(agent_name):
@@ -546,6 +578,232 @@ def get_current_user():
     return jsonify({
         "username": username
     })
+
+###### CHAT
+
+@app.route('/chat/<agent_name>')
+def chat(agent_name):
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    return render_template('chat.html', agent_name=agent_name)
+
+@app.route('/api/agents/<agent_name>/chat-history', methods=['GET'])
+def get_chat_history(agent_name):
+    if 'username' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+
+    username = session['username']
+    chat_file = os.path.join(DATA_DIR, username, 'AGENTS', agent_name, 'chat_history.json')
+    
+    # Create default chat history if doesn't exist
+    if not os.path.exists(chat_file):
+        default_history = {
+            "conversations": []
+        }
+        os.makedirs(os.path.dirname(chat_file), exist_ok=True)
+        with open(chat_file, 'w') as f:
+            json.dump(default_history, f, indent=2)
+        return jsonify(default_history)
+    
+    try:
+        with open(chat_file, 'r') as f:
+            chat_history = json.load(f)
+            return jsonify(chat_history)
+    except json.JSONDecodeError:
+        # If file is corrupted, create a new one
+        default_history = {
+            "conversations": []
+        }
+        with open(chat_file, 'w') as f:
+            json.dump(default_history, f, indent=2)
+        return jsonify(default_history)
+
+@app.route('/api/agents/<agent_name>/send-message', methods=['POST'])
+def send_message(agent_name):
+    if 'username' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+    
+    try:
+        username = session['username']
+        agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+        chat_file = os.path.join(agent_dir, 'chat_history.json')
+        
+        # Create agent dir if it doesn't exist
+        if not os.path.exists(agent_dir):
+            return jsonify({"error": "Agent not found"}), 404
+        
+        # Process the user message
+        data = request.json
+        if not data:
+            return jsonify({"error": "Invalid JSON data"}), 400
+            
+        user_message = data.get('message', '').strip()
+        
+        if not user_message:
+            return jsonify({"error": "Message cannot be empty"}), 400
+        
+        # Create a conversation ID if starting a new conversation
+        conversation_id = data.get('conversation_id')
+        if not conversation_id:
+            conversation_id = str(uuid.uuid4())
+        
+        # Get existing chat history or create new
+        if os.path.exists(chat_file):
+            try:
+                with open(chat_file, 'r') as f:
+                    chat_history = json.load(f)
+            except json.JSONDecodeError:
+                chat_history = {"conversations": []}
+        else:
+            chat_history = {"conversations": []}
+        
+        # Find the conversation or create new one
+        conversation = None
+        for conv in chat_history["conversations"]:
+            if conv["id"] == conversation_id:
+                conversation = conv
+                break
+        
+        if not conversation:
+            conversation = {
+                "id": conversation_id,
+                "title": f"Conversation {len(chat_history['conversations']) + 1}",
+                "created_at": datetime.now().isoformat(),
+                "updated_at": datetime.now().isoformat(),
+                "messages": []
+            }
+            chat_history["conversations"].append(conversation)
+        else:
+            conversation["updated_at"] = datetime.now().isoformat()
+        
+        # Add user message
+        user_message_obj = {
+            "id": str(uuid.uuid4()),
+            "role": "user",
+            "content": user_message,
+            "timestamp": datetime.now().isoformat()
+        }
+        conversation["messages"].append(user_message_obj)
+        
+        # Generate fake AI response with citations for now
+        # This will be replaced with actual LLM call later
+        ai_response = generate_ai_response(username, agent_name, user_message)
+        
+        ai_message_obj = {
+            "id": str(uuid.uuid4()),
+            "role": "assistant",
+            "content": ai_response["message"],
+            "citations": ai_response["citations"],
+            "timestamp": datetime.now().isoformat()
+        }
+        conversation["messages"].append(ai_message_obj)
+        
+        # Save updated chat history
+        try:
+            os.makedirs(os.path.dirname(chat_file), exist_ok=True)
+            with open(chat_file, 'w') as f:
+                json.dump(chat_history, f, indent=2)
+        except Exception as e:
+            logging.error(f"Error saving chat history: {str(e)}")
+            return jsonify({"error": f"Failed to save chat history: {str(e)}"}), 500
+        
+        return jsonify({
+            "conversation_id": conversation_id,
+            "message": ai_message_obj
+        })
+    
+    except Exception as e:
+        logging.error(f"Unexpected error in send_message: {str(e)}")
+        return jsonify({"error": f"An unexpected error occurred: {str(e)}"}), 500
+
+@app.route('/api/agents/<agent_name>/clear-chat', methods=['POST'])
+def clear_chat_history(agent_name):
+    if 'username' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+
+    username = session['username']
+    chat_file = os.path.join(DATA_DIR, username, 'AGENTS', agent_name, 'chat_history.json')
+    
+    try:
+        default_history = {"conversations": []}
+        with open(chat_file, 'w') as f:
+            json.dump(default_history, f, indent=2)
+        return jsonify({"message": "Chat history cleared"})
+    except Exception as e:
+        logging.error(f"Error clearing chat history: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+    
+def generate_ai_response(username, agent_name, user_message):
+    """Generate a fake AI response with citations for now"""
+    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+    uploads_dir = os.path.join(agent_dir, 'uploads')
+    
+    # Get list of uploaded files
+    files = []
+    if os.path.exists(uploads_dir):
+        files = [f for f in os.listdir(uploads_dir) if f.lower().endswith('.pdf')]
+    
+    # Default response if no files
+    if not files:
+        return {
+            "message": "I don't have any documents to reference yet. Please upload some PDF files to help me provide better answers.",
+            "citations": []
+        }
+    
+    # Generate a response based on the query
+    # Later this will be replaced with actual LLM integration
+    
+    # Sample responses with citation patterns for different query types
+    responses = [
+        {
+            "message": f"Based on the documentation I've analyzed, I can provide some information on that topic. According to [1], the recommended approach is to follow standard procedures. Additionally, [2] mentions specific guidelines that should be considered.",
+            "keywords": ["information", "documentation", "recommend", "guideline"]
+        },
+        {
+            "message": f"The safety protocols detailed in [1] require regular inspections. This is further emphasized in [2] where compliance requirements are explained in detail.",
+            "keywords": ["safety", "protocol", "comply", "requirement", "regulation"]
+        },
+        {
+            "message": f"Looking at the technical specifications in [1], I can see that the system needs to operate within specific parameters. The maintenance schedule outlined in [2] suggests regular checks to ensure optimal performance.",
+            "keywords": ["technical", "specification", "maintain", "performance", "system"]
+        }
+    ]
+    
+    # Select response based on keywords in user message
+    user_message_lower = user_message.lower()
+    best_response = responses[0]  # Default to first response
+    best_match_count = 0
+    
+    for response in responses:
+        match_count = sum(1 for keyword in response["keywords"] if keyword in user_message_lower)
+        if match_count > best_match_count:
+            best_match_count = match_count
+            best_response = response
+    
+    # Generate random citations
+    num_citations = min(len(files), 2)  # Up to 2 citations
+    citations = []
+    
+    for i in range(num_citations):
+        file = files[i % len(files)]
+        page = random.randint(1, 20)  # Random page number
+        citations.append({
+            "id": i + 1,
+            "file": file,
+            "page": page,
+            "text": f"Excerpt from {file}, page {page}"
+        })
+    
+    # Replace citation markers with actual citation numbers
+    message = best_response["message"]
+    for i, citation in enumerate(citations):
+        message = message.replace(f"[{i+1}]", f"[^{citation['id']}]")
+    
+    return {
+        "message": message,
+        "citations": citations
+    }
+
 
 if __name__ == '__main__':
     app.run(debug=True)

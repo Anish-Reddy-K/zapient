@@ -115,8 +115,8 @@
             // Add event listeners to buttons
             const interactBtn = agentTile.querySelector('.interact-btn');
             interactBtn.addEventListener('click', function() {
-                // In a real app, this would navigate to an interaction page
-                alert(`Interaction functionality for "${agent.name}" is coming soon!`);
+                // Navigate to the chat interface
+                window.location.href = `/chat/${encodeURIComponent(agent.name)}`;
             });
             
             const manageBtn = agentTile.querySelector('.manage-btn');

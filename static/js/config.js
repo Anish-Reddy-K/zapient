@@ -444,15 +444,23 @@
                     persona: agentPersona
                 })
             })
-            .then(response => response.json())
+            .then(response => {
+                // Check if the response is JSON
+                const contentType = response.headers.get('content-type');
+                if (!contentType || !contentType.includes('application/json')) {
+                    // Not a JSON response - likely a server error
+                    throw new Error('Server returned an invalid response. Please try again or use a different agent name.');
+                }
+                return response.json();
+            })
             .then(data => {
                 if (data.error) {
                     throw new Error(data.error);
                 }
-
+            
                 // Start monitoring this agent's status
                 startProcessingStatusMonitor(agentName);
-
+            
                 // If there are files to upload, upload them
                 if (uploadedFiles.length > 0) {
                     const formData = new FormData();
@@ -461,7 +469,7 @@
                         // Update status to processing immediately in the UI
                         updateFileStatus(file.name, 'processing', 'Processing...');
                     });
-
+            
                     return fetch(`/api/agents/${agentName}/upload`, {
                         method: 'POST',
                         body: formData
@@ -476,6 +484,12 @@
             })
             .then(response => {
                 if (response instanceof Response) {
+                    // Check if the response is JSON
+                    const contentType = response.headers.get('content-type');
+                    if (!contentType || !contentType.includes('application/json')) {
+                        // Not a JSON response - likely a server error
+                        throw new Error('Server returned an invalid response while uploading files.');
+                    }
                     return response.json();
                 }
                 return response;
@@ -483,7 +497,7 @@
             .catch(error => {
                 console.error('Error creating agent:', error);
                 alert('There was an error creating your AI Agent: ' + error.message);
-
+            
                 // Re-enable submit button
                 resetSubmitButtonState('Create Agent'); // Reset button on error
                 stopProcessingStatusMonitor(); // Stop status monitor on error
