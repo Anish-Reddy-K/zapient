@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage AI Agent - AI Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/status-indicators.css') }}">
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .config-content {
+            width:700px;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: var(--color-neutral);
+            border-radius: var(--border-radius-md);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .config-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+        
+        .config-subtitle {
+            font-size: 1rem;
+            color: #6b7280;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            color: var(--color-accent);
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+        
+        .back-link i {
+            margin-right: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label { 
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: var(--font-weight-medium);
+        }
+        
+        .form-input,
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--color-supporting);
+            border-radius: var(--border-radius-sm);
+            font-size: 0.9rem;
+            background-color: var(--color-secondary);
+        }
+        
+        .form-input:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-accent);
+            box-shadow: 0 0 0 2px rgba(10, 133, 209, 0.2);
+        }
+        
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        .dropzone {
+            border: 2px dashed var(--color-supporting);
+            border-radius: var(--border-radius-md);
+            padding: 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color var(--transition-fast);
+            margin-bottom: 1.5rem;
+        }
+        
+        .dropzone:hover {
+            border-color: var(--color-accent);
+        }
+        
+        .dropzone-icon {
+            font-size: 2rem;
+            color: #6b7280;
+            margin-bottom: 1rem;
+        }
+        
+        .dropzone-text {
+            color: #6b7280;
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-list {
+            margin-top: 1rem;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            background-color: #f9fafb;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--border-radius-sm);
+            margin-bottom: 0.5rem;
+        }
+        
+        .file-icon {
+            color: var(--color-accent);
+            margin-right: 0.5rem;
+        }
+        
+        .file-name {
+            flex: 1;
+            font-size: 0.85rem;
+            color: var(--color-primary);
+        }
+        
+        .file-remove {
+            color: #6b7280;
+            cursor: pointer;
+            transition: color var(--transition-fast);
+        }
+        
+        .file-remove:hover {
+            color: var(--color-error);
+        }
+        
+        .buttons-row {
+            display: flex;
+            flex-direction: row;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+        
+        .secondary-btn {
+            display: flex;
+            width: 100%;
+            align-items: center;
+            justify-content: center;
+            background-color: #f3f4f6;
+            color: #6b7280;
+            border: 1px solid #e5e7eb;
+            border-radius: var(--border-radius-sm);
+            padding: 0.75rem 1.25rem;
+            font-size: 0.9rem;
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        
+        .secondary-btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .secondary-btn:hover:not(:disabled) {
+            background-color: #e5e7eb;
+        }
+        
+        .secondary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .primary-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--color-accent);
+            color: white;
+            border: none;
+            border-radius: var(--border-radius-sm);
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: var(--font-weight-medium);
+            cursor: pointer;
+            transition: background-color var(--transition-fast);
+            height: 40px;
+        }
+        
+        .update-btn {
+            flex: 1;
+        }
+        
+        .danger-btn {
+            background-color: #e53e3e;
+            width: 40px;
+            min-width: 40px;
+            height: 40px;
+            padding: 0;
+            font-size: 1rem;
+        }
+        
+        .dropzone-subtext {
+            color: #6b7280;
+            font-size: 0.8rem;
+            font-style: italic;
+        }
+    
+        .primary-btn:hover:not(:disabled) {
+            background-color: var(--color-accent-hover);
+        }
+        
+        .primary-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .danger-btn:hover {
+            background-color: #c53030;
+        }
+        
+        .badge {
+            display: inline-block;
+            background-color: #f3f4f6;
+            color: #6b7280;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body class="dashboard-body">
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <div id="sidebar-container"></div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Main content header -->
+            <div id="header-container"></div>
+
+            <!-- Manage Content -->
+            <div class="config-content">
+                <a href="{{ url_for('my_agents') }}" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to My Agents
+                </a>
+                <h1 class="config-title">Manage Your AI Agent</h1>
+                <p class="config-subtitle">Update your AI agent settings and knowledge sources</p>
+                
+                <form id="agentManageForm">
+                    <div class="form-group">
+                        <label for="agentName" class="form-label">Agent Name</label>
+                        <input type="text" id="agentName" name="agentName" class="form-input" placeholder="e.g., AI Maintenance Buddy" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="agentPersona" class="form-label">Agent Persona</label>
+                        <textarea id="agentPersona" name="agentPersona" class="form-textarea" placeholder="Describe the roles and responsibilities of this AI Agent" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Upload Files</label>
+                        <div id="fileDropzone" class="dropzone">
+                            <input type="file" id="fileInput" multiple style="display: none;">
+                            <div class="dropzone-icon">
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                            </div>
+                            <p class="dropzone-text">Drag and drop files here or click to browse</p>
+                            <p class="dropzone-subtext">Supported file types: .pdf</p>
+                        </div>                        
+                        
+                        <div id="fileList" class="file-list"></div>
+                    </div>
+                    
+                    <div class="buttons-row">
+                        <button type="button" id="deleteAgentBtn" class="primary-btn danger-btn" title="Delete Agent">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button type="submit" class="primary-btn update-btn">Save</button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/manage.js') }}"></script>
+</body>
+</html>

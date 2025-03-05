@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard - AI Assistant</title>
-    <link rel="stylesheet" href="../assets/css/reset.css">
-    <link rel="stylesheet" href="../assets/css/variables.css">
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
@@ -24,12 +24,12 @@
             <!-- Central content -->
             <div class="central-content">
                 <div class="hero-section">
-                    <img src="../assets/images/logo_gray.png" alt="Logo" class="hero-logo">
+                    <img src="{{ url_for('static', filename='images/logo_gray.png') }}" alt="Logo" class="hero-logo">
                     <h1 class="hero-title">Build Your AI Team for Smarter Operations</h1>
                     <p class="hero-subtitle">Create specialized AI Agents to supercharge your Frontline Operations</p>
                 </div>
 
-                <a href="config.html" class="create-agent-card">
+                <a href="{{ url_for('config') }}" class="create-agent-card">
                     <div class="create-card-content">
                         <div class="card-icon">
                             <div class="icon-box">
@@ -48,7 +48,7 @@
                     <h3 class="templates-title">Or choose from these templates:</h3>
                     
                     <div class="templates-grid">
-                        <a href="config.html" class="template-card">
+                        <a href="{{ url_for('config') }}?template=maintenance&name=AI%20Maintenance%20Buddy&persona=This%20AI%20Agent%20is%20designed%20to%20diagnose%20issues%2C%20recommend%20troubleshooting%20actions%2C%20and%20automate%20maintenance%20logging.%20It%20specializes%20in%20equipment%20diagnostics%20and%20repair%20procedures." class="template-card">
                             <div class="template-icon">
                                 <i class="fas fa-wrench"></i>
                             </div>
@@ -58,7 +58,7 @@
                             </div>
                         </a>
                         
-                        <a href="config.html" class="template-card">
+                        <a href="{{ url_for('config') }}?template=safety&name=AI%20Safety%20Guardian&persona=This%20AI%20Agent%20focuses%20on%20safety%20procedures%2C%20automating%20safety%20inspections%2C%20and%20assisting%20with%20hazard%20detection.%20It%20provides%20guidance%20on%20safety%20protocols%20and%20regulatory%20compliance." class="template-card">
                             <div class="template-icon shield-icon">
                                 <i class="fas fa-shield-alt"></i>
                             </div>
@@ -68,7 +68,7 @@
                             </div>
                         </a>
                         
-                        <a href="config.html" class="template-card">
+                        <a href="{{ url_for('config') }}?template=reliability&name=AI%20Reliability%20Engineer&persona=This%20AI%20Agent%20specializes%20in%20predicting%20equipment%20failures%2C%20recommending%20reliability%20improvements%2C%20and%20managing%20predictive%20maintenance%20workflows.%20It%20analyzes%20failure%20patterns%20to%20improve%20asset%20reliability." class="template-card">
                             <div class="template-icon">
                                 <i class="fas fa-chart-line"></i>
                             </div>
@@ -78,7 +78,7 @@
                             </div>
                         </a>
                         
-                        <a href="config.html" class="template-card">
+                        <a href="{{ url_for('config') }}?template=operations&name=AI%20Operations%20Assistant&persona=This%20AI%20Agent%20assists%20operators%20with%20real-time%20process%20monitoring%2C%20detecting%20abnormal%20conditions%2C%20ensuring%20SOP%20adherence%2C%20and%20initiating%20work%20orders.%20It%20provides%20guidance%20on%20operational%20procedures%20and%20best%20practices." class="template-card">
                             <div class="template-icon">
                                 <i class="fas fa-user-cog"></i>
                             </div>
@@ -94,7 +94,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/components.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
 </body>
 </html>

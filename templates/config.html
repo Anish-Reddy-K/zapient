@@ -4,15 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configure AI Agent - AI Assistant</title>
-    <link rel="stylesheet" href="../assets/css/reset.css">
-    <link rel="stylesheet" href="../assets/css/variables.css">
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/status-indicators.css') }}">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         .config-content {
-            max-width: 1100px;
+            width: 700px;
             margin: 0 auto;
             padding: 2rem;
             background-color: var(--color-neutral);
@@ -22,7 +23,7 @@
         
         .config-title {
             font-size: 1.5rem;
-            font-weight: var(--font-weight-bold);
+            font-weight: 500;
             margin-bottom: 0.5rem;
             text-align: center;
         }
@@ -71,6 +72,12 @@
             outline: none;
             border-color: var(--color-accent);
             box-shadow: 0 0 0 2px rgba(10, 133, 209, 0.2);
+        }
+
+        .dropzone-subtext {
+            color: #6b7280;
+            font-size: 0.8rem;
+            font-style: italic;
         }
         
         .form-textarea {
@@ -164,10 +171,6 @@
             margin-right: 0.5rem;
         }
         
-        .secondary-btn:hover:not(:disabled) {
-            background-color: #e5e7eb;
-        }
-        
         .secondary-btn:disabled {
             opacity: 0.6;
             cursor: not-allowed;
@@ -217,7 +220,7 @@
 
             <!-- Config Content -->
             <div class="config-content">
-                <a href="dashboard.html" class="back-link">
+                <a href="{{ url_for('dashboard') }}" class="back-link">
                     <i class="fas fa-arrow-left"></i> Back to Dashboard
                 </a>
                 <h1 class="config-title">Configure Your AI Agent</h1>
@@ -239,9 +242,10 @@
                         <div id="fileDropzone" class="dropzone">
                             <input type="file" id="fileInput" multiple style="display: none;">
                             <div class="dropzone-icon">
-                                <i class="fas fa-cloud-upload-alt"></i>
+                                <i class="fa-solid fa-arrow-up-from-bracket"></i>
                             </div>
                             <p class="dropzone-text">Drag and drop files here or click to browse</p>
+                            <p class="dropzone-subtext">Supported file types: .pdf</p>
                         </div>
                         
                         <div id="fileList" class="file-list"></div>
@@ -261,8 +265,21 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/config.js"></script>
-    <script src="../assets/js/components.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+    
+    {% if agent_name %}
+    <script>
+        // If redirected back after creating an agent, start monitoring status
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                if (window.startProcessingStatusMonitor) {
+                    window.startProcessingStatusMonitor("{{ agent_name }}");
+                }
+            }, 500);
+        });
+    </script>
+    {% endif %}
 </body>
 </html>

@@ -4,10 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My AI Agents - AI Assistant</title>
-    <link rel="stylesheet" href="../assets/css/reset.css">
-    <link rel="stylesheet" href="../assets/css/variables.css">
-    <link rel="stylesheet" href="../assets/css/styles.css">
-    <link rel="stylesheet" href="../assets/css/dashboard.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/reset.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/variables.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/status-indicators.css') }}">
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -151,12 +152,12 @@
         .create-icon {
             width: 60px;
             height: 60px;
-            background-color: #e6f0fd;
+            background-color: rgba(10, 133, 209, 0.1);
             border-radius: 9px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #3182ed;
+            color: var(--color-accent);
             font-size: 1.6rem;
             margin-bottom: 1rem;
         }
@@ -222,8 +223,8 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../assets/js/app.js"></script>
-    <script src="../assets/js/components.js"></script>
-    <script src="../assets/js/my-agents.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/components.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/my-agents.js') }}"></script>
 </body>
 </html>
