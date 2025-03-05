@@ -15,9 +15,9 @@ from sentence_transformers import SentenceTransformer, util
 # Configuration
 #########################
 
-# You can customize these defaults as needed:
-LARGE_CHUNK_SIZE = 600     # approximate # of characters for "large" chunks
-SMALL_CHUNK_SIZE = 300     # approximate # of characters for "small" chunks
+# Updated per your request:
+LARGE_CHUNK_SIZE = 3000    # approximate # of characters for "large" chunks
+SMALL_CHUNK_SIZE = 500     # approximate # of characters for "small" chunks
 CHUNK_OVERLAP = 50         # overlap in characters between consecutive chunks
 TOP_K_SEMANTIC = 10        # # of chunks to retrieve for semantic search
 TOP_K_KEYWORD = 25         # # of chunks to retrieve for keyword-based search
@@ -113,7 +113,6 @@ class RetrievalEngine:
     def _split_text_into_chunks(self, text: str, chunk_size: int, overlap: int) -> List[str]:
         """
         Simple character-based chunking with overlap. 
-        For more advanced usage, you might do token-based chunking or etc.
         """
         chunks = []
         start = 0
@@ -136,7 +135,6 @@ class RetrievalEngine:
         top_results = scores.topk(k=min(top_k, len(scores)), largest=True)
 
         top_indices = top_results[1].cpu().numpy().tolist()
-        # top_scores = top_results[0].cpu().numpy().tolist()  # If you want the actual scores
         result = []
         for idx in top_indices:
             result.append(self.large_chunks[idx])
@@ -151,7 +149,6 @@ class RetrievalEngine:
             return []
 
         query_lower = query.lower()
-        # Just split by non-alphanumeric to get "words"
         keywords = re.split(r'\W+', query_lower)
         keywords = [k for k in keywords if k]  # remove empty entries
 
@@ -164,9 +161,7 @@ class RetrievalEngine:
                     score += 1
             chunk_scores.append((score, i))
 
-        # sort descending by score
         chunk_scores.sort(key=lambda x: x[0], reverse=True)
-
         top_hits = chunk_scores[: min(top_k, len(chunk_scores))]
         result = []
         for (score, idx) in top_hits:
@@ -185,16 +180,7 @@ def save_retrieval_results(
     keyword_chunks: List[ChunkData]
 ):
     """
-    Saves retrieval results to retrieval_results.json under the agent's folder,
-    in a structure like:
-    {
-      "conversation_id": {
-        "some user query": {
-          "semantic_chunks": [...],
-          "keyword_chunks": [...]
-        }
-      }
-    }
+    Saves retrieval results to retrieval_results.json under the agent's folder.
     """
     agent_dir = os.path.join(data_dir, username, 'AGENTS', agent_name)
     retrieval_file = os.path.join(agent_dir, 'retrieval_results.json')
@@ -213,7 +199,6 @@ def save_retrieval_results(
     if conversation_id not in retrieval_data:
         retrieval_data[conversation_id] = {}
 
-    # Convert chunk objects to dict for safe JSON
     def chunk_to_dict(ch: ChunkData) -> dict:
         return {
             "text": ch.text,

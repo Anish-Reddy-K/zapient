@@ -137,31 +137,30 @@
 
 /* Citation styles */
 .citation-marker {
-    font-size: 0.8em;
+    /* Make it look like a superscript hyperlink */
     vertical-align: super;
-    color: var(--color-accent);
+    color: #2680eb;
+    text-decoration: underline;
     cursor: pointer;
     font-weight: bold;
-    padding: 0 2px;
-    text-decoration: none;
+    margin-left: 2px;
 }
-
-/* Removed: .user-message .citation-marker { color: white; } */
 
 /* Citation tooltip */
 .citation-tooltip {
     position: fixed;
     z-index: 1000;
     display: none;
-    max-width: 250px; /* Smaller width */
+    max-width: 250px;
     box-shadow: var(--shadow-lg);
     border-radius: var(--border-radius-md);
     overflow: hidden;
+    background-color: white;
+    border: 1px solid var(--color-supporting);
 }
 
 .citation-content {
     background-color: white;
-    border: 1px solid var(--color-supporting);
 }
 
 .citation-header {
@@ -188,7 +187,7 @@
 }
 
 .citation-body {
-    padding: 0.75rem; /* make it fairly small */
+    padding: 0.75rem;
     color: var(--color-primary);
     font-size: 0.9rem;
 }

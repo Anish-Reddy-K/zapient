@@ -22,7 +22,7 @@
      */
     function initChat() {
         setupEventListeners();
-        loadChatHistory();    // UNCOMMENTED to load existing conversation
+        loadChatHistory();
         adjustTextareaHeight();
     }
     
@@ -85,7 +85,6 @@
         // Auto-resize textarea as the user types
         messageInput.addEventListener('input', function() {
             adjustTextareaHeight();
-            // Enable/disable send button based on input
             sendButton.disabled = messageInput.value.trim() === '' || isWaitingForResponse;
         });
         
@@ -175,12 +174,12 @@
                 isWaitingForResponse = false;
                 sendButton.disabled = messageInput.value.trim() === '';
                 scrollToBottom();
-            }, 500);  // Smaller artificial delay
+            }, 500);  // optional small delay
         })
         .catch(error => {
             console.error('Error sending message:', error);
             removeLoadingIndicator();
-            appendErrorMessage();  // Provide fallback
+            appendErrorMessage();
             isWaitingForResponse = false;
             sendButton.disabled = messageInput.value.trim() === '';
         });
@@ -224,10 +223,13 @@
     function processMessageContent(content, messageCitations) {
         let processedContent = content;
         if (messageCitations && messageCitations.length > 0) {
+            // For each citation, replace [^n] with a sup-tag
             messageCitations.forEach(citation => {
-                const citationMarker = `[^${citation.id}]`;
-                const htmlMarker = `<a href="#" class="citation-marker" data-citation-id="${citation.id}">[${citation.id}]</a>`;
-                processedContent = processedContent.replace(new RegExp(escapeRegExp(citationMarker), 'g'), htmlMarker);
+                const citationMarker = `\$begin:math:display$\\\\^${citation.id}\\$end:math:display$`; 
+                const markerRegex = new RegExp(citationMarker, 'g');
+                // We'll render it as a <sup class="citation-marker">^n</sup>
+                const htmlMarker = `<sup class="citation-marker" data-citation-id="${citation.id}">^${citation.id}</sup>`;
+                processedContent = processedContent.replace(markerRegex, htmlMarker);
             });
         }
         
@@ -341,13 +343,6 @@
         return div.innerHTML;
     }
     
-    /**
-     * Utility: escape string for RegExp
-     */
-    function escapeRegExp(string) {
-        return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    }
-
     /**
      * Clear chat
      */

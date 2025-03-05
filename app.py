@@ -12,16 +12,13 @@ from pathlib import Path
 from dotenv import load_dotenv
 import uuid
 import re
-import random
 
 # Import the file processor module
 from file_processor import process_agent_files
 
-# NEW: We'll import prompt_analyzer if we want to reuse its Gemini logic
-from prompt_analyzer import analyze_prompt_with_gemini
-
-# NEW: We'll import our retrieval engine directly for synchronous retrieval
-from retrieval_engine import RetrievalEngine
+# Import our prompt analyzer and retrieval logic
+from prompt_analyzer import analyze_prompt_with_gemini, perform_retrieval_for_analysis
+from retrieval_engine import save_retrieval_results
 
 # Try to import Gemini for final LLM calls
 try:
@@ -544,7 +541,7 @@ def chat(agent_name):
 def get_chat_history(agent_name):
     """
     Returns the JSON object containing 'conversations': [...],
-    each with a conversation_id and a messages array.
+    each with a conversation_id and a messages array, plus optional 'analysis' array if present.
     """
     if 'username' not in session:
         return jsonify({"error": "Not authenticated"}), 401
@@ -568,12 +565,41 @@ def get_chat_history(agent_name):
             json.dump(default_history, f, indent=2)
         return jsonify(default_history)
 
+@app.route('/api/agents/<agent_name>/clear-chat', methods=['POST'])
+def clear_chat_history(agent_name):
+    """
+    Overwrites the agent's chat_history.json with an empty 'conversations' list.
+    """
+    if 'username' not in session:
+        return jsonify({"error": "Not authenticated"}), 401
+
+    username = session['username']
+    chat_file = os.path.join(DATA_DIR, username, 'AGENTS', agent_name, 'chat_history.json')
+
+    try:
+        default_history = {"conversations": []}
+        os.makedirs(os.path.dirname(chat_file), exist_ok=True)
+        with open(chat_file, 'w') as f:
+            json.dump(default_history, f, indent=2)
+        return jsonify({"message": "Chat history cleared"})
+    except Exception as e:
+        logging.error(f"Error clearing chat history: {str(e)}")
+        return jsonify({"error": str(e)}), 500
+
+########################
+# NEW: Send Message Flow
+########################
+
 @app.route('/api/agents/<agent_name>/send-message', methods=['POST'])
 def send_message(agent_name):
     """
-    Handles the user message, does prompt analysis + retrieval,
-    calls the LLM for a final answer grounded in the chunks,
-    then returns + saves everything to chat_history.json.
+    Handles the user message:
+      1) Append user message to chat_history
+      2) Analyze prompt (splitting, keywords) => store analysis in chat_history
+      3) Perform retrieval => store in retrieval_results.json
+      4) Build final answer with citations from retrieval_results
+      5) Append answer to chat_history
+      6) Return answer + citations
     """
     if 'username' not in session:
         return jsonify({"error": "Not authenticated"}), 401
@@ -606,29 +632,54 @@ def send_message(agent_name):
     # 2) Append user message to conversation
     user_msg_obj = {
         "role": "user",
-        "content": user_message
+        "content": user_message,
+        "timestamp": datetime.datetime.now().isoformat()
     }
     conversation["messages"].append(user_msg_obj)
 
-    # 3) Now generate the final AI answer with retrieval
+    # 3) Analyze prompt (Gemini or fallback)
     api_key = os.environ.get('GEMINI_API_KEY')
+    analysis_result = analyze_prompt_with_gemini(api_key or "", user_message)
 
-    final_answer, citations = generate_answer_with_retrieval(
-        api_key=api_key,
-        user_query=user_message,
+    # Store analysis in conversation["analysis"]
+    if "analysis" not in conversation:
+        conversation["analysis"] = []
+    conversation["analysis"].append(analysis_result)
+
+    # Save chat_history so far
+    chat_history["conversations"] = conversations
+    with open(chat_file, 'w') as f:
+        json.dump(chat_history, f, indent=2)
+
+    # 4) Perform retrieval with sub-queries and original query
+    perform_retrieval_for_analysis(
+        data_dir=DATA_DIR,
         username=username,
-        agent_name=agent_name
+        agent_name=agent_name,
+        conversation_id=conversation_id,
+        analysis_result=analysis_result
     )
 
-    # 4) Append AI's answer to conversation
+    # 5) Build final answer using the retrieval results
+    final_answer, final_citations = build_final_answer_with_citations(
+        api_key=api_key or "",
+        analysis=analysis_result,
+        username=username,
+        agent_name=agent_name,
+        conversation_id=conversation_id
+    )
+
+    # 6) Append AI's answer to conversation
+    # NOTE: We store citations in chat_history so the UI can re-load them on refresh.
     assistant_msg_obj = {
         "role": "assistant",
         "content": final_answer,
-        "citations": citations
+        "citations": final_citations,
+        "timestamp": datetime.datetime.now().isoformat()
     }
     conversation["messages"].append(assistant_msg_obj)
 
-    # Save chat history
+    # Save entire chat again
     chat_history["conversations"] = conversations
     with open(chat_file, 'w') as f:
         json.dump(chat_history, f, indent=2)
@@ -638,116 +689,111 @@ def send_message(agent_name):
         "message": assistant_msg_obj
     })
 
-@app.route('/api/agents/<agent_name>/clear-chat', methods=['POST'])
-def clear_chat_history(agent_name):
-    """
-    Overwrites the agent's chat_history.json with an empty 'conversations' list.
-    """
-    if 'username' not in session:
-        return jsonify({"error": "Not authenticated"}), 401
-
-    username = session['username']
-    chat_file = os.path.join(DATA_DIR, username, 'AGENTS', agent_name, 'chat_history.json')
-
-    try:
-        default_history = {"conversations": []}
-        os.makedirs(os.path.dirname(chat_file), exist_ok=True)
-        with open(chat_file, 'w') as f:
-            json.dump(default_history, f, indent=2)
-        return jsonify({"message": "Chat history cleared"})
-    except Exception as e:
-        logging.error(f"Error clearing chat history: {str(e)}")
-        return jsonify({"error": str(e)}), 500
-
 
 ########################
-# NEW HELPER FUNCTION
+# HELPER: Build final LLM answer
 ########################
 
-def generate_answer_with_retrieval(api_key, user_query, username, agent_name):
+def build_final_answer_with_citations(api_key, analysis, username, agent_name, conversation_id):
     """
-    1) Analyze the user query for sub-queries (Gemini or fallback)
-    2) Use retrieval engine to fetch top chunks
-    3) Call LLM with those chunks as context
-    4) If no chunks found, return a fallback message
-    5) Return final markdown answer + a list of citations
+    1) Load retrieval chunks from retrieval_results.json for all sub-queries and original_query
+    2) Merge them, deduplicate
+    3) Pass them to LLM as context
+    4) Return the answer, plus a structured list of numbered citations
     """
+    # -- Load retrieval results
+    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
+    retrieval_file = os.path.join(agent_dir, 'retrieval_results.json')
+    if not os.path.exists(retrieval_file):
+        # No retrieval
+        return ("I have no relevant documents to reference.", [])
 
-    # 1) Analyze prompt for subqueries/keywords (using prompt_analyzer logic)
-    analysis_result = analyze_prompt_with_gemini(api_key or "", user_query)
-    sub_queries = analysis_result.get("sub_queries", [])
-    if not sub_queries:
-        # fallback to just the original query
-        sub_queries = [user_query]
+    with open(retrieval_file, 'r', encoding='utf-8') as f:
+        retrieval_data = json.load(f)
 
-    # 2) Build retrieval engine
-    agent_processed_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name, 'processed')
-    if not os.path.exists(agent_processed_dir):
-        # no processed docs
-        return ("I'm sorry, but I have no documents to reference yet.", [])
+    conv_dict = retrieval_data.get(conversation_id, {})
+    if not conv_dict:
+        # No retrieval results for this conversation
+        return ("I couldn't find any relevant info in the documents.", [])
 
-    engine = RetrievalEngine(agent_processed_dir)
+    original_q = analysis.get("original_query", "").strip()
+    sub_qs = analysis.get("sub_queries", [])
 
-    # Gather top chunks from each sub-query (semantic search)
-    all_chunks = []
-    for q in sub_queries:
-        chunks = engine.semantic_search(q, top_k=5)
-        all_chunks.extend(chunks)
+    # Collect chunk sets
+    all_text_chunks = []
+    for q in [original_q] + sub_qs:
+        q_data = conv_dict.get(q.strip())
+        if not q_data:
+            continue
+        semantic_chunks = q_data.get("semantic_chunks", [])
+        keyword_chunks = q_data.get("keyword_chunks", [])
+        combined = semantic_chunks + keyword_chunks
+        for ch in combined:
+            all_text_chunks.append((ch["doc_filename"], ch["page_number"], ch["text"]))
 
-    # Deduplicate (doc_filename+page_number+chunk_index)
-    unique_map = {}
-    for ch in all_chunks:
-        key = (ch.doc_filename, ch.page_number, ch.chunk_index)
-        unique_map[key] = ch
-    top_chunks = list(unique_map.values())
-    # Limit total chunks
-    top_chunks = top_chunks[:5]
+    # Deduplicate
+    seen = set()
+    unique_chunks = []
+    for item in all_text_chunks:
+        if item not in seen:
+            seen.add(item)
+            unique_chunks.append(item)
 
-    if not top_chunks:
-        # No relevant text found
-        no_answer = (
-            "I could not find any relevant information in the uploaded documents. "
-            "Sorry about that."
-        )
-        return (no_answer, [])
+    if not unique_chunks:
+        return ("I couldn't find relevant info from the docs.", [])
 
-    # 3) Construct context text + citations
-    context_text = ""
-    citations = []
-    for i, chunk in enumerate(top_chunks, start=1):
-        context_text += f"Source [{i}]: (Doc: {chunk.doc_filename}, page {chunk.page_number})\n{chunk.text}\n\n"
-        # We'll store a simple snippet for citations
-        snippet = chunk.text[:100].strip().replace('\n', ' ')
-        citations.append({
+    # Build a context for the LLM, and also build final_citations for the UI
+    context_lines = []
+    final_citations = []
+    for i, (doc_file, page_num, text) in enumerate(unique_chunks, start=1):
+        snippet = text.strip().replace('\n', ' ')
+        snippet = snippet[:400]
+        context_lines.append(f"Reference [{i}]: File: {doc_file}, Page: {page_num}\nExcerpt: {snippet}")
+        final_citations.append({
             "id": i,
-            "file": chunk.doc_filename,
-            "page": chunk.page_number,
-            "text": snippet
+            "file": doc_file,
+            "page": page_num,
+            "text": snippet[:100]
         })
 
-    # 4) Generate final answer using Gemini or fallback
-    answer_text = call_llm_for_final_answer(api_key, user_query, context_text)
+    context_text = "\n\n".join(context_lines)
 
-    return (answer_text, citations)
+    answer_text = call_llm_with_numbered_citations(
+        api_key=api_key,
+        user_query=original_q,
+        context_text=context_text
+    )
 
-def call_llm_for_final_answer(api_key, user_query, context_text):
+    return (answer_text, final_citations)
+
+
+def call_llm_with_numbered_citations(api_key, user_query, context_text):
     """
-    Calls Gemini with an instruction to incorporate the chunk text as context,
-    or does a fallback if Gemini isn't available. Returns markdown answer.
-    The LLM is asked to produce citations as [^1], [^2], etc. if it uses the sources.
-    If no relevant info is found, it should say so.
+    We supply the context from retrieval, and ask the LLM to:
+      - Provide citations in ascending order as [^1], [^2], etc.
+      - Insert blank lines to separate paragraphs or bullet points.
+      - If no relevant info is found, say so.
+
+    We also instruct it not to reuse chunk numbering, but to always label them
+    in the order used in the final answer (1, 2, 3...).
     """
+    system_prompt = """You are a retrieval-augmented AI assistant. You have references enumerated as [1], [2], etc., each mapping to a distinct file/page excerpt.
 
-    system_prompt = """You are a retrieval-augmented AI assistant. 
-You have access to chunks of text from various documents. 
-Use ONLY that provided text as factual context. 
-If the user’s question cannot be answered from the documents, say you couldn't find the answer in the docs.
+IMPORTANT REQUIREMENTS:
+1) Cite references strictly in ascending numerical order, using the format [^1], [^2], [^3], etc.
+2) Each reference label in the text must match exactly with the references you use.
+3) Separate paragraphs with blank lines.
+4) Use bullet points and headings as appropriate.
+5) If no relevant info is in the context, say so.
 
-Rules:
-1) Answer in valid Markdown.
-2) Cite each source you use as [^1], [^2], etc. in the text body.
-3) If no relevant info is found, say "I couldn't find the answer in the docs."
-"""
+---"""
+
+    full_prompt = (
+        f"{system_prompt}\n"
+        f"References:\n{context_text}\n\n"
+        f"User Question: {user_query}\n\n"
+        "Please provide your best answer, following all the requirements above."
+    )
 
     if HAS_GEMINI and api_key:
         try:
@@ -763,12 +809,6 @@ Rules:
             )
             chat = model.start_chat(history=[])
             chat.send_message(system_prompt)
-            # Combine user query + context
-            full_prompt = (
-                f"Context:\n{context_text}\n\n"
-                f"User Question: {user_query}\n\n"
-                "Please provide your best answer following the rules."
-            )
             response = chat.send_message(full_prompt)
             return response.text.strip()
         except Exception as e:
@@ -780,42 +820,19 @@ Rules:
 
 def fallback_llm_answer(user_query, context_text):
     """
-    Simple fallback that always tries to mimic a short answer
-    or says we couldn't find anything. Real apps might call another LLM or a local model.
+    Simple fallback if Gemini isn't available. 
+    We'll just show the context and disclaim.
     """
     if not context_text.strip():
-        return "I couldn't find an answer in the docs."
+        return "I'm sorry, I couldn't find any relevant info in the docs."
     return (
-        "Fallback Answer (No Gemini API):\n\n"
-        "Based on the provided context, here are some possible points:\n\n"
-        f"---\n{context_text[:300]}...\n\n"
-        "Please note this is a fallback."
+        "Fallback Answer (No Gemini API)\n\n"
+        "Based on these sources:\n"
+        f"{context_text[:1000]}\n\n"
+        "I would guess the answer is: <your own summary here>\n"
+        "(*This is a fallback dummy answer*)"
     )
 
-########################
-# Example AI function
-########################
-def generate_ai_response(username, agent_name, user_message):
-    """
-    Legacy example function. (Not used in new flow.)
-    """
-    agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
-    uploads_dir = os.path.join(agent_dir, 'uploads')
-    files = []
-    if os.path.exists(uploads_dir):
-        files = [f for f in os.listdir(uploads_dir) if f.lower().endswith('.pdf')]
-    
-    if not files:
-        return {
-            "message": "I don't have any documents to reference. Please upload PDF files!",
-            "citations": []
-        }
-
-    # (Old code omitted; replaced by real approach now)
-    return {
-        "message": "Legacy fallback response.",
-        "citations": []
-    }
 
 if __name__ == '__main__':
     app.run(debug=True)
