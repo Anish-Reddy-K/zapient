@@ -1,9 +1,9 @@
 {
   "metadata": {
     "filename": "Benzene.pdf",
-    "file_path": "/Users/anishreddy/Code/zapient/data/test/AGENTS/AI Maintenance Buddy/uploads/Benzene.pdf",
+    "file_path": "/Users/anishreddy/Code/zapient/data/admin/AGENTS/AI Safety Guardian/uploads/Benzene.pdf",
     "file_hash": "4c6a9680c54128b73b17a3925b406582b1421ae771c2a70ca486e5970c471679",
-    "extraction_date": "2025-03-06T00:29:53.373924",
+    "extraction_date": "2025-03-06T01:00:29.594797",
     "title": "",
     "author": "",
     "subject": "",
@@ -543,28 +543,26 @@
   "advanced_metadata": {
     "intent": "Safety",
     "semantic_queries": [
-      "benzene safety data sheet",
-      "hazard communication standard benzene",
-      "benzene emergency response"
+      "Benzene safety data sheet",
+      "Benzene hazard classification",
+      "Benzene emergency response"
     ],
     "keywords": [
-      "benzene",
-      "flammable",
-      "carcinogen",
-      "hazard",
-      "safety",
+      "Benzene",
       "SDS",
+      "Safety Data Sheet",
+      "Flammable",
+      "Hazardous",
+      "Carcinogen",
+      "Toxic",
       "GHS",
       "OSHA",
-      "toxicity",
-      "acute toxicity"
+      "NFPA"
     ],
     "entities": {
       "equipment": [],
       "standards": [
-        "29 CFR 1910.1200",
-        "API RP 571",
-        "ISO 14156",
+        "OSHA Hazard Communication Standard (29 CFR 1910.1200)",
         "29 CFR 1910.134",
         "ANSI Z88.2",
         "NIOSH"
@@ -574,12 +572,7 @@
         "mg/kg",
         "mg/L",
         "°C",
-        "°F",
-        "bbl",
-        "mD",
-        "ft",
-        "psi",
-        "bar"
+        "°F"
       ]
     },
     "key_sections": [
@@ -590,7 +583,6 @@
       "6. ACCIDENTAL RELEASE MEASURES",
       "7. HANDLING AND STORAGE",
       "8. EXPOSURE CONTROLS/PERSONAL PROTECTION",
-      "11. TOXICOLOGICAL INFORMATION",
       "13. DISPOSAL CONSIDERATIONS",
       "14. TRANSPORT INFORMATION",
       "15. REGULATORY INFORMATION"

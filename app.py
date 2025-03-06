@@ -784,6 +784,7 @@ def call_llm_with_structured_response(api_key, user_query, context_text):
 - Clarity and Conciseness: Keep the answer well-structured and to the point. Use short paragraphs (3-5 sentences each) and organize content logically so it is easy to read and scan.
 - Context Fidelity: Do NOT generate any information that is not supported by the provided context. Avoid adding external knowledge or assumptions.
 - Follow User Instructions: If the user requests a specific output format or style, follow their instructions (even if it deviates from the above), as long as it does not violate the above rules.
+- IMPORTANT: DO NOT include any ```markdown or ``` code block syntax in your response. Format the content with Markdown syntax directly inside the JSON without code block delimiters.
 - IMPORTANT: Format your response as valid JSON only. Do not include markdown code blocks or any additional text outside the JSON object.
 """
 
