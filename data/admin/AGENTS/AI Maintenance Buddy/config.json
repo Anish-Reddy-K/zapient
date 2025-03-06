@@ -1,0 +1,21 @@
+{
+  "name": "AI Maintenance Buddy",
+  "persona": "This AI Agent is designed to diagnose issues, recommend troubleshooting actions, and automate maintenance logging. It specializes in equipment diagnostics and repair procedures.",
+  "createdAt": "2025-03-06T01:53:41.165073",
+  "updatedAt": "2025-03-06T01:54:04.206758",
+  "createdBy": "admin",
+  "files_processed": true,
+  "processing_complete": true,
+  "processing_results": {
+    "Amonia-001003.pdf": {
+      "status": "success",
+      "message": "Successfully processed Amonia-001003.pdf with Gemini AI",
+      "output_path": "/Users/anishreddy/Code/zapient/data/admin/AGENTS/AI Maintenance Buddy/processed/Amonia-001003.json"
+    },
+    "Benzene.pdf": {
+      "status": "success",
+      "message": "Successfully processed Benzene.pdf with Gemini AI",
+      "output_path": "/Users/anishreddy/Code/zapient/data/admin/AGENTS/AI Maintenance Buddy/processed/Benzene.json"
+    }
+  }
+}
