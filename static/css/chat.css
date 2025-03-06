@@ -160,23 +160,17 @@
 
 .user-message .message-content {
     background-color: var(--color-accent);
-    color: white;
-    text-align: right;
-}
-
-.message-timestamp {
-    font-size: 0.7rem;
-    color: #6b7280;
-    margin-top: 0.5rem;
-}
-
-.agent-message .message-timestamp {
-    text-align: right;
-}
-
-.user-message .message-timestamp {
+    color: #fff;
     text-align: left;
+    display: inline-block; 
+    max-width: 60%; 
+    width: auto;
+    margin-left: auto;  
+    margin-right: 0;  
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.5rem;
 }
+
 
 /* Sources section styles */
 .sources-section {
