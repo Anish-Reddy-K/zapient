@@ -6,3 +6,4 @@ pdfplumber==0.10.3
 pandas==2.2.0
 google-generativeai==0.3.2
 tenacity==8.2.3
+sentence-transformers==3.4.1

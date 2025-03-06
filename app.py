@@ -597,9 +597,9 @@ def send_message(agent_name):
       1) Append user message to chat_history
       2) Analyze prompt (splitting, keywords) => store analysis in chat_history
       3) Perform retrieval => store in retrieval_results.json
-      4) Build final answer with citations from retrieval_results
+      4) Build final answer with sources from retrieval_results
       5) Append answer to chat_history
-      6) Return answer + citations
+      6) Return answer + sources
     """
     if 'username' not in session:
         return jsonify({"error": "Not authenticated"}), 401
@@ -661,7 +661,7 @@ def send_message(agent_name):
     )
 
     # 5) Build final answer using the retrieval results
-    final_answer, final_citations = build_final_answer_with_citations(
+    response = build_final_answer_with_citations(
         api_key=api_key or "",
         analysis=analysis_result,
         username=username,
@@ -670,11 +670,11 @@ def send_message(agent_name):
     )
 
     # 6) Append AI's answer to conversation
-    # NOTE: We store citations in chat_history so the UI can re-load them on refresh.
+    # Store both answer and sources in the message object
     assistant_msg_obj = {
         "role": "assistant",
-        "content": final_answer,
-        "citations": final_citations,
+        "content": response["answer"],
+        "sources": response["sources"],  # New format: array of {file, page} objects
         "timestamp": datetime.datetime.now().isoformat()
     }
     conversation["messages"].append(assistant_msg_obj)
@@ -689,7 +689,6 @@ def send_message(agent_name):
         "message": assistant_msg_obj
     })
 
-
 ########################
 # HELPER: Build final LLM answer
 ########################
@@ -699,14 +698,14 @@ def build_final_answer_with_citations(api_key, analysis, username, agent_name, c
     1) Load retrieval chunks from retrieval_results.json for all sub-queries and original_query
     2) Merge them, deduplicate
     3) Pass them to LLM as context
-    4) Return the answer, plus a structured list of numbered citations
+    4) Return the answer and sources
     """
     # -- Load retrieval results
     agent_dir = os.path.join(DATA_DIR, username, 'AGENTS', agent_name)
     retrieval_file = os.path.join(agent_dir, 'retrieval_results.json')
     if not os.path.exists(retrieval_file):
         # No retrieval
-        return ("I have no relevant documents to reference.", [])
+        return {"answer": "I have no relevant documents to reference.", "sources": []}
 
     with open(retrieval_file, 'r', encoding='utf-8') as f:
         retrieval_data = json.load(f)
@@ -714,7 +713,7 @@ def build_final_answer_with_citations(api_key, analysis, username, agent_name, c
     conv_dict = retrieval_data.get(conversation_id, {})
     if not conv_dict:
         # No retrieval results for this conversation
-        return ("I couldn't find any relevant info in the documents.", [])
+        return {"answer": "I couldn't find any relevant info in the documents.", "sources": []}
 
     original_q = analysis.get("original_query", "").strip()
     sub_qs = analysis.get("sub_queries", [])
@@ -740,59 +739,77 @@ def build_final_answer_with_citations(api_key, analysis, username, agent_name, c
             unique_chunks.append(item)
 
     if not unique_chunks:
-        return ("I couldn't find relevant info from the docs.", [])
+        return {"answer": "I couldn't find relevant info from the docs.", "sources": []}
 
-    # Build a context for the LLM, and also build final_citations for the UI
+    # Build a context for the LLM
     context_lines = []
-    final_citations = []
     for i, (doc_file, page_num, text) in enumerate(unique_chunks, start=1):
         snippet = text.strip().replace('\n', ' ')
         snippet = snippet[:400]
         context_lines.append(f"Reference [{i}]: File: {doc_file}, Page: {page_num}\nExcerpt: {snippet}")
-        final_citations.append({
-            "id": i,
-            "file": doc_file,
-            "page": page_num,
-            "text": snippet[:100]
-        })
 
     context_text = "\n\n".join(context_lines)
 
-    answer_text = call_llm_with_numbered_citations(
+    # Get structured response from LLM
+    response = call_llm_with_structured_response(
         api_key=api_key,
         user_query=original_q,
         context_text=context_text
     )
+    
+    return response
 
-    return (answer_text, final_citations)
 
-
-def call_llm_with_numbered_citations(api_key, user_query, context_text):
+def call_llm_with_structured_response(api_key, user_query, context_text):
     """
     We supply the context from retrieval, and ask the LLM to:
-      - Provide citations in ascending order as [^1], [^2], etc.
-      - Insert blank lines to separate paragraphs or bullet points.
-      - If no relevant info is found, say so.
-
-    We also instruct it not to reuse chunk numbering, but to always label them
-    in the order used in the final answer (1, 2, 3...).
+      - Answer based only on the provided references
+      - Return a clean JSON with 'answer' and 'sources'
+      - Sources should list document names and page numbers
     """
-    system_prompt = """You are a retrieval-augmented AI assistant. You have references enumerated as [1], [2], etc., each mapping to a distinct file/page excerpt.
+    system_prompt = """You are an AI assistant specialized in asnwering questions about oil and gas documents. 
+    
+Follow these guidelines strictly:
+- Output Format: Always respond with a single, valid JSON object and NO additional text. This JSON must have exactly two keys:
+  - `answer`: A comprehensive answer based ONLY on the provided PDF context.
+  - `sources`: An array of unique document sources (each with `file` and `page` properties), ensuring no duplicate pages from the same file.
+- Insufficient Context: If the provided context is insufficient to answer the question, explicitly state in the `answer` that the context is insufficient.
+- Conflicting Information: If multiple versions of the same information are present, use the most recent version.
+- Markdown Formatting: Format the `answer` using simple, clean Markdown:
+  * For bullet points, use the asterisk format: `* Item` with a single space after the asterisk
+  * For numbered lists, use: `1. Item`, `2. Item` format with a single space after the period
+  * For emphasis, use `**bold**` and `*italic*`
+  * For headings, use `## Heading` with a space after the hashtags
+  * Include blank lines between paragraphs
+  * Do not indent or add spaces at the beginning of lines unless it's part of Markdown syntax
+- Clarity and Conciseness: Keep the answer well-structured and to the point. Use short paragraphs (3-5 sentences each) and organize content logically so it is easy to read and scan.
+- Context Fidelity: Do NOT generate any information that is not supported by the provided context. Avoid adding external knowledge or assumptions.
+- Follow User Instructions: If the user requests a specific output format or style, follow their instructions (even if it deviates from the above), as long as it does not violate the above rules.
 
-IMPORTANT REQUIREMENTS:
-1) Cite references strictly in ascending numerical order, using the format [^1], [^2], [^3], etc.
-2) Each reference label in the text must match exactly with the references you use.
-3) Separate paragraphs with blank lines.
-4) Use bullet points and headings as appropriate.
-5) If no relevant info is in the context, say so.
+- IMPORTANT:
+- do NOT include any "```markdown" or "```" code block syntax in your response. Format the content with Markdown syntax directly inside the JSON without code block delimiters.
+- do NOT include any references witin the 'answer', all references should be included in the 'sources' array ONLY. NEVER have anything like this in the 'answer' field: (document_name.json, page 8, 31) or similar.
+- Format your response as valid JSON only. Do not include markdown code blocks or any additional text outside the JSON object.
 
----"""
+Valid 'answer' example in the output json:
+"answer": "## Ammonia Environmental Hazards and Spill Response\n\n*   **Aquatic Toxicity:** Ammonia is very toxic to aquatic life.  Releases should be prevented from contaminating soil, water, drainage, and sewer systems.\n*   **Spill Response:** For small spills, immediately contain the spill. For larger spills,  prevent contamination of the environment. Inform relevant authorities if environmental pollution occurs. Use appropriate personal protective equipment and follow safety procedures.\n\n"
+
+Valid 'sources' example in the output json:
+"sources": [{"file": "document_name.json", "page": 8}, {"file": "document_name.json", "page": 31}]
+
+Valid OUTPUT JSON example:
+{
+    "answer": "Your answer here...",
+    "sources": [{"file": "document_name.json", "page": 8}, {"file": "document_name.json", "page": 31}]
+}
+
+Think carefully and make sure to check that you satisfy every guideline and the IMPORTANT section before submitting your final response.
+"""
 
     full_prompt = (
-        f"{system_prompt}\n"
         f"References:\n{context_text}\n\n"
         f"User Question: {user_query}\n\n"
-        "Please provide your best answer, following all the requirements above."
+        "Please provide your response following the required JSON format. Return only the JSON with no additional text."
     )
 
     if HAS_GEMINI and api_key:
@@ -810,28 +827,104 @@ IMPORTANT REQUIREMENTS:
             chat = model.start_chat(history=[])
             chat.send_message(system_prompt)
             response = chat.send_message(full_prompt)
-            return response.text.strip()
+            
+            # Try to parse response as JSON
+            response_text = response.text.strip()
+            logging.info(f"Raw Gemini response: {response_text[:100]}...")  # Log first 100 chars for debugging
+            
+            try:
+                import json
+                # First attempt: direct JSON parsing
+                json_response = json.loads(response_text)
+                return json_response
+            except json.JSONDecodeError:
+                # Second attempt: extract JSON with regex
+                import re
+                # Look for anything that looks like a JSON object (between curly braces)
+                json_pattern = r'({[\s\S]*})'
+                match = re.search(json_pattern, response_text)
+                if match:
+                    try:
+                        json_response = json.loads(match.group(1))
+                        return json_response
+                    except json.JSONDecodeError:
+                        pass
+                
+                # Third attempt: more aggressive cleanup - strip markdown code blocks
+                cleaned_text = re.sub(r'```json\s*|\s*```', '', response_text)
+                try:
+                    json_response = json.loads(cleaned_text)
+                    return json_response
+                except json.JSONDecodeError:
+                    pass
+                
+                # Fourth attempt: try to extract just the content between outermost braces
+                brace_pattern = r'({(?:[^{}]|(?R))*})'
+                match = re.search(brace_pattern, response_text)
+                if match:
+                    try:
+                        json_response = json.loads(match.group(1))
+                        return json_response
+                    except json.JSONDecodeError:
+                        pass
+                        
+                # If all extraction attempts fail, construct a manual response
+                logging.error(f"Failed to parse Gemini response as JSON: {response_text}")
+                
+                # Create a manual response using patterns to extract content
+                answer_pattern = r'"answer"\s*:\s*"([^"]*)"'
+                answer_match = re.search(answer_pattern, response_text)
+                answer = answer_match.group(1) if answer_match else "I couldn't parse the structured response correctly."
+                
+                # Extract sources if possible
+                sources = []
+                sources_pattern = r'"sources"\s*:\s*\[(.*?)\]'
+                sources_match = re.search(sources_pattern, response_text, re.DOTALL)
+                if sources_match:
+                    # Try to manually extract file and page entries
+                    source_entries = re.finditer(r'{\s*"file"\s*:\s*"([^"]*)"\s*,\s*"page"\s*:\s*(\d+)\s*}', sources_match.group(1))
+                    for entry in source_entries:
+                        sources.append({"file": entry.group(1), "page": int(entry.group(2))})
+                
+                return {
+                    "answer": answer,
+                    "sources": sources
+                }
+                
         except Exception as e:
             logging.error(f"Gemini final LLM call error: {str(e)}")
-            return fallback_llm_answer(user_query, context_text)
+            return fallback_structured_response(user_query, context_text)
     else:
-        return fallback_llm_answer(user_query, context_text)
+        return fallback_structured_response(user_query, context_text)
 
 
-def fallback_llm_answer(user_query, context_text):
+def fallback_structured_response(user_query, context_text):
     """
     Simple fallback if Gemini isn't available. 
-    We'll just show the context and disclaim.
+    We'll provide a structured response with the same fields.
     """
     if not context_text.strip():
-        return "I'm sorry, I couldn't find any relevant info in the docs."
-    return (
-        "Fallback Answer (No Gemini API)\n\n"
-        "Based on these sources:\n"
-        f"{context_text[:1000]}\n\n"
-        "I would guess the answer is: <your own summary here>\n"
-        "(*This is a fallback dummy answer*)"
-    )
+        return {
+            "answer": "I'm sorry, I couldn't find any relevant information in the documents.",
+            "sources": []
+        }
+    
+    # Extract some basic source information from context
+    sources = []
+    import re
+    references = re.findall(r'Reference \[(\d+)\]: File: ([^,]+), Page: (\d+)', context_text)
+    seen = set()
+    
+    for _, file, page in references:
+        source_key = f"{file}_{page}"
+        if source_key not in seen:
+            seen.add(source_key)
+            sources.append({"file": file, "page": int(page)})
+    
+    return {
+        "answer": "Fallback Answer (No Gemini API): Based on the provided documents, I would synthesize an answer here. (*This is a fallback response*)",
+        "sources": sources
+    }
 
 
 if __name__ == '__main__':
