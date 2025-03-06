@@ -767,37 +767,24 @@ def call_llm_with_structured_response(api_key, user_query, context_text):
       - Return a clean JSON with 'answer' and 'sources'
       - Sources should list document names and page numbers
     """
-    system_prompt = """You are a retrieval-augmented AI assistant. You will be given references from documents along with a user question. 
-    
-TASK:
-Answer the user's question based ONLY on the provided references. If the references don't contain relevant information, acknowledge this in your answer.
+    system_prompt = """You are an AI PDF chat assistant specialized in oil and gas documents. Follow these guidelines strictly:
 
-RESPONSE FORMAT:
-Respond with ONLY a valid JSON object with these properties:
-1. "answer": Your comprehensive answer to the question based on the references
-2. "sources": An array of unique document sources, each with "file" and "page" properties
-
-Example response:
-{
-  "answer": "The safety protocol requires three verification steps before equipment startup: physical inspection, electronic diagnostics, and supervisor approval.",
-  "sources": [
-    {"file": "safety_manual.pdf", "page": 12},
-    {"file": "operations_guide.pdf", "page": 45}
-  ]
-}
-
-IMPORTANT:
-- Return ONLY the JSON. No other explanatory text.
-- Include ALL relevant document sources in the sources array.
-- Do not make up information - stick strictly to what's in the references.
-- If no information can be found, say so in the answer and return an empty sources array.
-- Format your answer with appropriate paragraph breaks, bullet points, etc. as needed.
+- Output Format: Always respond with a single, valid JSON object and no additional text. This JSON must have exactly two keys:
+  - `answer`: A comprehensive answer based ONLY on the provided PDF context.
+  - `sources`: An array of unique document sources (each with `file` and `page` properties), ensuring no duplicate pages from the same file.
+- Insufficient Context: If the provided context is insufficient to answer the question, explicitly state in the `answer` that the context is insufficient.
+- Conflicting Information: If multiple versions of the same information are present, use the most recent version.
+- Markdown Formatting: Format the `answer` in Markdown for clarity. Use bullet points or numbered lists whenever possible, and **bold** or *italic* text for emphasis. Include appropriate line breaks for readability.
+- Clarity and Conciseness: Keep the answer well-structured and to the point. Use short paragraphs (3-5 sentences each) and organize content logically so it is easy to read and scan.
+- Context Fidelity: Do NOT generate any information that is not supported by the provided context. Avoid adding external knowledge or assumptions.
+- Follow User Instructions: If the user requests a specific output format or style, follow their instructions (even if it deviates from the above), as long as it does not violate the above rules.
+- IMPORTANT: Format your response as valid JSON only. Do not include markdown code blocks or any additional text outside the JSON object.
 """
 
     full_prompt = (
         f"References:\n{context_text}\n\n"
         f"User Question: {user_query}\n\n"
-        "Please provide your response following the required JSON format."
+        "Please provide your response following the required JSON format. Return only the JSON with no additional text."
     )
 
     if HAS_GEMINI and api_key:
@@ -818,26 +805,65 @@ IMPORTANT:
             
             # Try to parse response as JSON
             response_text = response.text.strip()
+            logging.info(f"Raw Gemini response: {response_text[:100]}...")  # Log first 100 chars for debugging
+            
             try:
                 import json
+                # First attempt: direct JSON parsing
                 json_response = json.loads(response_text)
                 return json_response
             except json.JSONDecodeError:
-                # If JSON parsing fails, try to extract JSON from response
+                # Second attempt: extract JSON with regex
                 import re
+                # Look for anything that looks like a JSON object (between curly braces)
                 json_pattern = r'({[\s\S]*})'
                 match = re.search(json_pattern, response_text)
                 if match:
                     try:
                         json_response = json.loads(match.group(1))
                         return json_response
-                    except:
+                    except json.JSONDecodeError:
+                        pass
+                
+                # Third attempt: more aggressive cleanup - strip markdown code blocks
+                cleaned_text = re.sub(r'```json\s*|\s*```', '', response_text)
+                try:
+                    json_response = json.loads(cleaned_text)
+                    return json_response
+                except json.JSONDecodeError:
+                    pass
+                
+                # Fourth attempt: try to extract just the content between outermost braces
+                brace_pattern = r'({(?:[^{}]|(?R))*})'
+                match = re.search(brace_pattern, response_text)
+                if match:
+                    try:
+                        json_response = json.loads(match.group(1))
+                        return json_response
+                    except json.JSONDecodeError:
                         pass
                         
-                # If all extraction attempts fail, return a fallback
+                # If all extraction attempts fail, construct a manual response
+                logging.error(f"Failed to parse Gemini response as JSON: {response_text}")
+                
+                # Create a manual response using patterns to extract content
+                answer_pattern = r'"answer"\s*:\s*"([^"]*)"'
+                answer_match = re.search(answer_pattern, response_text)
+                answer = answer_match.group(1) if answer_match else "I couldn't parse the structured response correctly."
+                
+                # Extract sources if possible
+                sources = []
+                sources_pattern = r'"sources"\s*:\s*\[(.*?)\]'
+                sources_match = re.search(sources_pattern, response_text, re.DOTALL)
+                if sources_match:
+                    # Try to manually extract file and page entries
+                    source_entries = re.finditer(r'{\s*"file"\s*:\s*"([^"]*)"\s*,\s*"page"\s*:\s*(\d+)\s*}', sources_match.group(1))
+                    for entry in source_entries:
+                        sources.append({"file": entry.group(1), "page": int(entry.group(2))})
+                
                 return {
-                    "answer": "I couldn't generate a proper response. There might be an issue with my formatting.",
-                    "sources": []
+                    "answer": answer,
+                    "sources": sources
                 }
                 
         except Exception as e:
