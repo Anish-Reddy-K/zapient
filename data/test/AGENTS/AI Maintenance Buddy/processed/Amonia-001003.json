@@ -3,7 +3,7 @@
     "filename": "Amonia-001003.pdf",
     "file_path": "/Users/anishreddy/Code/zapient/data/test/AGENTS/AI Maintenance Buddy/uploads/Amonia-001003.pdf",
     "file_hash": "8c0262049918114d12eab7ab806340b47871c72087f6fe52c2df21e65653d3bf",
-    "extraction_date": "2025-03-05T23:59:00.231412",
+    "extraction_date": "2025-03-06T00:29:48.827872",
     "title": "",
     "author": "",
     "subject": "",
@@ -759,35 +759,33 @@
     "intent": "Safety",
     "semantic_queries": [
       "Ammonia safety data sheet",
-      "Ammonia hazard classification",
+      "Ammonia handling precautions",
       "Ammonia emergency response"
     ],
     "keywords": [
       "Ammonia",
       "SDS",
       "Safety Data Sheet",
-      "Flammable Gas",
+      "Flammable gas",
       "Hazardous",
       "GHS",
-      "Inhalation Hazard",
-      "Skin Corrosion",
-      "Eye Damage",
-      "Emergency Response"
+      "Inhalation",
+      "Skin corrosion",
+      "Eye damage",
+      "Emergency response"
     ],
     "entities": {
       "equipment": [
         "respirator",
-        "safety goggles",
-        "safety shower",
-        "eyewash station",
+        "safety eyewear",
         "gloves",
-        "protective clothing"
+        "safety showers",
+        "eyewash stations"
       ],
       "standards": [
         "OSHA",
         "ACGIH",
         "NIOSH",
-        "API",
         "ANSI/CGA G-2.1",
         "NFPA 704"
       ],
@@ -809,6 +807,8 @@
       "Section 6. Accidental release measures",
       "Section 7. Handling and storage",
       "Section 8. Exposure controls/personal protection",
+      "Section 11. Toxicological information",
+      "Section 13. Disposal considerations",
       "Section 14. Transport information",
       "Section 15. Regulatory information"
     ]

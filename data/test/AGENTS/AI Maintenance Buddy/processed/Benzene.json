@@ -3,7 +3,7 @@
     "filename": "Benzene.pdf",
     "file_path": "/Users/anishreddy/Code/zapient/data/test/AGENTS/AI Maintenance Buddy/uploads/Benzene.pdf",
     "file_hash": "4c6a9680c54128b73b17a3925b406582b1421ae771c2a70ca486e5970c471679",
-    "extraction_date": "2025-03-05T23:59:04.854982",
+    "extraction_date": "2025-03-06T00:29:53.373924",
     "title": "",
     "author": "",
     "subject": "",
@@ -543,33 +543,28 @@
   "advanced_metadata": {
     "intent": "Safety",
     "semantic_queries": [
-      "Benzene safety data sheet",
-      "Hazardous material handling procedures for benzene",
-      "Emergency response plan for benzene spill"
+      "benzene safety data sheet",
+      "hazard communication standard benzene",
+      "benzene emergency response"
     ],
     "keywords": [
-      "Benzene",
-      "SDS",
+      "benzene",
       "flammable",
-      "toxic",
       "carcinogen",
       "hazard",
-      "safety precautions",
-      "personal protective equipment",
-      "emergency response",
-      "OSHA"
+      "safety",
+      "SDS",
+      "GHS",
+      "OSHA",
+      "toxicity",
+      "acute toxicity"
     ],
     "entities": {
-      "equipment": [
-        "respirators",
-        "safety goggles",
-        "protective clothing",
-        "gloves",
-        "eyewash stations",
-        "showers"
-      ],
+      "equipment": [],
       "standards": [
-        "OSHA Hazard Communication Standard (29 CFR 1910.1200)",
+        "29 CFR 1910.1200",
+        "API RP 571",
+        "ISO 14156",
         "29 CFR 1910.134",
         "ANSI Z88.2",
         "NIOSH"
@@ -580,21 +575,25 @@
         "mg/L",
         "°C",
         "°F",
-        "bbl/day",
-        "kg"
+        "bbl",
+        "mD",
+        "ft",
+        "psi",
+        "bar"
       ]
     },
     "key_sections": [
-      "1. Identification",
-      "2. Hazards Identification",
-      "4. First Aid Measures",
-      "5. Fire-Fighting Measures",
-      "6. Accidental Release Measures",
-      "7. Handling and Storage",
-      "8. Exposure Controls/Personal Protection",
-      "13. Disposal Considerations",
-      "14. Transport Information",
-      "15. Regulatory Information"
+      "1. IDENTIFICATION",
+      "2. HAZARDS IDENTIFICATION",
+      "4. FIRST AID MEASURES",
+      "5. FIRE-FIGHTING MEASURES",
+      "6. ACCIDENTAL RELEASE MEASURES",
+      "7. HANDLING AND STORAGE",
+      "8. EXPOSURE CONTROLS/PERSONAL PROTECTION",
+      "11. TOXICOLOGICAL INFORMATION",
+      "13. DISPOSAL CONSIDERATIONS",
+      "14. TRANSPORT INFORMATION",
+      "15. REGULATORY INFORMATION"
     ]
   }
 }

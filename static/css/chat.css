@@ -115,6 +115,39 @@
     color: var(--color-primary);
 }
 
+.markdown-content {
+    line-height: 1.5;
+}
+
+.markdown-content ul, 
+.markdown-content ol {
+    padding-left: 2rem;
+    margin-bottom: 1rem;
+}
+
+.markdown-content ul li {
+    list-style-type: disc;
+    margin-bottom: 0.25rem;
+}
+
+.markdown-content ol li {
+    list-style-type: decimal;
+    margin-bottom: 0.25rem;
+}
+
+.markdown-content h1, 
+.markdown-content h2, 
+.markdown-content h3, 
+.markdown-content h4 {
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+.markdown-content p {
+    margin-bottom: 1rem;
+}
+
 .user-message .message-content {
     background-color: var(--color-accent);
     color: white;

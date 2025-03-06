@@ -195,8 +195,23 @@
      * Process message content to render markdown
      */
     function processMessageContent(content) {
+        // Configure marked for better compatibility
+        marked.setOptions({
+            breaks: true,          // Add line breaks on single line breaks
+            gfm: true,             // Use GitHub Flavored Markdown
+            headerIds: false,      // Don't add ids to headings
+            smartLists: true       // Use smarter list behavior
+        });
+        
+        // Preprocess content to handle any whitespace issues
+        let preprocessed = content.trim();
+        
+        // Ensure bullet points and numbered lists have proper spacing
+        preprocessed = preprocessed.replace(/^(\s*[*-])\s*/gm, '* ');  // Fix bullet points
+        preprocessed = preprocessed.replace(/^(\s*\d+\.)\s*/gm, '$1 '); // Fix numbered lists
+        
         // Render markdown
-        const renderedMarkdown = marked.parse(content);
+        const renderedMarkdown = marked.parse(preprocessed);
         return DOMPurify.sanitize(renderedMarkdown);
     }
     

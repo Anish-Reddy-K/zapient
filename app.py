@@ -774,7 +774,13 @@ def call_llm_with_structured_response(api_key, user_query, context_text):
   - `sources`: An array of unique document sources (each with `file` and `page` properties), ensuring no duplicate pages from the same file.
 - Insufficient Context: If the provided context is insufficient to answer the question, explicitly state in the `answer` that the context is insufficient.
 - Conflicting Information: If multiple versions of the same information are present, use the most recent version.
-- Markdown Formatting: Format the `answer` in Markdown for clarity. Use bullet points or numbered lists whenever possible, and **bold** or *italic* text for emphasis. Include appropriate line breaks for readability.
+- Markdown Formatting: Format the `answer` using simple, clean Markdown:
+  * For bullet points, use the asterisk format: `* Item` with a single space after the asterisk
+  * For numbered lists, use: `1. Item`, `2. Item` format with a single space after the period
+  * For emphasis, use `**bold**` and `*italic*`
+  * For headings, use `## Heading` with a space after the hashtags
+  * Include blank lines between paragraphs
+  * Do not indent or add spaces at the beginning of lines unless it's part of Markdown syntax
 - Clarity and Conciseness: Keep the answer well-structured and to the point. Use short paragraphs (3-5 sentences each) and organize content logically so it is easy to read and scan.
 - Context Fidelity: Do NOT generate any information that is not supported by the provided context. Avoid adding external knowledge or assumptions.
 - Follow User Instructions: If the user requests a specific output format or style, follow their instructions (even if it deviates from the above), as long as it does not violate the above rules.
