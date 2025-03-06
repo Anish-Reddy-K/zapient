@@ -135,71 +135,39 @@
     text-align: left;
 }
 
-/* Citation styles */
-.citation-marker {
-    /* Make it look like a superscript hyperlink */
-    vertical-align: super;
-    color: #2680eb;
-    text-decoration: underline;
-    cursor: pointer;
-    font-weight: bold;
-    margin-left: 2px;
+/* Sources section styles */
+.sources-section {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-supporting);
+    font-size: 0.85rem;
 }
 
-/* Citation tooltip */
-.citation-tooltip {
-    position: fixed;
-    z-index: 1000;
-    display: none;
-    max-width: 250px;
-    box-shadow: var(--shadow-lg);
-    border-radius: var(--border-radius-md);
-    overflow: hidden;
-    background-color: white;
-    border: 1px solid var(--color-supporting);
-}
-
-.citation-content {
-    background-color: white;
-}
-
-.citation-header {
-    display: flex;
-    justify-content: flex-end;
-    padding: 0.3rem;
-}
-
-.citation-close {
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: #6b7280;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.citation-close:hover {
-    background-color: #e5e7eb;
-}
-
-.citation-body {
-    padding: 0.75rem;
+.sources-section h4 {
     color: var(--color-primary);
     font-size: 0.9rem;
-}
-
-.citation-file {
     font-weight: 500;
-    margin-bottom: 0.25rem;
+    margin-bottom: 0.5rem;
 }
 
-.citation-page {
+.sources-list {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+}
+
+.sources-list li {
     color: #6b7280;
-    font-size: 0.85rem;
+    background-color: #f3f4f6;
+    padding: 0.3rem 0.6rem;
+    border-radius: 1rem;
+    font-size: 0.8rem;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
 }
 
 /* Input container */

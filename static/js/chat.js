@@ -7,15 +7,11 @@
     const chatMessages = document.getElementById('chatMessages');
     const messageInput = document.getElementById('messageInput');
     const sendButton = document.getElementById('sendButton');
-    const citationTooltip = document.getElementById('citationTooltip');
-    const citationBody = document.getElementById('citationBody');
-    const closeCitationTooltip = document.getElementById('closeCitationTooltip');
     const clearChatButton = document.getElementById('clearChatButton');
 
     // State variables
     let conversationId = null;
     let isWaitingForResponse = false;
-    let citations = [];
     
     /**
      * Initialize the chat functionality
@@ -51,10 +47,6 @@
                             appendUserMessage(message);
                         } else if (message.role === 'assistant') {
                             appendAgentMessage(message);
-                            // Store citations from the agent message if present
-                            if (message.citations) {
-                                citations = [...citations, ...message.citations];
-                            }
                         }
                     });
                     
@@ -88,26 +80,6 @@
             sendButton.disabled = messageInput.value.trim() === '' || isWaitingForResponse;
         });
         
-        // Close citation tooltip when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!citationTooltip.contains(e.target) && 
-                !e.target.classList.contains('citation-marker')) {
-                citationTooltip.style.display = 'none';
-            }
-        });
-        
-        // Close citation tooltip on close button click
-        closeCitationTooltip.addEventListener('click', function() {
-            citationTooltip.style.display = 'none';
-        });
-        
-        // Citation click handling (delegated event)
-        chatMessages.addEventListener('click', function(e) {
-            if (e.target.classList.contains('citation-marker')) {
-                showCitationTooltip(e.target);
-            }
-        });
-
         // Clear chat
         clearChatButton.addEventListener('click', clearChat);
     }
@@ -166,11 +138,6 @@
                 // The assistant's message
                 appendAgentMessage(data.message);
                 
-                // Add any citations
-                if (data.message.citations) {
-                    citations = [...citations, ...data.message.citations];
-                }
-                
                 isWaitingForResponse = false;
                 sendButton.disabled = messageInput.value.trim() === '';
                 scrollToBottom();
@@ -206,36 +173,82 @@
         const messageElement = document.createElement('div');
         messageElement.className = 'message-wrapper agent-message';
         
-        // Process the content (markdown, citations, etc.)
-        const processedContent = processMessageContent(message.content, message.citations);
+        // Process the content (markdown and add sources at the bottom)
+        let processedContent = processMessageContent(message.content);
+        
+        // Add sources section if available
+        let sourcesHtml = '';
+        if (message.sources && message.sources.length > 0) {
+            sourcesHtml = createSourcesSection(message.sources);
+        }
         
         messageElement.innerHTML = `
             <div class="message-content">
                 <div class="markdown-content">${processedContent}</div>
+                ${sourcesHtml}
             </div>
         `;
         chatMessages.appendChild(messageElement);
     }
     
     /**
-     * Process message content to render markdown and handle citations
+     * Process message content to render markdown
      */
-    function processMessageContent(content, messageCitations) {
-        let processedContent = content;
-        if (messageCitations && messageCitations.length > 0) {
-            // For each citation, replace [^n] with a sup-tag
-            messageCitations.forEach(citation => {
-                const citationMarker = `\$begin:math:display$\\\\^${citation.id}\\$end:math:display$`; 
-                const markerRegex = new RegExp(citationMarker, 'g');
-                // We'll render it as a <sup class="citation-marker">^n</sup>
-                const htmlMarker = `<sup class="citation-marker" data-citation-id="${citation.id}">^${citation.id}</sup>`;
-                processedContent = processedContent.replace(markerRegex, htmlMarker);
-            });
+    function processMessageContent(content) {
+        // Render markdown
+        const renderedMarkdown = marked.parse(content);
+        return DOMPurify.sanitize(renderedMarkdown);
+    }
+    
+    /**
+     * Create the sources section HTML
+     */
+    function createSourcesSection(sources) {
+        if (!sources || sources.length === 0) {
+            return '';
         }
         
-        // Render markdown
-        const renderedMarkdown = marked.parse(processedContent);
-        return DOMPurify.sanitize(renderedMarkdown);
+        // Sort sources by file and page
+        sources.sort((a, b) => {
+            if (a.file === b.file) {
+                return a.page - b.page;
+            }
+            return a.file.localeCompare(b.file);
+        });
+        
+        // Create a unique list of sources (no duplicates)
+        const uniqueSources = [];
+        const seen = new Set();
+        
+        sources.forEach(source => {
+            const key = `${source.file}_${source.page}`;
+            if (!seen.has(key)) {
+                seen.add(key);
+                uniqueSources.push(source);
+            }
+        });
+        
+        // Format filenames to be shorter
+        function formatFileName(fileName) {
+            // Remove file extension
+            const baseName = fileName.replace(/\.[^/.]+$/, "");
+            // Truncate if too long
+            return baseName.length > 15 ? baseName.substring(0, 12) + '...' : baseName;
+        }
+        
+        // Create HTML for sources with requested format
+        const sourceItems = uniqueSources.map(source => 
+            `<li title="${escapeHTML(source.file)}">${formatFileName(escapeHTML(source.file))}, Page ${source.page}</li>`
+        ).join('');
+        
+        return `
+            <div class="sources-section">
+                <h4>Sources:</h4>
+                <ul class="sources-list">
+                    ${sourceItems}
+                </ul>
+            </div>
+        `;
     }
     
     /**
@@ -274,57 +287,23 @@
         const messageElement = document.createElement('div');
         messageElement.className = 'message-wrapper agent-message';
         
-        const fakeMessage = {
-             content: "## Error\n\nCould not process your request. [^1]",
-             citations: [{
-                 id: 1,
-                 file: "Error.log",
-                 page: 999,
-                 text: "No additional info"
-             }]
+        const errorMessage = {
+            content: "## Error\n\nCould not process your request.",
+            sources: [{ file: "Error.log", page: 1 }]
         };
         
-        const processedContent = processMessageContent(fakeMessage.content, fakeMessage.citations);
+        const processedContent = processMessageContent(errorMessage.content);
+        const sourcesHtml = createSourcesSection(errorMessage.sources);
         
         messageElement.innerHTML = `
             <div class="message-content">
                 <div class="markdown-content">${processedContent}</div>
+                ${sourcesHtml}
             </div>
         `;
         
         chatMessages.appendChild(messageElement);
         scrollToBottom();
-    }
-    
-    /**
-     * Show the citation tooltip
-     */
-    function showCitationTooltip(target) {
-        const citationId = parseInt(target.getAttribute('data-citation-id'));
-        const citation = citations.find(c => c.id === citationId);
-        
-        if (!citation) {
-            return;
-        }
-        
-        citationBody.innerHTML = `
-            <div class="citation-file">${citation.file}</div>
-            <div class="citation-page">Page ${citation.page}</div>
-        `;
-        
-        const rect = target.getBoundingClientRect();
-        citationTooltip.style.left = `${rect.left}px`;
-        citationTooltip.style.top = `${rect.bottom + 10}px`;
-        
-        citationTooltip.style.display = 'block';
-        
-        // Reposition if off-screen
-        const tooltipRect = citationTooltip.getBoundingClientRect();
-        const viewportWidth = window.innerWidth;
-        if (tooltipRect.right > viewportWidth) {
-            const overflow = tooltipRect.right - viewportWidth;
-            citationTooltip.style.left = `${rect.left - overflow - 20}px`;
-        }
     }
     
     /**
